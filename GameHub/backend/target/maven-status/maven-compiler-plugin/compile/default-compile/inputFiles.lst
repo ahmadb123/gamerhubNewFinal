@@ -1,5 +1,7 @@
-/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/mydomain/GamerHubBackEnd/DemoApplication.java
-/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/mydomain/GamerHubBackEnd/controller/AuthController.java
-/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/mydomain/GamerHubBackEnd/models/PSNLoginRequest.java
-/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/mydomain/GamerHubBackEnd/models/SteamLoginRequest.java
-/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/mydomain/GamerHubBackEnd/models/xboxLoginRequest.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/DemoApplication.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/config/CorsConfig.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/controllers/AuthController.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/models/PSNLoginRequest.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/models/SteamLoginRequest.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/models/xboxLoginRequest.java
+/Users/ahmadbishara/Desktop/GamerHUB/GameHub/backend/src/main/java/com/services/XboxAuthService.java
