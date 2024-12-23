@@ -1,13 +1,12 @@
 import React from "react";
-import XboxLogin from "./XboxLogin";
+import AppRoutes from "./Routes";
 
-function App() {
-  return (
-    <div>
-      <h1>Welcome to GamerHub</h1>
-      <XboxLogin />
+const App = () => {
+  return(
+    <div className="app">
+      <AppRoutes />
     </div>
   );
-}
+};
 
 export default App;
