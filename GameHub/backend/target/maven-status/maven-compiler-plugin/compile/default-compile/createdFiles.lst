@@ -1,7 +1,0 @@
-com/services/XboxAuthService.class
-com/controllers/AuthController.class
-com/models/PSNLoginRequest.class
-com/models/xboxLoginRequest.class
-com/DemoApplication.class
-com/models/SteamLoginRequest.class
-com/mydomain/GamerHubBackEnd/config/CorsConfig.class
