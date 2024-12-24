@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { handleLogin, exchangeCodeForTokens } from "../service/XboxAuthService";
-import { fetchXboxProfile } from "../service/profileService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXbox, faPlaystation, faSteam } from "@fortawesome/free-brands-svg-icons";
+
 
 const apiUrl = 'http://localhost:8080';
 
@@ -12,15 +14,9 @@ function LandingPage() {
     useEffect(() => {
         const handleXboxLogin = async () => {
             await exchangeCodeForTokens();
-            try {
-                const profile = await fetchXboxProfile();
-                console.log("Fetched Xbox profile:", profile);
-                localStorage.setItem("platform", "xbox");
-                navigate("/main");
-            } catch (error) {
-                console.error(error);
-                toast.error("Failed to fetch Xbox profile.");
-            }
+            // Removed fetchXboxProfile() call to avoid duplicate fetching
+            localStorage.setItem("platform", "xbox");
+            navigate("/main");
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -42,12 +38,15 @@ function LandingPage() {
             <p>Select a platform to log in:</p>
             <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "20px" }}>
                 <button onClick={() => handlePlatformLogin("xbox")} style={buttonStyle("green")}>
+                    <FontAwesomeIcon icon={faXbox} style={{ marginRight: "10px" }} />
                     Xbox Login
                 </button>
                 <button onClick={() => handlePlatformLogin("psn")} style={buttonStyle("blue")}>
+                    <FontAwesomeIcon icon={faPlaystation} style={{ marginRight: "10px" }} />
                     PSN Login
                 </button>
                 <button onClick={() => handlePlatformLogin("steam")} style={buttonStyle("gray")}>
+                    <FontAwesomeIcon icon={faSteam} style={{ marginRight: "10px" }} />
                     Steam Login
                 </button>
             </div>

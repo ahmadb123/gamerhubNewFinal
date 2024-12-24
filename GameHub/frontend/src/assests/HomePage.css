@@ -123,3 +123,108 @@ body {
     margin-right: 5px;
   }
   
+  .friends-list-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    background-color: #1a1a1a; /* Dark background */
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.friend-avatar {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border: 2px solid #fff; /* Optional border */
+}
+
+.friend-details {
+    flex: 1; /* Take up remaining space */
+}
+
+.friend-gamertag {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+    color: #fff;
+}
+
+.friend-realname {
+    font-size: 0.9rem;
+    margin: 0;
+    color: #bbb;
+}
+
+.friend-presence {
+    font-size: 0.8rem;
+    margin: 0;
+    color: #888;
+}
+
+.favorite-icon {
+    color: gold;
+    font-size: 1.2rem;
+    margin-left: auto; /* Push to the right */
+}
+.recent-games {
+  text-align: left;
+}
+
+.recent-games h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.recent-games .game-list {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* Horizontal scroll for extra games */
+}
+
+.game-card {
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  padding: 15px;
+  width: 200px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-card img {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.game-card .game-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #fff;
+}
+
+.game-card .game-info {
+  font-size: 14px;
+  color: #bbb;
+}
+
+.game-card .game-devices {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+}
+

@@ -20,8 +20,10 @@ export const exchangeCodeForTokens = async () => {
             }
 
             const data = await response.json();
+            console.log("Callback API JSON Response:", data);
+
             localStorage.setItem("uhs", data.uhs);
-            localStorage.setItem("XSTS_token", data.XSTS_token);
+            localStorage.setItem("XSTS_token", data.xsts_token);
 
             toast.success("Xbox login successful!");
         } catch (error) {
