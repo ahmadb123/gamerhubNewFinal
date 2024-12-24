@@ -20,7 +20,7 @@ public class XboxProfileController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String PROFILE_API_URL = "https://profile.xboxlive.com/users/me/profile/settings?settings=Gamertag,GameDisplayName,AppDisplayPicRaw";
+    private final String PROFILE_API_URL = "https://profile.xboxlive.com/users/me/profile/settings?settings=Gamertag,GameDisplayName,AppDisplayPicRaw,GameDisplayPicRaw,AccountTier,TenureLevel,Gamerscore";
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile() {
@@ -46,10 +46,13 @@ public class XboxProfileController {
 
             // Populate XboxProfile Model
             XboxProfile xboxProfile = new XboxProfile();
+            xboxProfile.setId(profileUser.path("id").asText());
+            tokenService.setXuid(xboxProfile.getId()); // save the xuid in tokenservice.
             xboxProfile.setGamertag(getSettingValue(settings, "Gamertag"));
             xboxProfile.setGameDisplayName(getSettingValue(settings, "GameDisplayName"));
             xboxProfile.setAppDisplayPicRaw(getSettingValue(settings, "AppDisplayPicRaw"));
-            // Add more fields if needed
+            xboxProfile.setGamerscore(Integer.parseInt(getSettingValue(settings, "Gamerscore")));
+            xboxProfile.setTenureLevel(Integer.parseInt(getSettingValue(settings, "TenureLevel")));
 
             return ResponseEntity.ok(xboxProfile);
         } catch (Exception e) {
@@ -58,13 +61,14 @@ public class XboxProfileController {
         }
     }
 
-    // Helper Method to Extract Values from Settings
     private String getSettingValue(JsonNode settings, String settingId) {
         for (JsonNode setting : settings) {
             if (setting.path("id").asText().equals(settingId)) {
                 return setting.path("value").asText();
             }
         }
+        System.out.println("Setting not found: " + settingId);
         return null; // Return null if not found
     }
+    
 }

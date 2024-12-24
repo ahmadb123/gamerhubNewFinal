@@ -1,6 +1,7 @@
 package com.models;
 
 public class XboxProfile {
+    private String id; // xuid of the user
     private String appDisplayName;
     private String gameDisplayName;
     private String gamertag;
@@ -10,7 +11,16 @@ public class XboxProfile {
     private int tenureLevel;
     private int gamerscore;
 
+
     // Getters and setters for each field
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
     public String getAppDisplayName() {
         return appDisplayName;
     }

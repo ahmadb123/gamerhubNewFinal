@@ -16,7 +16,15 @@ public class TokenService {
     private String xblToken; // Xbox Live token
     private String xstsToken; // XSTS token
     private String uhs; // UserHash
+    private String xuid; // Xbox User ID
 
+    public void setXuid(String xuid) {
+        this.xuid = xuid;
+    }
+
+    public String getXuid() {
+        return xuid;
+    }
     @Autowired
     private RestTemplate restTemplate;
 
