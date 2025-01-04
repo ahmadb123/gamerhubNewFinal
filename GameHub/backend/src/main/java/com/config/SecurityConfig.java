@@ -13,7 +13,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**", "/api/xbox/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/xbox/**", "/api/news/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .cors()

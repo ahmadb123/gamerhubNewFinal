@@ -2,7 +2,8 @@ package com.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.models.XboxProfile;
+import com.models.XboxModel.XboxProfile;
+
 import org.springframework.stereotype.Service;
 
 @Service
