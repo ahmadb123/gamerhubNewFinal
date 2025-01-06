@@ -6,7 +6,7 @@ public class CurrentDate {
         return LocalDate.now();
     }
 
-    public static LocalDate getLastMonth() {
-        return LocalDate.now().minusMonths(1);
+    public static LocalDate getDateTwoMonthsAgo() {
+        return LocalDate.now().minusMonths(2);
     }
 }

@@ -31,7 +31,7 @@ public class NewsController {
         try {
             // Use provided dates or default to the past month
             if (startDate == null) {
-                startDate = CurrentDate.getLastMonth();
+                startDate = CurrentDate.getDateTwoMonthsAgo();
             }
             if (endDate == null) {
                 endDate = CurrentDate.getCurrentDate();
