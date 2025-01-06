@@ -14,7 +14,6 @@ function LandingPage() {
     useEffect(() => {
         const handleXboxLogin = async () => {
             await exchangeCodeForTokens();
-            // Removed fetchXboxProfile() call to avoid duplicate fetching
             localStorage.setItem("platform", "xbox");
             navigate("/main");
         };
