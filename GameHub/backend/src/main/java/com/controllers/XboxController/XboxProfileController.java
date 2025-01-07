@@ -1,12 +1,18 @@
 package com.controllers.XboxController;
 import com.services.TokenService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.services.XboxProfileService;
+import com.services.UserDetailsService.UserService;
+import com.utility.JWT;
+import com.dto.XboxProfileDTO;
+import com.models.UserModel.User;
 import com.models.XboxModel.XboxProfile;
+import com.Repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -21,11 +27,40 @@ public class XboxProfileController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private XboxProfileService xboxProfileService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JWT jwt;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private final String PROFILE_API_URL = "https://profile.xboxlive.com/users/me/profile/settings?settings=Gamertag,GameDisplayName,AppDisplayPicRaw,GameDisplayPicRaw,AccountTier,TenureLevel,Gamerscore";
 
+
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile() {
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader) {
         try {
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Missing or invalid Authorization header");
+            }   
+
+            String token = authHeader.substring(7);
+            String username = jwt.extractUsername(token);
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token or username not found");
+            }
+
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            System.out.println("USERRRR: "+ username);
             // Get Authorization Header
             String authorizationHeader = tokenService.getXboxAuthorizationHeader();
             System.out.println("Authorization Header Used: " + authorizationHeader);
@@ -39,37 +74,22 @@ public class XboxProfileController {
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(PROFILE_API_URL, HttpMethod.GET, requestEntity, String.class);
 
-            // Parse Response
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response.getBody());
-            JsonNode profileUser = rootNode.path("profileUsers").get(0);
-            JsonNode settings = profileUser.path("settings");
+            // parse json api -> DTO 
 
-            // Populate XboxProfile Model
-            XboxProfile xboxProfile = new XboxProfile();
-            xboxProfile.setId(profileUser.path("id").asText());
-            tokenService.setXuid(xboxProfile.getId()); // save the xuid in tokenservice.
-            xboxProfile.setGamertag(getSettingValue(settings, "Gamertag"));
-            xboxProfile.setGameDisplayName(getSettingValue(settings, "GameDisplayName"));
-            xboxProfile.setAppDisplayPicRaw(getSettingValue(settings, "AppDisplayPicRaw"));
-            xboxProfile.setGamerscore(Integer.parseInt(getSettingValue(settings, "Gamerscore")));
-            xboxProfile.setTenureLevel(Integer.parseInt(getSettingValue(settings, "TenureLevel")));
+            XboxProfileDTO profileDTO = xboxProfileService.parseProfileJson(response.getBody());
 
-            return ResponseEntity.ok(xboxProfile);
+            // store XUID- 
+            tokenService.setXuid(profileDTO.getId());
+            
+            // to link user and xboxprofile get username from Authentication controller-  
+            
+            // save to db- 
+            xboxProfileService.saveProfile(profileDTO, user);
+
+            return ResponseEntity.ok(profileDTO);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch profile");
         }
     }
-
-    private String getSettingValue(JsonNode settings, String settingId) {
-        for (JsonNode setting : settings) {
-            if (setting.path("id").asText().equals(settingId)) {
-                return setting.path("value").asText();
-            }
-        }
-        System.out.println("Setting not found: " + settingId);
-        return null; // Return null if not found
-    }
-    
 }

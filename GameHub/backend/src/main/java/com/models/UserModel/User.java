@@ -4,9 +4,16 @@
  */
 package com.models.UserModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.models.XboxModel.XboxProfile;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
@@ -19,6 +26,13 @@ public class User {
     private String username;
     private String email;
     private String password;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<XboxProfile> xboxProfiles = new ArrayList<>();
+    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<PSNProfile> psnProfiles = new ArrayList<>();
+    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<SteamProfile> steamProfiles = new ArrayList<>();
+
     
     // Getters
     public Long getId() {
@@ -34,6 +48,7 @@ public class User {
         return password;
     }
 
+
     // Setters
 
     public void setId(Long id) {
@@ -48,4 +63,9 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<XboxProfile> getXboxProfiles() { return xboxProfiles; }
+    public void setXboxProfiles(List<XboxProfile> xboxProfiles) { this.xboxProfiles = xboxProfiles; }
+
+
 }

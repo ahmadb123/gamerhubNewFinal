@@ -1,37 +1,92 @@
 package com.services;
 
+import com.Repository.UserRepository;
+import com.Repository.XboxProfileRepository;
+import com.dto.XboxProfileDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.models.UserModel.User;
 import com.models.XboxModel.XboxProfile;
+import com.utility.XboxProfileMapper;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class XboxProfileService {
+    @Autowired
+    private XboxProfileRepository saveXboxProfile;
+    @Autowired
+    private UserRepository checkUserExists;
+    // Parses the response into DTO- 
+    public XboxProfileDTO parseProfileJson(String responseBody) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(responseBody);
 
-    // Parses the response body into an XboxProfile object
-    public XboxProfile parseProfile(String responseBody) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(responseBody);
+        JsonNode profileUser = rootNode.path("profileUsers").get(0);
+        JsonNode settingsNode = profileUser.path("settings");
+        String xuid = profileUser.path("id").asText();
 
-        // Extract profile details
-        JsonNode profileNode = rootNode.path("profileUsers").get(0).path("settings");
-        XboxProfile profile = new XboxProfile();
+        // build DTO - 
+        XboxProfileDTO dto = new XboxProfileDTO();
+        dto.setId(xuid);
+        dto.setGamertag(getValue(settingsNode, "Gamertag"));
+        dto.setGameDisplayName(getValue(settingsNode, "GameDisplayName"));
+        dto.setAppDisplayPicRaw(getValue(settingsNode, "AppDisplayPicRaw"));
+        dto.setGameDisplayPicRaw(getValue(settingsNode, "GameDisplayPicRaw"));
+        dto.setAccountTier(getValue(settingsNode, "AccountTier"));
+        dto.setTenureLevel(parseIntSafe(getValue(settingsNode, "TenureLevel")));
+        dto.setGamerscore(parseIntSafe(getValue(settingsNode, "Gamerscore")));
+        return dto;
+    }   
 
-        profile.setGamertag(getValueFromSettings(profileNode, "Gamertag"));
-        profile.setGameDisplayName(getValueFromSettings(profileNode, "GameDisplayName"));
-        profile.setAppDisplayPicRaw(getValueFromSettings(profileNode, "AppDisplayPicRaw"));
-
-        return profile;
+    // save profile - 
+    public XboxProfile saveProfile(XboxProfileDTO dto, User user){
+       // check if xbox profile already exists in user to avoid duplications  
+       Optional<XboxProfile> existingProfile = saveXboxProfile.findByUserIdAndGamertag(user.getId(), dto.getGamertag());
+       if(existingProfile == null) {
+        System.out.println("FAILEDD");
+       }
+        XboxProfile profile;
+        if(existingProfile.isPresent()){
+            // update exisiting profile - 
+            profile = existingProfile.get();
+            profile.setAccountTier(dto.getAccountTier());
+            profile.setAppDisplayName(dto.getAppDisplayName());
+            profile.setAppDisplayPicRaw(dto.getAppDisplayPicRaw());
+            profile.setGameDisplayName(dto.getGameDisplayName());
+            profile.setGameDisplayPicRaw(dto.getGameDisplayPicRaw());
+            profile.setGamerscore(dto.getGamerscore());
+            profile.setTenureLevel(dto.getTenureLevel());
+            profile.setXboxGamertag(dto.getGamertag());
+            profile.setXboxId(dto.getId());
+        }else{
+            // Create a new profile
+            profile = XboxProfileMapper.toEntity(dto, user);
+        }
+        //save profile 
+        return saveXboxProfile.save(profile);
     }
 
-    // Helper method to get the value for a specific setting
-    private String getValueFromSettings(JsonNode settingsNode, String id) {
-        for (JsonNode setting : settingsNode) {
-            if (setting.path("id").asText().equals(id)) {
+    // helpers-  
+    private String getValue(JsonNode settings, String settingId) {
+        for (JsonNode setting : settings) {
+            if (setting.path("id").asText().equals(settingId)) {
                 return setting.path("value").asText();
             }
         }
-        return null; // Return null if the setting ID is not found
+        return null;
     }
+
+    private int parseIntSafe(String val) {
+        if (val == null) return 0;
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 }
