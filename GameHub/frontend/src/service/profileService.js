@@ -4,6 +4,7 @@ const apiUrl = 'http://localhost:8080';
 
 // Fetch Xbox profile
 export const fetchXboxProfile = async () => {
+    const jwtToken = localStorage.getItem("jwtToken");
     const uhs = localStorage.getItem("uhs");
     const XSTS_token = localStorage.getItem("XSTS_token");
 
@@ -21,6 +22,7 @@ export const fetchXboxProfile = async () => {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `XBL3.0 x=${uhs};${XSTS_token}`,
+                'Authorization': 'Bearer ' + jwtToken
             },
         });
 
