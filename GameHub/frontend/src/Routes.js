@@ -5,6 +5,9 @@ import HomePage from "./pages/HomePage";
 import News from "./pages/News";
 import LoginPage from "./pages/LoginPage";
 import AuthPage from "./pages/AuthPage";
+import CommunityPage from "./pages/CommunityPage";
+import ClipsPage from "./pages/ClipsPage";
+
 function App() {
     return (
         <Router>
@@ -14,6 +17,8 @@ function App() {
                 <Route path="/news" element={<News />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/auth" element={<AuthPage />} />
+                <Route path="/community" element={<CommunityPage />} />
+                <Route path="/clips" element={<ClipsPage />} />
                 <Route path="*" element={<LandingPage />} />
             </Routes>
         </Router>

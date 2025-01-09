@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
 import { fetchXboxProfile, fetchPSNProfile, fetchSteamProfile } from "../service/profileService";
 import { fetchXboxFriends } from "../service/friendsService";
 import { getRecentGames } from "../service/RecentGamesXbox";
 import { fetchRecentNews } from "../service/NewsService";
+import {postNews} from "../service/PostNewsService";
 // import { FaDesktop, FaXbox, FaPlaystation, FaGamepad } from "react-icons/fa";
 import {checkAccountType} from "../utility/CheckAccountType";
-
 class HomePage extends Component {
   state = {
     accountInfo: null,
@@ -20,6 +21,32 @@ class HomePage extends Component {
     recentNews: [],
     isFetchingRecentNews: true,
   };
+
+  navigateClips = () => {
+    this.props.navigate("/clips");
+  };
+
+  navigateCommunity = () => {
+    this.props.navigate("/community");
+  };
+
+  handleShareNews = async (news) =>{
+    const contentText = `Check out this news: ${news.name}`;
+    const sharedNewsId = news.id;
+
+    try{
+      const result = await postNews(contentText, sharedNewsId);
+      if(result.success){
+        toast.success("News shared successfully.");
+      }else{
+        toast.error("Failed to share news.");
+      }
+    }catch(error){
+      console.error(error);
+      toast.error("Failed to share news.");
+    }
+  };
+
 
   componentDidMount() {
     this.fetchNews();
@@ -98,6 +125,7 @@ class HomePage extends Component {
   };
 
 
+
   render() {
     const {
       accountInfo,
@@ -121,7 +149,9 @@ class HomePage extends Component {
           <nav className="navbar">
             <button className="nav-button">NEWS</button>
             <button className="nav-button">SEARCH</button>
-            <div className="account-section">
+            <button onClick= {this.navigateClips} className="nav-button">CLIPS</button>
+            <button onClick={this.navigateCommunity} className="nav-button">Community Insight</button> 
+              <div className="account-section">
               <div className="gamertag-display">
                 <p>{accountInfo.gamertag}</p>
               </div>
@@ -173,6 +203,12 @@ class HomePage extends Component {
                                   ))}
                                 </ul>
                               </div>
+                              <button 
+                                className="share-button"
+                                onClick={() => this.handleShareNews(news)}
+                              >
+                                Share to Community
+                              </button>
                               <div className="screenshots-container">
                                 {news.short_screenshots?.map((screenshot, idx) => (
                                   <img
@@ -278,4 +314,9 @@ class HomePage extends Component {
   }
 }
 
-export default HomePage;
+const HomePageWithNavigate = (props) => {
+  const navigate = useNavigate();
+  return <HomePage {...props} navigate={navigate} />;
+};
+
+export default HomePageWithNavigate;
