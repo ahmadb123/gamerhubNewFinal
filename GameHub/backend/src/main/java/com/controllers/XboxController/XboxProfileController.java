@@ -1,11 +1,9 @@
 package com.controllers.XboxController;
 import com.services.TokenService;
 import com.services.XboxProfileService;
-import com.services.UserDetailsService.UserService;
 import com.utility.JWT;
 import com.dto.XboxProfileDTO;
 import com.models.UserModel.User;
-import com.models.XboxModel.XboxProfile;
 import com.Repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +27,6 @@ public class XboxProfileController {
 
     @Autowired
     private XboxProfileService xboxProfileService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private JWT jwt;

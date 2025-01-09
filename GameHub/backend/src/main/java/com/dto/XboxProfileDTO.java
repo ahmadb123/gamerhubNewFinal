@@ -2,7 +2,6 @@ package com.dto;
 
 public class XboxProfileDTO {
     
-    // These field names and types match your incoming JSON from the Xbox API
     private String id;                
     private String gamertag;        
     private String appDisplayName;    

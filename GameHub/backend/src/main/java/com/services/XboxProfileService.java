@@ -1,6 +1,5 @@
 package com.services;
 
-import com.Repository.UserRepository;
 import com.Repository.XboxProfileRepository;
 import com.dto.XboxProfileDTO;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 public class XboxProfileService {
     @Autowired
     private XboxProfileRepository saveXboxProfile;
-    @Autowired
-    private UserRepository checkUserExists;
     // Parses the response into DTO- 
     public XboxProfileDTO parseProfileJson(String responseBody) throws Exception{
         ObjectMapper mapper = new ObjectMapper();
