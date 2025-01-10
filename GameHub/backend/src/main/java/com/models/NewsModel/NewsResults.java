@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsResults {
     private String name; // Title of the news
+    private String slug; // name of the game
     private int playTime; // Playtime of the game
     private List<Platforms> platforms = new ArrayList<>(); // Platforms of the game
     private List<Stores> stores; // Stores of the game
@@ -21,6 +22,10 @@ public class NewsResults {
 
     public String getName() {
         return name;
+    }
+
+    public String getSlug(){
+        return slug;
     }
 
     public void setName(String name) {
@@ -81,6 +86,10 @@ public class NewsResults {
 
     public void setUpdated(String updated) {
         this.updated = updated;
+    }
+
+    public void setSlug(String slug){
+        this.slug = slug;
     }
 
     public List<ShortScreenShotNews> getShort_screenshots() {

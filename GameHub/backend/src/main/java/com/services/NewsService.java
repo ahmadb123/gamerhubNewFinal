@@ -38,6 +38,7 @@ public class NewsService {
                     List<NewsResults> resultsList = new ArrayList<>();
                     NewsResults newsResults = new NewsResults();
                     newsResults.setName(result.get("name").asText());
+                    newsResults.setSlug(result.get("slug").asText());
                     newsResults.setReleased(result.get("released").asText());
                     newsResults.setUpdated(result.get("updated").asText());    
                     if(result.has("background_image") && !result.get("background_image").isNull()){
@@ -62,6 +63,7 @@ public class NewsService {
                             Platform platform = new Platform();
                             Platforms allPlatforms = new Platforms();
                             platform.setName(result.get("platforms").get(j).get("platform").get("name").asText());
+                            platform.setSlug(result.get("platforms").get(j).get("platform").get("slug").asText());
                             allPlatforms.setPlatform(platform);
                             newsResults.getPlatforms().add(allPlatforms);
                         }

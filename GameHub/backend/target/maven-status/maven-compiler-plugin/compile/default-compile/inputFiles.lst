@@ -14,6 +14,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxProfileController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxRecentPlayedGamescontroller.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/AuthResponseDTO.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/PostNewsDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/UserDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/XboxProfileDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/CommunityInsight/PostNews.java
