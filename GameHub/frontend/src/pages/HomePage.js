@@ -30,10 +30,11 @@ class HomePage extends Component {
     this.props.navigate("/community");
   };
 
+
   handleShareNews = async (news) =>{
     const contentText = `Check out this news: ${news.name}`;
-    const sharedNewsId = news.id;
-
+    const sharedNewsId = news.slug;
+    console.log("Sharing news with ID:", sharedNewsId);
     try{
       const result = await postNews(contentText, sharedNewsId);
       if(result.success){
