@@ -2,13 +2,18 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
-import { fetchXboxProfile, fetchPSNProfile, fetchSteamProfile } from "../service/profileService";
+import {
+  fetchXboxProfile,
+  fetchPSNProfile,
+  fetchSteamProfile
+} from "../service/profileService";
 import { fetchXboxFriends } from "../service/friendsService";
 import { getRecentGames } from "../service/RecentGamesXbox";
 import { fetchRecentNews } from "../service/NewsService";
-import {postNews} from "../service/PostNewsService";
-// import { FaDesktop, FaXbox, FaPlaystation, FaGamepad } from "react-icons/fa";
-import {checkAccountType} from "../utility/CheckAccountType";
+import { postNews } from "../service/PostNewsService";
+import { checkAccountType } from "../utility/CheckAccountType";
+import { searchUserProfile } from "../service/searchUserProfile";
+
 class HomePage extends Component {
   state = {
     accountInfo: null,
@@ -20,35 +25,83 @@ class HomePage extends Component {
     isFetchingRecentGames: true,
     recentNews: [],
     isFetchingRecentNews: true,
+
+    // For searching other users:
+    searchQuery: "",
+    searchResult: null,   // store the found user (if only one)
+    selectedUser: null,   // which user (from the search) was clicked to show details
   };
 
+  // Navigate to the "clips" page
   navigateClips = () => {
     this.props.navigate("/clips");
   };
 
+  // Navigate to the "community" page
   navigateCommunity = () => {
     this.props.navigate("/community");
   };
 
-
-  handleShareNews = async (news) =>{
+  // Share news to the community
+  handleShareNews = async (news) => {
     const contentText = `Check out this news: ${news.name}`;
     const sharedNewsId = news.slug;
     console.log("Sharing news with ID:", sharedNewsId);
-    try{
+    try {
       const result = await postNews(contentText, sharedNewsId);
-      if(result.success){
+      if (result.success) {
         toast.success("News shared successfully.");
-      }else{
+      } else {
         toast.error("Failed to share news.");
       }
-    }catch(error){
+    } catch (error) {
       console.error(error);
       toast.error("Failed to share news.");
     }
   };
 
+  /**
+   * Auto-search as user types:
+   * 1. Update searchQuery in state.
+   * 2. If length >= 3, call searchUserProfile.
+   * 3. If a user is found, store in searchResult. Otherwise, clear it.
+   */
+  handleSearchChange = async (event) => {
+    const newQuery = event.target.value;
+    this.setState({ searchQuery: newQuery, selectedUser: null }, async () => {
+      // Optional: only search if user typed >= 3 characters
+      if (newQuery.length < 3) {
+        // Clear any previous search results
+        this.setState({ searchResult: null });
+        return;
+      }
 
+      try {
+        const result = await searchUserProfile(newQuery);
+        console.log("Search result:", result);
+
+        if (result) {
+          this.setState({ searchResult: result });
+        } else {
+          // If no user found, clear the result
+          this.setState({ searchResult: null });
+        }
+      } catch (error) {
+        console.error("Auto-search error:", error);
+        toast.error("Failed to search user profile.");
+        this.setState({ searchResult: null });
+      }
+    });
+  };
+
+  /**
+   * Fetch initial data once the component mounts:
+   * - platform from localStorage
+   * - accountInfo (profile) for that platform
+   * - Xbox friends if platform === "xbox"
+   * - recent games
+   * - recent news
+   */
   componentDidMount() {
     this.fetchNews();
     const platform = localStorage.getItem("platform");
@@ -67,7 +120,6 @@ class HomePage extends Component {
     };
 
     const fetchProfile = profileFetchers[platform];
-
     if (!fetchProfile) {
       toast.error("Unsupported platform. Please log in again.");
       window.location.href = "/";
@@ -83,7 +135,7 @@ class HomePage extends Component {
         console.log("Fetched account info:", accountInfo);
         this.setState({ accountInfo, isFetching: false });
 
-        // Fetch Xbox friends if the platform is Xbox
+        // Fetch Xbox friends if platform is Xbox
         if (platform === "xbox") {
           try {
             const friends = await fetchXboxFriends();
@@ -94,8 +146,9 @@ class HomePage extends Component {
             toast.error("Failed to fetch friends list.");
           }
         }
+
+        // Fetch recent games
         try {
-          // fetch recent games
           const recentGames = await getRecentGames();
           this.setState({ recentGames, isFetchingRecentGames: false });
         } catch (error) {
@@ -109,6 +162,7 @@ class HomePage extends Component {
         window.location.href = "/";
       }
     };
+
     fetchAccountInfo();
   }
 
@@ -125,8 +179,6 @@ class HomePage extends Component {
     }
   };
 
-
-
   render() {
     const {
       accountInfo,
@@ -137,6 +189,9 @@ class HomePage extends Component {
       recentGames,
       isFetchingRecentGames,
       isFetchingRecentNews,
+      searchQuery,
+      searchResult,
+      selectedUser,
     } = this.state;
 
     if (isFetching) {
@@ -149,10 +204,62 @@ class HomePage extends Component {
           <h1 className="logo">GamerHUB</h1>
           <nav className="navbar">
             <button className="nav-button">NEWS</button>
-            <button className="nav-button">SEARCH</button>
-            <button onClick= {this.navigateClips} className="nav-button">CLIPS</button>
-            <button onClick={this.navigateCommunity} className="nav-button">Community Insight</button> 
-              <div className="account-section">
+            <button onClick={this.navigateClips} className="nav-button">
+              CLIPS
+            </button>
+            <button onClick={this.navigateCommunity} className="nav-button">
+              Community Insight
+            </button>
+
+            {/* Auto-search input */}
+            <div className="search-bar" style={{ position: "relative" }}>
+              <input
+                type="text"
+                placeholder="Search User..."
+                className="search-input"
+                value={searchQuery || ""}
+                onChange={this.handleSearchChange}
+              />
+
+              {/**
+               * If searchQuery >= 3, and searchResult is found,
+               * show a "preview" below the input
+               */}
+              {searchQuery.length >= 3 && searchResult && (
+                <div
+                  className="search-result-preview"
+                  onClick={() => this.setState({ selectedUser: searchResult })}
+                  style={{
+                    position: "absolute",
+                    top: "35px",
+                    left: 0,
+                    border: "1px solid #ccc",
+                    background: "#fff",
+                    borderRadius: "4px",
+                    width: "250px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "8px",
+                    zIndex: 10
+                  }}
+                >
+                  <img
+                    src={searchResult.appDisplayPicRaw || "/default-avatar.png"}
+                    alt="User Avatar"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      marginRight: "10px"
+                    }}
+                  />
+                  <span>{searchResult.gamertag}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="account-section">
               <div className="gamertag-display">
                 <p>{accountInfo.gamertag}</p>
               </div>
@@ -168,8 +275,33 @@ class HomePage extends Component {
         </header>
 
         <div className="container">
+          {/* If a user was clicked in the preview, show the full details here */}
+          {selectedUser && (
+            <div
+              className="user-details"
+              style={{
+                border: "1px solid #ddd",
+                padding: "16px",
+                margin: "16px 0",
+                borderRadius: "4px"
+              }}
+            >
+              <h2>Xbox Profile Details</h2>
+              <p>Gamertag: {selectedUser.gamertag}</p>
+              <p>Account Tier: {selectedUser.accountTier}</p>
+              <p>Gamerscore: {selectedUser.gamerscore}</p>
+              <p>Tenure Level: {selectedUser.tenureLevel}</p>
+              <img
+                src={selectedUser.gameDisplayPicRaw}
+                alt="Game Display"
+                style={{ width: "150px", height: "150px", borderRadius: "8px" }}
+              />
+            </div>
+          )}
+
           <div className="main-content">
             <div className="news-and-games">
+              {/* --- News Feed Section --- */}
               <section className="news-feed">
                 <h2>News Feed</h2>
                 <div className="content-box">
@@ -177,41 +309,47 @@ class HomePage extends Component {
                     <p>Loading news...</p>
                   ) : recentNews.length > 0 ? (
                     <ul className="news-feed-container">
-                      {recentNews.map((news, index) => (
+                      {recentNews.map((newsItem, index) => (
                         <li className="news-item" key={index}>
                           <img
                             className="news-main-image"
-                            src={news.background_image}
-                            alt={news.name}
+                            src={newsItem.background_image}
+                            alt={newsItem.name}
                           />
                           <div className="news-item-content">
-                            <h2 className="news-title">{news.name}</h2>
+                            <h2 className="news-title">{newsItem.name}</h2>
                             <p className="news-available-on">
-                                Available on:{" "}
-                                {news.platforms && news.platforms.length > 0 ? (
-                                    checkAccountType([...new Set(news.platforms.map(p => p.platform.name.toLowerCase()))])
-                                ) : (
-                                    "N/A"
-                                )}
-                                </p>
+                              Available on:{" "}
+                              {newsItem.platforms && newsItem.platforms.length > 0
+                                ? checkAccountType([
+                                    ...new Set(
+                                      newsItem.platforms.map((p) =>
+                                        p.platform.name.toLowerCase()
+                                      )
+                                    ),
+                                  ])
+                                : "N/A"}
+                            </p>
 
                             <div className="news-extra-details">
-                              <p className="news-release-date">Release Date: {news.released}</p>
+                              <p className="news-release-date">
+                                Release Date: {newsItem.released}
+                              </p>
                               <div className="genres">
                                 <ul>
-                                  {news.genres?.map((genre, idx) => (
+                                  {newsItem.genres?.map((genre, idx) => (
                                     <li key={idx}>{genre.name}</li>
                                   ))}
                                 </ul>
                               </div>
-                              <button 
+                              <button
                                 className="share-button"
-                                onClick={() => this.handleShareNews(news)}
+                                onClick={() => this.handleShareNews(newsItem)}
                               >
                                 Share to Community
                               </button>
                               <div className="screenshots-container">
-                                {news.short_screenshots?.map((screenshot, idx) => (
+                                {newsItem.short_screenshots?.map((screenshot, idx) => (
                                   <img
                                     key={idx}
                                     className="screenshot-img"
@@ -231,6 +369,7 @@ class HomePage extends Component {
                 </div>
               </section>
 
+              {/* --- Recent Games Section --- */}
               <section className="recent-games">
                 <h2>Recent Games</h2>
                 <div className="content-box">
@@ -261,6 +400,8 @@ class HomePage extends Component {
                 </div>
               </section>
             </div>
+
+            {/* --- Friends List Section --- */}
             <aside className="friends-list">
               <h2>Friends</h2>
               <div className="content-box">

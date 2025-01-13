@@ -3,7 +3,8 @@ const apiUrl = 'http://localhost:8080';
 // fetch news- 
 
 // recent news for the homepage - 
-
+// add another api to filter news  - 
+// recent news for specific genres, games, platforms.
 export const fetchRecentNews = async () =>{
     try{
         const response = await fetch(`${apiUrl}/api/news/recent-news`, {

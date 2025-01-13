@@ -30,7 +30,6 @@ function AuthPage(){
         }
         }catch(e){
             console.error("Error", e);
-            toast.error("An error occurred during registration");
         }
     };
     return (
