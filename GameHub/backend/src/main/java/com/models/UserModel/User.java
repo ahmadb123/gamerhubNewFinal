@@ -26,6 +26,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private boolean isAuthorized = false;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<XboxProfile> xboxProfiles = new ArrayList<>();
     // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,6 +49,14 @@ public class User {
         return password;
     }
 
+
+    public Boolean getIsAuthorized() {
+        return isAuthorized;
+    }
+    
+    public void setIsAuthorized(Boolean isAuthorized) {
+        this.isAuthorized = isAuthorized;
+    }
 
     // Setters
 

@@ -14,6 +14,18 @@ public class XboxProfileDTO {
 
     public XboxProfileDTO() {}
 
+    public XboxProfileDTO(String id, String gamertag, String appDisplayName, String gameDisplayName, String appDisplayPicRaw, String gameDisplayPicRaw, String accountTier, int tenureLevel, int gamerscore) {
+        this.id = id;
+        this.gamertag = gamertag;
+        this.appDisplayName = appDisplayName;
+        this.gameDisplayName = gameDisplayName;
+        this.appDisplayPicRaw = appDisplayPicRaw;
+        this.gameDisplayPicRaw = gameDisplayPicRaw;
+        this.accountTier = accountTier;
+        this.tenureLevel = tenureLevel;
+        this.gamerscore = gamerscore;
+    }
+
     // --- Getters / Setters ---
     public String getId() {
         return id;

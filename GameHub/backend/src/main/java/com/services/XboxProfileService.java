@@ -67,6 +67,28 @@ public class XboxProfileService {
         return saveXboxProfile.save(profile);
     }
 
+    // return searhed user profile - 
+    public XboxProfileDTO getSearchedProfileData(String username){
+        Optional<XboxProfile> user = saveXboxProfile.findXboxUserByUsername(username);
+        System.out.println("Result of findXboxUserByUsername for " + username + ": " + user);
+        if(user.isEmpty()){
+            System.out.println("User not found");
+            return null;
+        }
+        XboxProfile profile = user.get();
+        XboxProfileDTO dto = new XboxProfileDTO(
+            profile.getXboxId(),
+            profile.getXboxGamertag(),
+            profile.getAppDisplayName(),
+            profile.getGameDisplayName(),
+            profile.getAppDisplayPicRaw(),
+            profile.getGameDisplayPicRaw(),
+            profile.getAccountTier(),
+            profile.getTenureLevel(),
+            profile.getGamerscore() 
+        );
+        return dto;
+    }
     // helpers-  
     private String getValue(JsonNode settings, String settingId) {
         for (JsonNode setting : settings) {

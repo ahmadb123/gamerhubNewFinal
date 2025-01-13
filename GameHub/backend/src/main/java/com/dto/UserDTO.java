@@ -7,7 +7,10 @@ public class UserDTO {
     private String password;
     
     // setters and getters- 
-
+ 
+    public UserDTO(String username){
+        this.username = username;
+    }
     public Long getId(){
         return id;
     }

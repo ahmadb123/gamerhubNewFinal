@@ -1,8 +1,7 @@
 package com.controllers.LoginController;
 
-import java.beans.BeanProperty;
+import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,7 @@ public class Authentication {
     public ResponseEntity<?> register(@RequestBody UserDTO userDto){
         try{
             authService.register(userDto.getUsername(),userDto.getEmail(),userDto.getPassword());
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok(Map.of("message", "User registered successfully"));
         }catch(RuntimeException e){
             if (e.getMessage().equals("User already exists")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
