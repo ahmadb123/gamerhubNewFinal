@@ -39,6 +39,10 @@ public class XboxProfile {
     private String accountTier;
     private int tenureLevel;
     private int gamerscore;
+    private String uhs; 
+    private String xuid;
+    @Column(name = "xsts", columnDefinition = "TEXT")
+    private String xsts;
 
     public XboxProfile() {}
 
@@ -67,6 +71,11 @@ public class XboxProfile {
         return gameDisplayName;
     }
 
+    public String getXsts(){
+        return xsts;
+    }
+
+
     public String getAppDisplayPicRaw() {
         return appDisplayPicRaw;
     }
@@ -87,6 +96,16 @@ public class XboxProfile {
         return gamerscore;
     }
 
+    public String getUhs() {
+        return uhs;
+    }
+
+
+    public String getXuid() {
+        return xuid;
+    }
+
+
     // --- Setters ---
     public void setUser(User user) {
         this.user = user;
@@ -102,6 +121,10 @@ public class XboxProfile {
 
     public void setAppDisplayName(String appDisplayName) {
         this.appDisplayName = appDisplayName;
+    }
+
+    public void setXsts(String xsts){
+        this.xsts = xsts;
     }
 
     public void setGameDisplayName(String gameDisplayName) {
@@ -126,5 +149,13 @@ public class XboxProfile {
 
     public void setGamerscore(int gamerscore) {
         this.gamerscore = gamerscore;
+    }
+
+    public void setUhs(String uhs) {
+        this.uhs = uhs;
+    }
+
+    public void setXuid(String xuid) {
+        this.xuid = xuid;
     }
 }

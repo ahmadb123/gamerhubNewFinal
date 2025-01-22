@@ -1,7 +1,6 @@
 package com.dto;
 
 public class XboxProfileDTO {
-    
     private String id;                
     private String gamertag;        
     private String appDisplayName;    
@@ -10,11 +9,14 @@ public class XboxProfileDTO {
     private String gameDisplayPicRaw; 
     private String accountTier;       
     private int tenureLevel;          
-    private int gamerscore;          
+    private int gamerscore;   
+    private String xuid;
+    private String uhs;       
+    private String xsts;
 
     public XboxProfileDTO() {}
 
-    public XboxProfileDTO(String id, String gamertag, String appDisplayName, String gameDisplayName, String appDisplayPicRaw, String gameDisplayPicRaw, String accountTier, int tenureLevel, int gamerscore) {
+    public XboxProfileDTO(String id, String gamertag, String appDisplayName, String gameDisplayName, String appDisplayPicRaw, String gameDisplayPicRaw, String accountTier, int tenureLevel, int gamerscore, String xuid, String uhs, String xsts) {
         this.id = id;
         this.gamertag = gamertag;
         this.appDisplayName = appDisplayName;
@@ -24,15 +26,46 @@ public class XboxProfileDTO {
         this.accountTier = accountTier;
         this.tenureLevel = tenureLevel;
         this.gamerscore = gamerscore;
+        this.xuid = xuid;
+        this.xsts = xsts;
+        this.uhs = uhs;
     }
 
+
+
     // --- Getters / Setters ---
+
+    public String getUhs() {
+        return uhs;
+    }
+
+    public void setUhs(String uhs) {
+        this.uhs = uhs;
+    }
+
+    public String getXsts() {
+        return xsts;
+    }
+
+    public void setXsts(String xsts) {
+        this.xsts = xsts;
+    }
+
+    public String getXuid() {
+        return xuid;
+    }
+
+    public void setXuid(String xuid) {
+        this.xuid = xuid;
+    }
+    
     public String getId() {
         return id;
     }
     public void setId(String id) {
         this.id = id;
     }
+
 
     public String getGamertag() {
         return gamertag;

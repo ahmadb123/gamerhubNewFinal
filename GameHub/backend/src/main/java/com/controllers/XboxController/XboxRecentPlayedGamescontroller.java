@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.Repository.XboxProfileRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.XboxModel.RecentGamesXbox;
 import com.services.TokenService;
+import com.utility.JWT;
 
 @RestController
 @RequestMapping("/api/xbox/recent-games")
@@ -23,6 +25,10 @@ public class XboxRecentPlayedGamescontroller {
     private RestTemplate restTemplate;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private XboxProfileRepository profile;
+    @Autowired
+    private JWT jwt;
     /*
      * requires headers: 
      * Authorization: XBL3.0 x={userhash};{token}
@@ -33,7 +39,7 @@ public class XboxRecentPlayedGamescontroller {
     @GetMapping
     public ResponseEntity<?> getRecentGames(){
         try{
-            String authHeader = tokenService.getXboxAuthorizationHeader();
+            String apiAuthHeader = tokenService.getXboxAuthorizationHeader();
             String xuid = tokenService.getXuid();
             if(xuid == null){
                 System.out.println("XUID not found");
@@ -41,12 +47,11 @@ public class XboxRecentPlayedGamescontroller {
             }
             System.out.println("RECENT GAMES: " + xuid);
             // send the request 
-            // call api and only get 10 (first)friends 
             String url = RECENT_GAMES_URL.replace("{xuid}", xuid);
             System.out.println("Request URL: " + url);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", authHeader);
+            headers.set("Authorization", apiAuthHeader);
             headers.set("x-xbl-contract-version", "2"); 
             headers.set("Accept-Language", "en-US"); // Add Accept-Language header
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
@@ -56,6 +61,10 @@ public class XboxRecentPlayedGamescontroller {
             // parse json response -
             ObjectMapper mapper = new ObjectMapper();
             RecentGamesXbox recentGames = mapper.readValue(response.getBody(), RecentGamesXbox.class);
+
+            // get username from token - 
+            // GET USERNAME 
+            // call xboxrecentgame service to save recent games
             // return response = 
             return ResponseEntity.ok(recentGames);
         }catch (Exception e){

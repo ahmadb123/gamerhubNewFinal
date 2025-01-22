@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class XboxProfileService {
     @Autowired
     private XboxProfileRepository saveXboxProfile;
+    @Autowired
+    private TokenService tokenService;
     // Parses the response into DTO- 
     public XboxProfileDTO parseProfileJson(String responseBody) throws Exception{
         ObjectMapper mapper = new ObjectMapper();
@@ -36,6 +38,9 @@ public class XboxProfileService {
         dto.setAccountTier(getValue(settingsNode, "AccountTier"));
         dto.setTenureLevel(parseIntSafe(getValue(settingsNode, "TenureLevel")));
         dto.setGamerscore(parseIntSafe(getValue(settingsNode, "Gamerscore")));
+        dto.setXuid(tokenService.getXuid());
+        dto.setUhs(tokenService.getUhs());
+        dto.setXsts(tokenService.getXstsToken());
         return dto;
     }   
 
@@ -59,6 +64,9 @@ public class XboxProfileService {
             profile.setTenureLevel(dto.getTenureLevel());
             profile.setXboxGamertag(dto.getGamertag());
             profile.setXboxId(dto.getId());
+            profile.setXuid(dto.getXuid());
+            profile.setUhs(dto.getUhs());
+            profile.setXsts(dto.getXsts());
         }else{
             // Create a new profile
             profile = XboxProfileMapper.toEntity(dto, user);
@@ -85,7 +93,10 @@ public class XboxProfileService {
             profile.getGameDisplayPicRaw(),
             profile.getAccountTier(),
             profile.getTenureLevel(),
-            profile.getGamerscore() 
+            profile.getGamerscore(),
+            profile.getUhs(), 
+            profile.getXuid(),
+            profile.getXsts()
         );
         return dto;
     }

@@ -84,6 +84,10 @@ public class TokenService {
         return "XBL3.0 x=" + uhs + ";" + xstsToken;
     }
 
+    public String getXboxAuthByPassingUhsAndXsts(String uhs, String xstsToken){
+        return "XBL3.0 x=" + uhs + ";" + xstsToken;
+    }
+
     // Getters for private fields
     public String getMsAccessToken() {
         return msAccessToken;
@@ -101,3 +105,4 @@ public class TokenService {
         return uhs;
     }
 }
+
