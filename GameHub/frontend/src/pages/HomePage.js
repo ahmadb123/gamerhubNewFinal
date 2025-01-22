@@ -45,7 +45,7 @@ class HomePage extends Component {
   // Share news to the community
   handleShareNews = async (news) => {
     const contentText = `Check out this news: ${news.name}`;
-    const sharedNewsId = news.slug;
+    const sharedNewsId = news.slug; // slug is the name of the news item in the API
     console.log("Sharing news with ID:", sharedNewsId);
     try {
       const result = await postNews(contentText, sharedNewsId);
@@ -134,7 +134,6 @@ class HomePage extends Component {
         const accountInfo = await fetchProfile();
         console.log("Fetched account info:", accountInfo);
         this.setState({ accountInfo, isFetching: false });
-
         // Fetch Xbox friends if platform is Xbox
         if (platform === "xbox") {
           try {
@@ -228,31 +227,13 @@ class HomePage extends Component {
               {searchQuery.length >= 3 && searchResult && (
                 <div
                   className="search-result-preview"
-                  onClick={() => this.setState({ selectedUser: searchResult })}
-                  style={{
-                    position: "absolute",
-                    top: "35px",
-                    left: 0,
-                    border: "1px solid #ccc",
-                    background: "#fff",
-                    borderRadius: "4px",
-                    width: "250px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "8px",
-                    zIndex: 10
-                  }}
+                  onClick={() => this.setState({ selectedUser: searchResult,
+                    searchQuery: '', searchResult: null 
+                   })}
                 >
-                  <img
+                  <img className="search-avatar-preview"
                     src={searchResult.appDisplayPicRaw || "/default-avatar.png"}
                     alt="User Avatar"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      marginRight: "10px"
-                    }}
                   />
                   <span>{searchResult.gamertag}</span>
                 </div>

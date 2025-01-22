@@ -397,6 +397,27 @@ body {
   box-shadow: none; 
 }
 
+.search-result-preview {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  border: 1px solid #ccc;
+  background: black;
+  border-radius: 4px;
+  width: 250px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  z-index: 10;
+}
+
+.search-avatar-preview{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-Right: 10px;
+}
 /* 9) Responsive Design */
 
 @media (max-width: 768px) {

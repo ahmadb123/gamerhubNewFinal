@@ -22,7 +22,9 @@ export const searchUserProfile = async username =>{
             throw new Error(`Failed to search user profile. Status: ${response.status}`);
         }
         const data = await response.json();
-        return data;
+        const profile = data.profile;
+        const friends = data.friends;
+        return {success: true, profile, friends};
     }catch(error){
         console.error(error);
         throw error;
