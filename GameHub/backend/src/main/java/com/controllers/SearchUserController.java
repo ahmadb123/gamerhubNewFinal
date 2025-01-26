@@ -1,5 +1,9 @@
 package com.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.XboxProfileDTO;
-
+import com.models.DataModelAccountLinks.XboxRecentGame;
 import com.services.XboxProfileService;
+import com.services.XboxRecentGamesService;
 import com.utility.JWT;
 
 @RestController
@@ -21,7 +26,8 @@ public class SearchUserController {
     private JWT jwt;
     @Autowired
     private XboxProfileService xboxProfileService; 
-
+    @Autowired
+    private XboxRecentGamesService xboxRecentGamesService;
     @GetMapping
     public ResponseEntity<?> searchUser(@RequestParam String username, @RequestHeader("Authorization") String authHeader){
         try{
@@ -39,8 +45,14 @@ public class SearchUserController {
                 return ResponseEntity.status(404).body("User not found");
             }
             XboxProfileDTO dto = xboxProfileService.getSearchedProfileData(username);
-            // return user xbox profile - 
-            return ResponseEntity.ok(dto);
+            List<XboxRecentGame> recentPlayedGames = xboxRecentGamesService.getRecentGames(username);
+
+            // mapping - 
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("profile", dto);
+            responseData.put("recentPlayedGames", recentPlayedGames);
+           // 4) Return that map as JSON
+            return ResponseEntity.ok(responseData); 
         }catch(Exception e){
             return ResponseEntity.status(500).body("Internal server error");
         }

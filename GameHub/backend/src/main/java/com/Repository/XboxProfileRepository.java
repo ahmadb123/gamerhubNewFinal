@@ -14,6 +14,7 @@ public interface XboxProfileRepository extends JpaRepository<XboxProfile, Long> 
     Optional<XboxProfile> findByUserIdAndGamertag(@Param("userId") Long userId, @Param("gamertag") String gamertag);
     @Query("SELECT x FROM XboxProfile x WHERE x.user.username = :username")
     Optional<XboxProfile> findXboxUserByUsername(@Param("username") String username);
-    
+    @Query("SELECT x FROM XboxProfile x WHERE x.user.id = :userId")
+    Optional<XboxProfile> findByUserId(@Param("userId") Long userId);
 }
 

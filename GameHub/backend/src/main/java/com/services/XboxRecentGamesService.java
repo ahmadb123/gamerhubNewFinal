@@ -1,9 +1,10 @@
 package com.services;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.Repository.XboxProfileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.Repository.XboxRecentGamesRepository;
 import com.models.DataModelAccountLinks.XboxRecentGame;
 import com.models.XboxModel.GameLastPlayed;
@@ -11,15 +12,15 @@ import com.models.XboxModel.RecentGamesXbox;
 import com.models.XboxModel.TitleId;
 import com.models.XboxModel.XboxProfile;
 
+@Service
 public class XboxRecentGamesService {
     @Autowired
     private XboxRecentGamesRepository xboxRecentGamesRepository;
-    @Autowired
-    private XboxProfileRepository xboxProfileRepository; // if needed to fetch the profile
 
     public void saveRecentGames(RecentGamesXbox recentGamesXbox, XboxProfile profile){
         // clear old data - 
-        xboxRecentGamesRepository.deleteByTitleId(profile.getId());
+
+        xboxRecentGamesRepository.deleteByTitleId(String.valueOf(profile.getId()));
 
         List<TitleId> titles = recentGamesXbox.getTitles();
         if (titles == null || titles.isEmpty()) {
@@ -28,7 +29,7 @@ public class XboxRecentGamesService {
 
         for (TitleId title : titles) {
             XboxRecentGame recentGame = new XboxRecentGame();
-            recentGame.setXboxProfile(profile); // Link to the user’s profile
+            recentGame.setXboxProfile(profile); // Link to the user’s Xbox_profile
             recentGame.setTitleId(title.getTitleId());
             recentGame.setGameName(title.getName());
             recentGame.setDisplayImage(title.getDisplayImage());
@@ -39,4 +40,9 @@ public class XboxRecentGamesService {
             xboxRecentGamesRepository.save(recentGame);
         }
     }
+
+    // return all recent games played from db - 
+    public List<XboxRecentGame> getRecentGames(String username) {
+        return xboxRecentGamesRepository.findRecentGamesByUsername(username);
+    }    
 }
