@@ -23,6 +23,8 @@ import com.services.TokenService;
 import com.services.XboxRecentGamesService;
 import com.utility.JWT;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/xbox/recent-games")
 public class XboxRecentPlayedGamescontroller {
@@ -84,9 +86,17 @@ public class XboxRecentPlayedGamescontroller {
             // GET USERNAME 
             User user = userRepository.findByUsername(loggedInUser)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            System.out.println("User: "+ loggedInUser);
     
-            XboxProfile xboxProfile = profile.findByUserId(user.getId())
+            List<XboxProfile> userProfiles = profile.findAllByUserId(user.getId());
+            if (userProfiles.isEmpty()) {
+                throw new UsernameNotFoundException("No Xbox profiles found for user");
+            }
+            String gamertagFromDb = userProfiles.get(0).getXboxGamertag(); 
+            XboxProfile xboxProfile = profile.findByUserIdAndGamertag(user.getId(), gamertagFromDb)
                 .orElseThrow(() -> new UsernameNotFoundException("Xbox profile not found"));
+
             // call xboxrecentgame service to save recent games
             xboxRexGamesService.saveRecentGames(recentGames, xboxProfile);
             xboxRexGamesService.getRecentGames(loggedInUser);

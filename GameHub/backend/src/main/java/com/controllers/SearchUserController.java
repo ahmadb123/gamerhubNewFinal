@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.XboxProfileDTO;
+import com.dto.XboxRecentGameDTO;
 import com.models.DataModelAccountLinks.XboxRecentGame;
 import com.services.XboxProfileService;
 import com.services.XboxRecentGamesService;
@@ -45,8 +46,11 @@ public class SearchUserController {
                 return ResponseEntity.status(404).body("User not found");
             }
             XboxProfileDTO dto = xboxProfileService.getSearchedProfileData(username);
-            List<XboxRecentGame> recentPlayedGames = xboxRecentGamesService.getRecentGames(username);
+            List<XboxRecentGameDTO> recentPlayedGames = xboxRecentGamesService.getRecentGamesByUsername(username);
 
+            // debugging- 
+            System.out.println("User " + dto.getGamertag());
+            System.out.println("Recent Played Games: " + recentPlayedGames);
             // mapping - 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("profile", dto);

@@ -1,5 +1,6 @@
 package com.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,7 @@ public interface XboxProfileRepository extends JpaRepository<XboxProfile, Long> 
     Optional<XboxProfile> findXboxUserByUsername(@Param("username") String username);
     @Query("SELECT x FROM XboxProfile x WHERE x.user.id = :userId")
     Optional<XboxProfile> findByUserId(@Param("userId") Long userId);
+    @Query("SELECT x FROM XboxProfile x WHERE x.user.id = :userId")
+    List<XboxProfile> findAllByUserId(@Param("userId") Long userId);
 }
 

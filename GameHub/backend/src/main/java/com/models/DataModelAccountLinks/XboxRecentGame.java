@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.models.XboxModel.XboxProfile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
+
 @Entity
 @Table(name = "xbox_recent_games")
 public class XboxRecentGame {
@@ -129,4 +130,16 @@ public class XboxRecentGame {
     public void setReleaseDate(LocalDateTime releaseDate) {
         this.releaseDate = releaseDate;
     }
+
+    @Override
+    public String toString() {
+        return "XboxRecentGame{" +
+                "id=" + id +
+                ", gameName='" + gameName + '\'' +
+                ", titleId='" + titleId + '\'' +
+                ", displayImage='" + displayImage + '\'' +
+                ", lastTimePlayedFormatted='" + lastTimePlayedFormatted + '\'' +
+                '}';
+    }
+
 }
