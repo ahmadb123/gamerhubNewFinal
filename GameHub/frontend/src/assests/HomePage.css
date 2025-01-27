@@ -418,6 +418,54 @@ body {
   border-radius: 50%;
   margin-Right: 10px;
 }
+
+.selected-user-container {
+  background-color: #2c2c2c;
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.selected-user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.selected-user-games {
+  margin-top: 20px;
+}
+
+.selected-user-games-list {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.selected-user-game-card {
+  background-color: #444;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  min-width: 120px;
+}
+
+.toggle-games-button {
+  background-color: #555;
+  color: #fff;
+  border: none;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.toggle-games-button:hover {
+  background-color: #666;
+}
+
 /* 9) Responsive Design */
 
 @media (max-width: 768px) {
@@ -445,3 +493,4 @@ body {
     /* Ensure news items are also responsive */
   }
 }
+

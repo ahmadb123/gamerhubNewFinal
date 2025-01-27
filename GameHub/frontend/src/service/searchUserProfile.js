@@ -23,8 +23,8 @@ export const searchUserProfile = async username =>{
         }
         const data = await response.json();
         const profile = data.profile;
-        const friends = data.friends;
-        return {success: true, profile, friends};
+        const recentGames = data.recentPlayedGames;
+        return {success: true, profile, recentGames};
     }catch(error){
         console.error(error);
         throw error;

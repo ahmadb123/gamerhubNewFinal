@@ -25,13 +25,23 @@ class HomePage extends Component {
     isFetchingRecentGames: true,
     recentNews: [],
     isFetchingRecentNews: true,
+    showMoreGames: false,
 
     // For searching other users:
     searchQuery: "",
     searchResult: null,   // store the found user (if only one)
     selectedUser: null,   // which user (from the search) was clicked to show details
+    selectedUserProfile: null,
+    selectedUserGames: [],
+    showMoreSelectedUserGames: false,
   };
 
+  // toggle to show more games - 
+  handleShowMoreGames = () => {
+    this.setState((prevState) => ({
+      showMoreGames: !prevState.showMoreGames,
+    }));
+  };
   // Navigate to the "clips" page
   navigateClips = () => {
     this.props.navigate("/clips");
@@ -81,10 +91,18 @@ class HomePage extends Component {
         console.log("Search result:", result);
 
         if (result) {
-          this.setState({ searchResult: result });
+          this.setState({
+            searchResult: result,
+            selectedUserProfile: result.profile,
+            selectedUserGames: result.recentGames,
+          });
         } else {
           // If no user found, clear the result
-          this.setState({ searchResult: null });
+          this.setState({
+            searchResult: null,
+            selectedUserProfile: null,
+            selectedUserGames: [],
+          });
         }
       } catch (error) {
         console.error("Auto-search error:", error);
@@ -178,6 +196,13 @@ class HomePage extends Component {
     }
   };
 
+  /* Toggle to show more or fewer recent games for the searched user */
+  toggleShowMoreSelectedUserGames = () => {
+    this.setState((prevState) => ({
+      showMoreSelectedUserGames: !prevState.showMoreSelectedUserGames,
+    }));
+  };
+
   render() {
     const {
       accountInfo,
@@ -191,6 +216,10 @@ class HomePage extends Component {
       searchQuery,
       searchResult,
       selectedUser,
+      showMoreGames,
+      selectedUserProfile,
+      selectedUserGames,
+      showMoreSelectedUserGames,
     } = this.state;
 
     if (isFetching) {
@@ -256,27 +285,41 @@ class HomePage extends Component {
         </header>
 
         <div className="container">
-          {/* If a user was clicked in the preview, show the full details here */}
-          {selectedUser && (
-            <div
-              className="user-details"
-              style={{
-                border: "1px solid #ddd",
-                padding: "16px",
-                margin: "16px 0",
-                borderRadius: "4px"
-              }}
-            >
+          {/* If a user is selected, show their details below */}
+          {selectedUserProfile && (
+            <div className="selected-user-container">
               <h2>Xbox Profile Details</h2>
-              <p>Gamertag: {selectedUser.gamertag}</p>
-              <p>Account Tier: {selectedUser.accountTier}</p>
-              <p>Gamerscore: {selectedUser.gamerscore}</p>
-              <p>Tenure Level: {selectedUser.tenureLevel}</p>
+              <p>Gamertag: {selectedUserProfile.gamertag}</p>
+              <p>Account Tier: {selectedUserProfile.accountTier}</p>
+              <p>Gamerscore: {selectedUserProfile.gamerscore}</p>
+              <p>Tenure Level: {selectedUserProfile.tenureLevel}</p>
               <img
-                src={selectedUser.gameDisplayPicRaw}
-                alt="Game Display"
-                style={{ width: "150px", height: "150px", borderRadius: "8px" }}
+                src={selectedUserProfile.gameDisplayPicRaw}
+                alt="User Avatar"
+                className="selected-user-avatar"
               />
+
+              <div className="selected-user-games">
+                <h3>Recent Games</h3>
+                <div className="selected-user-games-list">
+                  {selectedUserGames
+                    .slice(0, showMoreSelectedUserGames ? selectedUserGames.length : 2)
+                    .map((game, index) => (
+                      <div className="selected-user-game-card" key={index}>
+                        <img src={game.displayImage} alt={game.gameName} />
+                        <div>{game.gameName}</div>
+                      </div>
+                    ))}
+                </div>
+                {selectedUserGames.length > 2 && (
+                  <button
+                    onClick={this.toggleShowMoreSelectedUserGames}
+                    className="toggle-games-button"
+                  >
+                    {showMoreSelectedUserGames ? "Show Less" : "Show More"}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
