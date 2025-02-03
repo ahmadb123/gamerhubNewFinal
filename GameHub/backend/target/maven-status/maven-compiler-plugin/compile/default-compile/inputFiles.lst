@@ -19,6 +19,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/PostNewsDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/UserDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/XboxProfileDTO.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/XboxRecentGameDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/CommunityInsight/PostNews.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/DataModelAccountLinks/XboxRecentGame.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/GameClipRecordXbox/GameClip.java
