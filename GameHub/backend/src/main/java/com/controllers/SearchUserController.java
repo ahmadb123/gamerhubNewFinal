@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.XboxProfileDTO;
 import com.dto.XboxRecentGameDTO;
-import com.models.DataModelAccountLinks.XboxRecentGame;
 import com.services.XboxProfileService;
 import com.services.XboxRecentGamesService;
 import com.utility.JWT;
@@ -29,7 +28,7 @@ public class SearchUserController {
     private XboxProfileService xboxProfileService; 
     @Autowired
     private XboxRecentGamesService xboxRecentGamesService;
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<?> searchUser(@RequestParam String username, @RequestHeader("Authorization") String authHeader){
         try{
             if(authHeader == null || !authHeader.startsWith("Bearer ")){
@@ -37,6 +36,7 @@ public class SearchUserController {
             }
             String token = authHeader.substring(7);
             String loggedInUser = jwt.extractUsername(token);
+            // Long userId = jwt.extractUserId(token);
             if(loggedInUser == null){
                 System.out.println("Invalid token or username not found");
                 return ResponseEntity.status(401).body("Invalid token or username not found");
@@ -46,10 +46,12 @@ public class SearchUserController {
                 return ResponseEntity.status(404).body("User not found");
             }
             XboxProfileDTO dto = xboxProfileService.getSearchedProfileData(username);
+            // check if theres more than one dto - and return the first one.
             List<XboxRecentGameDTO> recentPlayedGames = xboxRecentGamesService.getRecentGamesByUsername(username);
 
             // debugging- 
             System.out.println("User " + dto.getGamertag());
+            
             System.out.println("Recent Played Games: " + recentPlayedGames);
             // mapping - 
             Map<String, Object> responseData = new HashMap<>();
@@ -58,6 +60,25 @@ public class SearchUserController {
            // 4) Return that map as JSON
             return ResponseEntity.ok(responseData); 
         }catch(Exception e){
+            return ResponseEntity.status(500).body("Internal server error");
+        }
+    }
+    @GetMapping("/all-linked-profiles")
+    public ResponseEntity<?> getAllLinkedUsers(@RequestHeader("Authorization") String authHeader){
+        try{
+            if(authHeader == null || !authHeader.startsWith("Bearer ")){
+                return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7);
+            Long loggedInUser = jwt.extractUserId(token);
+            if(loggedInUser == null){
+                System.out.println("Invalid token or username not found");
+                return ResponseEntity.status(401).body("Invalid token or username not found");
+            }
+            List<XboxProfileDTO> linkedProfiles = xboxProfileService.getAllLinkedAccounts(loggedInUser);
+            return ResponseEntity.ok(linkedProfiles);
+        }catch(Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Internal server error");
         }
     }

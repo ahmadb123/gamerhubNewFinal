@@ -1,6 +1,7 @@
 package com.dto;
 
 public class XboxProfileDTO {
+    private String username;
     private String id;                
     private String gamertag;        
     private String appDisplayName;    
@@ -16,7 +17,8 @@ public class XboxProfileDTO {
 
     public XboxProfileDTO() {}
 
-    public XboxProfileDTO(String id, String gamertag, String appDisplayName, String gameDisplayName, String appDisplayPicRaw, String gameDisplayPicRaw, String accountTier, int tenureLevel, int gamerscore, String xuid, String uhs, String xsts) {
+    public XboxProfileDTO(String username, String id, String gamertag, String appDisplayName, String gameDisplayName, String appDisplayPicRaw, String gameDisplayPicRaw, String accountTier, int tenureLevel, int gamerscore, String xuid, String uhs, String xsts) {
+        this.username = username;
         this.id = id;
         this.gamertag = gamertag;
         this.appDisplayName = appDisplayName;
@@ -34,6 +36,14 @@ public class XboxProfileDTO {
 
 
     // --- Getters / Setters ---
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getUhs() {
         return uhs;

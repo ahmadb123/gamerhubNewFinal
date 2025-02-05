@@ -1,0 +1,138 @@
+package com.controllers.FriendsController;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.Repository.FriendsRepository;
+import com.Repository.UserRepository;
+import com.models.FriendsModel.Friends;
+import com.models.UserModel.User;
+import com.services.FriendsService;
+import com.utility.JWT;
+import com.dto.PendingRequestDTO;
+
+@RestController
+@RequestMapping("/api/friends")
+public class FriendsController {
+    @Autowired
+    private JWT jwt;
+    @Autowired
+    private FriendsService friendsService;
+    @Autowired
+    private UserRepository userRepository; // Repository for User lookups
+    @Autowired
+    private FriendsRepository friendsRepository;
+    @PostMapping("/add")
+    public ResponseEntity<?> addFriend(@RequestParam String userNameOFRequest, @RequestHeader("Authorization") String authHeader){
+        try{
+            if(authHeader == null || !authHeader.startsWith("Bearer ")){
+                return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7);
+            String loggedInUser = jwt.extractUsername(token);
+            if(loggedInUser == null){
+                System.out.println("Invalid token or username not found");
+                return ResponseEntity.status(401).body("Invalid token or username not found");
+            }
+
+            // get the user we want to add as a friend - 
+
+            Optional<User> requesterOpt = userRepository.findByUsername(loggedInUser);
+            Optional<User> targetUserOpt = userRepository.findByUsername(userNameOFRequest);
+
+            if (!requesterOpt.isPresent()) {
+                return ResponseEntity.status(404).body("Requester not found");
+            }
+            if (!targetUserOpt.isPresent()) {
+                return ResponseEntity.status(404).body("Target user not found");
+            }
+
+            User requester = requesterOpt.get();
+            User targetUser = targetUserOpt.get();
+
+            // send friend request - 
+            friendsService.sendFriendRequest(requester, targetUser);
+            return ResponseEntity.ok("Friend request sent");
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
+    }
+    @PostMapping("/accept")
+    public ResponseEntity<?> acceptRequest(@RequestParam String userNameOFRequest, @RequestHeader("Authorization") String authHeader){
+        try{
+            if(authHeader == null || !authHeader.startsWith("Bearer ")){
+                return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7);
+            String loggedInUser = jwt.extractUsername(token);
+            if(loggedInUser == null){
+                System.out.println("Invalid token or username not found");
+                return ResponseEntity.status(401).body("Invalid token or username not found");
+            }
+
+            // get the user we want to add as a friend - 
+
+            Optional<User> requesterOpt = userRepository.findByUsername(loggedInUser);
+            Optional<User> targetUserOpt = userRepository.findByUsername(userNameOFRequest);
+
+            if (!requesterOpt.isPresent()) {
+                return ResponseEntity.status(404).body("Requester not found");
+            }
+            if (!targetUserOpt.isPresent()) {
+                return ResponseEntity.status(404).body("Target user not found");
+            }
+
+            User requester = requesterOpt.get();
+            User targetUser = targetUserOpt.get();
+
+            // look up friend request -
+            Optional<Friends> friendRequets = friendsRepository.findByUserIdAndFriendId(targetUser.getId(), requester.getId());
+            if(friendRequets.isEmpty()){
+                return ResponseEntity.status(404).body("Friend request not found");
+            }
+
+            // get the friend request id -
+            Long friendRequestId = friendRequets.get().getId();
+            // send friend request - 
+            friendsService.acceptFriendRequest(friendRequestId);
+            return ResponseEntity.ok("Friend request accepted");
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<?> getPendingRequests(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String loggedInUsername = jwt.extractUsername(token);
+        // find user by username
+        Optional<User> userOpt = userRepository.findByUsername(loggedInUsername);
+        if (!userOpt.isPresent()) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+        
+        User user = userOpt.get();
+        List<Friends> pendingList = friendsRepository.findPendingRequestsForUser(user.getId());
+        List<PendingRequestDTO> dtos = pendingList.stream().map(friend -> {
+            PendingRequestDTO dto = new PendingRequestDTO();
+            dto.setId(friend.getId());
+            dto.setUsername(friend.getUser().getUsername());
+            dto.setStatus(friend.getStatus());
+            return dto;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+}

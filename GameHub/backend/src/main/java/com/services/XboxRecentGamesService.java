@@ -14,15 +14,17 @@ import com.models.XboxModel.RecentGamesXbox;
 import com.models.XboxModel.TitleId;
 import com.models.XboxModel.XboxProfile;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class XboxRecentGamesService {
     @Autowired
     private XboxRecentGamesRepository xboxRecentGamesRepository;
+    @Transactional
 
     public void saveRecentGames(RecentGamesXbox recentGamesXbox, XboxProfile profile){
         // clear old data - 
-
-        xboxRecentGamesRepository.deleteByTitleId(String.valueOf(profile.getId()));
+        xboxRecentGamesRepository.deleteByXboxProfileId(profile.getId());
 
         List<TitleId> titles = recentGamesXbox.getTitles();
         if (titles == null || titles.isEmpty()) {

@@ -54,4 +54,15 @@ public class XboxRecentGameDTO {
     public void setLastTimePlayedFormatted(String lastTimePlayedFormatted) {
         this.lastTimePlayedFormatted = lastTimePlayedFormatted;
     }
+
+    @Override
+    public String toString() {
+        return "XboxRecentGameDTO{" +
+                "id=" + id +
+                ", gameName='" + gameName + '\'' +
+                ", titleId='" + titleId + '\'' +
+                ", displayImage='" + displayImage + '\'' +
+                ", lastTimePlayedFormatted='" + lastTimePlayedFormatted + '\'' +
+                '}';
+    }
 }

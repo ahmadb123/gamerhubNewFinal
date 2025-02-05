@@ -13,6 +13,7 @@ import com.models.DataModelAccountLinks.XboxRecentGame;
 @Repository
 public interface XboxRecentGamesRepository extends JpaRepository<XboxRecentGame, Long> {
     void deleteByTitleId(String titleId);
+    void deleteByXboxProfileId(Long id);
     @Query("SELECT g FROM XboxRecentGame g "
     + "WHERE g.xboxProfile.user.username = :username")
     List<XboxRecentGame> findRecentGamesByUsername(@Param("username") String username);

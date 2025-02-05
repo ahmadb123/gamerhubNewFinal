@@ -26,7 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**", "/api/xbox/**", "/api/news/**", "/api/community-insight/**", "/api/search/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/xbox/**", "/api/news/**", "/api/community-insight/**", "/api/search/**", "/api/friends/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .cors()

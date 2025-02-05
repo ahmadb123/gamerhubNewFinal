@@ -33,18 +33,24 @@ public class Authentication {
         return ResponseEntity.ok(new AuthResponseDTO(token, userId, username)); // call construction
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDto){
-        try{
-            authService.register(userDto.getUsername(),userDto.getEmail(),userDto.getPassword());
-            return ResponseEntity.ok(Map.of("message", "User registered successfully"));
-        }catch(RuntimeException e){
-            if (e.getMessage().equals("User already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+@PostMapping("/register")
+public ResponseEntity<?> register(@RequestBody UserDTO userDto) {
+    try {
+        authService.register(userDto.getUsername(), userDto.getEmail(), userDto.getPassword());
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
+    } catch (RuntimeException e) {
+        if ("User already exists".equals(e.getMessage())) {
+            // Return JSON for conflict as well
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "User already exists"));
         }
+        // Return JSON for internal server error
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "An error occurred: " + e.getMessage()));
     }
+}
 
     @GetMapping("/get-id")
     public ResponseEntity<?> getUsername(@RequestHeader("Authorization") String authHeader ){

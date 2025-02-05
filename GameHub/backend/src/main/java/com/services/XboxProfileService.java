@@ -8,6 +8,8 @@ import com.models.UserModel.User;
 import com.models.XboxModel.XboxProfile;
 import com.utility.XboxProfileMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,9 @@ public class XboxProfileService {
 
     // save profile - 
     public XboxProfile saveProfile(XboxProfileDTO dto, User user){
-       // check if xbox profile already exists in user to avoid duplications  
+       // check if xbox profile already exists in user to avoid duplications
+       System.out.println("User from DB: id=" + user.getId() + ", username=" + user.getUsername());
+  
        Optional<XboxProfile> existingProfile = saveXboxProfile.findByUserIdAndGamertag(user.getId(), dto.getGamertag());
        if(existingProfile == null) {
         System.out.println("FAILEDD");
@@ -78,6 +82,7 @@ public class XboxProfileService {
     // return searhed user profile - 
     public XboxProfileDTO getSearchedProfileData(String username){
         Optional<XboxProfile> user = saveXboxProfile.findXboxUserByUsername(username);
+        // only return the first user found - 
         System.out.println("Result of findXboxUserByUsername for " + username + ": " + user);
         if(user.isEmpty()){
             System.out.println("User not found");
@@ -85,6 +90,8 @@ public class XboxProfileService {
         }
         XboxProfile profile = user.get();
         XboxProfileDTO dto = new XboxProfileDTO(
+             // The user’s database username:
+            profile.getUser().getUsername(),
             profile.getXboxId(),
             profile.getXboxGamertag(),
             profile.getAppDisplayName(),
@@ -99,6 +106,31 @@ public class XboxProfileService {
             profile.getXsts()
         );
         return dto;
+    }
+
+    // return all linked accounts
+    public List<XboxProfileDTO> getAllLinkedAccounts(Long id){
+        List<XboxProfile> profiles = saveXboxProfile.findAllByUserId(id);
+        List<XboxProfileDTO> dtos = new ArrayList<>();
+        for(XboxProfile profile : profiles){
+            XboxProfileDTO dto = new XboxProfileDTO(
+                profile.getUser().getUsername(),
+                profile.getXboxId(),
+                profile.getXboxGamertag(),
+                profile.getAppDisplayName(),
+                profile.getGameDisplayName(),
+                profile.getAppDisplayPicRaw(),
+                profile.getGameDisplayPicRaw(),
+                profile.getAccountTier(),
+                profile.getTenureLevel(),
+                profile.getGamerscore(),
+                profile.getUhs(), 
+                profile.getXuid(),
+                profile.getXsts()
+            );
+            dtos.add(dto);
+        }
+        return dtos;
     }
     // helpers-  
     private String getValue(JsonNode settings, String settingId) {
