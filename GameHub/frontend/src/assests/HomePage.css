@@ -335,6 +335,7 @@ body {
 }
 
 .game-card img {
+  max-width: 150px;
   border-radius: 10px;
   width: 100%;
   height: auto;
@@ -410,6 +411,12 @@ body {
   align-items: center;
   padding: 8px;
   z-index: 10;
+  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.search-result-preview:hover {
+  background-color: #333;
 }
 
 .search-avatar-preview{
@@ -494,3 +501,169 @@ body {
   }
 }
 
+.search-input:focus {
+  outline: none;
+  border: 2px solid #00bfff;
+}
+
+.search-loading {
+  /* Show a spinner or loading indicator */
+  position: relative;
+  /* ...additional styles... */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+
+/* ========= Search Bar & Result Preview ========= */
+.search-bar {
+  position: relative;
+  width: 320px;
+  margin: 30px auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 30px;
+  background: #1a1a1a;
+  color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #00bfff;
+  box-shadow: 0 0 10px #00bfff;
+}
+
+/* The search result preview appears below the search bar */
+.search-result-preview {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.search-result-preview:hover {
+  background: #2a2a2a;
+}
+
+.search-avatar-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid #00bfff;
+  object-fit: cover;
+}
+
+/* ========= Searched User Profile Box with Close Button ========= */
+.selected-user-container {
+  position: relative; /* Enables absolute positioning for the close button */
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+}
+
+/* Close Button in Top-Right Corner */
+.selected-user-container .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #00bfff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.selected-user-container .close-btn:hover {
+  color: #fff;
+}
+
+/* Header & Paragraphs in the Profile Box */
+.selected-user-container h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #00bfff;
+  text-transform: uppercase;
+}
+
+.selected-user-container p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+/* User Avatar */
+.selected-user-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-top: 15px;
+  border: 3px solid #00bfff;
+  object-fit: cover;
+}
+
+/* ========= Recent Games Section for the Searched User ========= */
+.selected-user-games {
+  margin-top: 30px;
+}
+
+.selected-user-games h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #00bfff;
+  text-transform: uppercase;
+}
+
+.selected-user-games-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.selected-user-game-card {
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  width: 150px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.selected-user-game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 10px #00bfff;
+}
+
+.selected-user-game-card img {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.selected-user-game-card div {
+  font-size: 14px;
+  color: #fff;
+}
