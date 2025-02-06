@@ -1,5 +1,6 @@
 package com.models.XboxModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.models.UserModel.User;
 import jakarta.persistence.*;
 
@@ -19,6 +20,7 @@ public class XboxProfile {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore 
     private User user;
 
     /**

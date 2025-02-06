@@ -1,5 +1,6 @@
 package com.controllers.FriendsController;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,8 +18,10 @@ import com.Repository.FriendsRepository;
 import com.Repository.UserRepository;
 import com.models.FriendsModel.Friends;
 import com.models.UserModel.User;
+import com.models.XboxModel.XboxProfile;
 import com.services.FriendsService;
 import com.utility.JWT;
+import com.dto.FriendWithXboxDTO;
 import com.dto.PendingRequestDTO;
 
 @RestController
@@ -135,4 +138,49 @@ public class FriendsController {
         return ResponseEntity.ok(dtos);
     }
 
+    // get all friends - 
+    @GetMapping("/get-all")
+    public ResponseEntity<?> getAllFriends(@RequestHeader("Authorization") String authHeader){
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7);
+            String loggedInUser = jwt.extractUsername(token);
+            Long userId = jwt.extractUserId(token);
+            if (loggedInUser == null) {
+                System.out.println("Invalid token or username not found");
+                return ResponseEntity.status(401).body("Invalid token or username not found");
+            }
+
+            // 1) Get all friend User objects
+            List<User> friends = friendsService.getAllFriends(userId);
+            if (friends.isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
+            // 2) Transform each friend into a DTO
+            List<FriendWithXboxDTO> friendDTOs = friends.stream()
+                .map(friend -> {
+                    FriendWithXboxDTO dto = new FriendWithXboxDTO();
+                    dto.setUserId(friend.getId());
+                    dto.setUsername(friend.getUsername());
+                    dto.setEmail(friend.getEmail());  
+                    
+                    // Could fetch the entire list of XboxProfiles
+                    dto.setXboxProfiles(friend.getXboxProfiles());
+                    
+                    // If you only want the first profile or certain fields, handle that here
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+            // 3) Return the list of DTOs
+            return ResponseEntity.ok(friendDTOs);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
+    }
 }

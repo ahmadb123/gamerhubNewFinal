@@ -2,6 +2,7 @@ package com.models.FriendsModel;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.models.UserModel.User;
 
 import jakarta.persistence.Column;
@@ -22,10 +23,12 @@ public class Friends {
     // The user who initiated the friend request
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore 
     private User user;
      // The user who is being added as a friend
     @ManyToOne
     @JoinColumn(name = "friend_id")
+    @JsonIgnore 
     private User friend;
 
     @JoinColumn(name = "status")
