@@ -40,6 +40,7 @@ public class User {
     // private List<SteamProfile> steamProfiles = new ArrayList<>();
 
     
+    
     // Getters
     public Long getId() {
         return id;
