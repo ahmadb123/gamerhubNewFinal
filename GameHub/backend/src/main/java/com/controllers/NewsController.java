@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.models.NewsModel.Genres;
 import com.models.NewsModel.News;
 import com.services.NewsService;                           
 import com.utility.CurrentDate;
@@ -48,10 +49,13 @@ public class NewsController {
             String formattedEndDate = endDate.format(formatter);
 
             // Call your service class
-            List<News> newsList = newsService.getRecentNews(
+            List<News> newsList = newsService.getNews(
                 formattedStartDate,
                 formattedEndDate,
-                platform
+                platform,
+                null,           // No genre filter for recent news
+                "-relevance",   // Example ordering for recent news
+                10              // Top 10 results
             );
 
             // Return the list of news as JSON
@@ -62,6 +66,58 @@ public class NewsController {
             return ResponseEntity
                 .status(500)
                 .body("Failed to fetch news: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("all-news")
+    public ResponseEntity<?> getAllNews(
+        @RequestParam (value = "platform", required = false) String platform,
+        @RequestParam (value = "genre", required = false) String genre)
+        {
+        try{
+            if(platform == null || platform.isEmpty()){
+                platform = "187,186, 2"; // PlayStation 5 and Xbox Series S/X
+            }
+            if(genre == null || genre.isEmpty()){
+                genre = "action,adventure,strategy";
+            }
+            LocalDate startDate = null;
+            LocalDate endDate = null;
+            if (startDate == null) {
+                startDate = CurrentDate.getDateTwoMonthsAgo();
+            }
+            if (endDate == null) {
+                endDate = CurrentDate.getCurrentDate();
+            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedStartDate = startDate.format(formatter);
+            String formattedEndDate = endDate.format(formatter);
+            List<News> newsList = newsService.getNews(
+                formattedStartDate,           // No start date
+                formattedEndDate,           // No end date
+                platform,
+                genre,
+                "-relevance",      // Ordering by rating as an example
+                40              // Return more results
+            );
+            return ResponseEntity.ok(newsList);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                .status(500)
+                .body("Failed to fetch news: " + e.getMessage());
+        }
+    }
+    @GetMapping("/genres")
+    public ResponseEntity<?> getGenres(){
+        try{
+            List<Genres> genres = newsService.getAllGenres();
+            return ResponseEntity.ok(genres);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                .status(500)
+                .body("Failed to fetch genres: " + e.getMessage());
         }
     }
 }
