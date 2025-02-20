@@ -301,6 +301,9 @@ class HomePage extends Component {
   navigateCommunity = () => {
     this.props.navigate("/community");
   };
+  navigateNews = () => {
+    this.props.navigate("/news");
+  }
 
   // share news
   handleShareNews = async (news) => {
@@ -361,7 +364,9 @@ class HomePage extends Component {
         <header className="header">
           <h1 className="logo">GamerHUB</h1>
           <nav className="navbar">
-            <button className="nav-button">NEWS</button>
+            <button onClick={this.navigateNews} className="nav-button">
+              News
+            </button>
             <button onClick={this.navigateClips} className="nav-button">
               CLIPS
             </button>
