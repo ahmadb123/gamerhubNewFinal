@@ -1,12 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { fetchAllNews, getGenres } from "../service/NewsService";
+import React, { useEffect, useState, useRef } from "react";
+import { fetchAllNews, getGenres, searchForGame } from "../service/NewsService";
 
 function News() {
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
+  // newsData now holds an array of game objects
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const searchTimeoutRef = useRef(null);
+
+  // Updated search handler with debounce
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        // Call the search API; it should return an array of game results
+        const results = await searchForGame(searchTerm);
+        if (!results) {
+          setNewsData([]);
+          return;
+        }
+        setNewsData(results);
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      }
+    }, 500);
+  };
 
   // Fetch genres when component mounts
   useEffect(() => {
@@ -21,12 +43,11 @@ function News() {
     fetchGenreOptions();
   }, []);
 
-  // Fetch news whenever selectedGenre changes
+  // Fetch default news when selectedGenre changes (only when not searching)
   useEffect(() => {
     async function getNews() {
       try {
         setLoading(true);
-        // Use null if selectedGenre is an empty string
         const genreFilter = selectedGenre === "" ? null : selectedGenre;
         const data = await fetchAllNews(null, genreFilter);
         setNewsData(data);
@@ -37,6 +58,7 @@ function News() {
         setLoading(false);
       }
     }
+    // Only trigger if no search term is currently active (optional logic)
     getNews();
   }, [selectedGenre]);
 
@@ -64,7 +86,16 @@ function News() {
           ))}
         </select>
       </div>
-      {/* Display news items */}
+      {/* Search bar */}
+      <div className="search-bar">
+        <input
+          onChange={handleSearch}
+          type="text"
+          placeholder="Search for Game"
+          style={{ marginBottom: "1rem" }}
+        />
+      </div>
+      {/* Display search results or default news */}
       <div>
         {newsData.map((item) => (
           <div
@@ -94,7 +125,7 @@ function News() {
               <strong>Genres:</strong>
               <ul>
                 {item.genres.map((g) => (
-                  <li key={g.name}>{g.name}</li>
+                  <li key={g.slug}>{g.name}</li>
                 ))}
               </ul>
             </div>

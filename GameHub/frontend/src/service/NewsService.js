@@ -73,3 +73,23 @@ export const getGenres = async () => {
         throw error;
     }
 };
+
+export const searchForGame = async (searchGame) =>{
+    try{
+        const response = await fetch(`${apiUrl}/api/news/search-game?gameName=${searchGame}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if(!response.ok){
+            throw new Error(`Failed to fetch search results. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        const flattened = data.flatMap(item => item.results || []);
+        return flattened;
+    }catch(error){
+        console.error(error);
+        throw error;
+    }
+};
