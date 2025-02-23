@@ -10,18 +10,28 @@ public class NewsResults {
     private String slug; // name of the game
     private int playTime; // Playtime of the game
     private List<Platforms> platforms = new ArrayList<>(); // Platforms of the game
-    private List<Stores> stores; // Stores of the game
+    private List<Stores> stores = new ArrayList<>(); // Stores of the game
     private String released; // Release date of the game
     private String background_image; // Background image of the game
-    private int rating; // Rating of the game
+    private double rating; // Rating of the game
     private String updated; // Last updated date of the game
     private List <ShortScreenShotNews> short_screenshots = new ArrayList<>();
     private List <Genres> genres = new ArrayList<>(); // Genres of the game
+    private int ratingTop; // Rating top of the game
+    private List<Ratings> ratings = new ArrayList<>(); // Ratings of the game
 
     // Getters and Setters
 
     public String getName() {
         return name;
+    }
+
+    public int getRatingTop() {
+        return ratingTop;
+    }
+
+    public void setRatingTop(int ratingTop) {
+        this.ratingTop = ratingTop;
     }
 
     public String getSlug(){
@@ -72,11 +82,19 @@ public class NewsResults {
         this.background_image = background_image;
     }
 
-    public int getRating() {
+    public List<Ratings> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Ratings> ratings) {
+        this.ratings = ratings;
+    }
+    
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

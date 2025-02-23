@@ -120,4 +120,17 @@ public class NewsController {
                 .body("Failed to fetch genres: " + e.getMessage());
         }
     }
+
+    @GetMapping("/search-game")
+    public ResponseEntity<?> getGame(@RequestParam String gameName){
+        try{
+            List<News> newsList = newsService.searchForGame(gameName);
+            return ResponseEntity.ok(newsList);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                .status(500)
+                .body("Failed to fetch game: " + e.getMessage());
+        }
+    }
 }
