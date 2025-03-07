@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class OAuth2Service {
     private final String CLIENT_ID = "0a23b968-9e79-4cba-b337-862adab7a8e2";
-    // private final String REDIRECT_URI = "http://localhost:3000";
-    private final String REDIRECT_URI = "my-new-project://auth";
+    private final String REDIRECT_URI = "http://localhost:3000";
+    // private final String REDIRECT_URI = "my-new-project://auth";
     private final String TOKEN_URL = "https://login.live.com/oauth20_token.srf";
 
     @Autowired

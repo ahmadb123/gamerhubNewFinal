@@ -3,6 +3,7 @@ package com.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +20,8 @@ import com.models.NewsModel.Stores;
 
 @Service
 public class NewsService {
+    @Autowired
+    private SaveGamesService saveGamesService;
     private static final String API_KEY = "c6558e8ad9d54b4ca3697d0e63ac86ad";
     private static final String BASE_URL = "https://api.rawg.io/api/games";
     public List<News> getNews(
@@ -77,6 +80,7 @@ public class NewsService {
                     List<NewsResults> resultsList = new ArrayList<>();
     
                     NewsResults newsResults = new NewsResults();
+                    newsResults.setId(result.get("id").asLong());
                     newsResults.setName(result.get("name").asText());
                     newsResults.setSlug(result.get("slug").asText());
                     newsResults.setReleased(result.get("released").asText());
@@ -144,6 +148,7 @@ public class NewsService {
                     Genres genre = new Genres();
                     genre.setName(result.get("name").asText());
                     genre.setSlug(result.get("slug").asText());
+                    genre.setImage_background(result.get("image_background").asText());
                     genresList.add(genre);
                 }
             }
@@ -251,4 +256,39 @@ public class NewsService {
         }
         return newsList;
     }
+
+    /*
+     * pass user id so when we make this api call we pass it the correct user
+     * then the savedgameid will extract the game id from the user id
+     */
+    // return news or game details by id - 
+    public List<NewsResults> getSavedGameDetails(Long userId) {
+        List<Long> savedGameIds = saveGamesService.getSavedGameIds(userId);
+        List<NewsResults> gameDetailsList = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        
+        for (Long gameId : savedGameIds) {
+            try {
+                String url = "https://api.rawg.io/api/games/" + gameId + "?key=" + API_KEY;
+                JsonNode response = restTemplate.getForObject(url, JsonNode.class);
+                
+                if (response != null) {
+                    NewsResults gameDetails = new NewsResults();
+                    gameDetails.setId(response.get("id").asLong());
+                    gameDetails.setName(response.get("name").asText());
+                    gameDetails.setSlug(response.get("slug").asText());
+                    gameDetails.setReleased(response.get("released").asText());
+                    // Parse and set other details as needed
+                    
+                    gameDetailsList.add(gameDetails);
+                }
+            } catch (Exception e) {
+                // Handle exceptions for individual game fetches
+                e.printStackTrace();
+            }
+        }
+        
+        return gameDetailsList;
+    }
+    
 }    

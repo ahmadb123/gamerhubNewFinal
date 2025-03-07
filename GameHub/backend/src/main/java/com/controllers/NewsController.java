@@ -7,14 +7,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;   
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.models.NewsModel.Genres;
 import com.models.NewsModel.News;
+import com.models.NewsModel.NewsResults;
 import com.services.NewsService;                           
 import com.utility.CurrentDate;
+import com.utility.JWT;
 
 @RestController
 @RequestMapping("/api/news")
@@ -23,6 +26,8 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
 
+    @Autowired
+    private JWT jwt;
     @GetMapping("/recent-news")
     public ResponseEntity<?> getRecentNews(
         @RequestParam(value = "start_date", required = false) LocalDate startDate,
@@ -126,6 +131,27 @@ public class NewsController {
         try{
             List<News> newsList = newsService.searchForGame(gameName);
             return ResponseEntity.ok(newsList);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                .status(500)
+                .body("Failed to fetch game: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/get-game-by-id")
+    public ResponseEntity<?> getGameById(@RequestHeader("Authorization") String authHeader){
+        try{
+            if(authHeader == null || authHeader.isEmpty()){
+                return ResponseEntity.badRequest().body("Invalid token");
+            }
+            String token = authHeader.substring(7);
+            Long userId = jwt.extractUserId(token);
+            if(userId == null){
+                return ResponseEntity.badRequest().body("Invalid token");
+            }
+            List<NewsResults> gameDetails = newsService.getSavedGameDetails(userId);
+            return ResponseEntity.ok(gameDetails);
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity

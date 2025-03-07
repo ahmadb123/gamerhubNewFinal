@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.models.FriendsModel.Friends;
+import com.models.UserSavedGames.MyGames;
 import com.models.XboxModel.XboxProfile;
 
 import jakarta.persistence.CascadeType;
@@ -34,6 +35,8 @@ public class User {
     private List<Friends> receivedFriendRequest = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<XboxProfile> xboxProfiles = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<MyGames> myGames;
     // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     // private List<PSNProfile> psnProfiles = new ArrayList<>();
     // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -95,5 +98,12 @@ public class User {
     public List<XboxProfile> getXboxProfiles() { return xboxProfiles; }
     public void setXboxProfiles(List<XboxProfile> xboxProfiles) { this.xboxProfiles = xboxProfiles; }
 
+    public List<MyGames> getMyGames() {
+        return myGames;
+    }
 
+    public void setMyGames(List<MyGames> myGames) {
+        this.myGames = myGames;
+    }
+    
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class NewsResults {
     private String name; // Title of the news
     private String slug; // name of the game
+    private long id; // id of the game
     private int playTime; // Playtime of the game
     private List<Platforms> platforms = new ArrayList<>(); // Platforms of the game
     private List<Stores> stores = new ArrayList<>(); // Stores of the game
@@ -21,6 +22,15 @@ public class NewsResults {
     private List<Ratings> ratings = new ArrayList<>(); // Ratings of the game
 
     // Getters and Setters
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 
     public String getName() {
         return name;
