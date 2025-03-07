@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 
 const apiUrl = 'http://localhost:8080';
 
@@ -12,7 +11,7 @@ export const fetchXboxProfile = async () => {
     console.log("Fetched tokens - UHS:", uhs, "XSTS_token:", XSTS_token);
 
     if (!uhs || !XSTS_token) {
-        toast.error("Xbox authentication tokens missing. Please log in again.");
+        console.error("Xbox authentication tokens missing. Please log in again.");
         throw new Error("Xbox authentication tokens missing.");
     }
 
@@ -33,7 +32,7 @@ export const fetchXboxProfile = async () => {
         return await response.json();
     } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch Xbox profile.");
+        console.error("Failed to fetch Xbox profile.");
         throw error;
     }
 };
@@ -55,7 +54,7 @@ export const fetchPSNProfile = async () => {
         return await response.json();
     } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch PSN profile.");
+        console.error("Failed to fetch PSN profile.");
         throw error;
     }
 };
@@ -77,7 +76,7 @@ export const fetchSteamProfile = async () => {
         return await response.json();
     } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch Steam profile.");
+        console.error("Failed to fetch Steam profile.");
         throw error;
     }
 };

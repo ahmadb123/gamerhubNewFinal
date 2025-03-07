@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 const apiUrl = 'http://localhost:8080';
 
@@ -20,7 +18,7 @@ export const getGameClips = async() => {
         }
     }catch(error){
         console.error(error);
-        toast.error("Failed to fetch Xbox game clips.");
+        console.error("Failed to fetch Xbox game clips.");
         throw error;
     }
 };

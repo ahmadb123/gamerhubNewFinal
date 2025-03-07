@@ -1,4 +1,3 @@
-import React from "react";
 
 const apiUrl = 'http://localhost:8080';
 const jwtToken = localStorage.getItem("jwtToken");

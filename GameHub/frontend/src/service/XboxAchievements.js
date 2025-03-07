@@ -1,6 +1,5 @@
 // src/service/XboxAchievements.js
 
-import React from "react";
 
 const apiUrl = 'http://localhost:8080';
 

@@ -1,0 +1,75 @@
+/* genreSidebar.css */
+
+.genre-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh; /* Fill the full viewport height */
+  overflow-x: hidden;
+  background-color: #1c1c1c;
+  border-right: 1px solid #333;
+  padding: 1rem;
+  padding-top: 20px;
+}
+
+
+
+  
+  .genre-sidebar h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+  
+  .genre-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .genre-sidebar li {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+  }
+  
+  .genre-sidebar li:hover {
+    background-color: #333;
+  }
+  
+  /* Highlight the selected genre */
+  .genre-sidebar li.active {
+    background-color: #555;
+  }
+  
+  .genre-sidebar li img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
+  
+  .genre-sidebar li span {
+    font-size: 0.95rem;
+  }
+  
+  .genre-sidebar button {
+    margin-top: 1rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+  
+  .genre-sidebar button:hover {
+    background-color: #555;
+  }

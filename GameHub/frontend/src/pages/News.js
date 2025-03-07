@@ -1,36 +1,53 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fetchAllNews, getGenres, searchForGame } from "../service/NewsService";
+import { AddNewsGamesToGameList, AddToWishList, SaveToCollection } from "../NewsHelper/AddNewsGamesToGameList";
+import SavedGamesFolder from "../component/SavedGameFolder";
+import GenreSidebar from "../NewsHelper/GenreSideBar";
+import "../assests/News.css";
 
 function News() {
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
-  // newsData now holds an array of game objects
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const searchTimeoutRef = useRef(null);
 
-  // Updated search handler with debounce
-  const handleSearch = (e) => {
-    const searchTerm = e.target.value;
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(async () => {
-      try {
-        // Call the search API; it should return an array of game results
-        const results = await searchForGame(searchTerm);
-        if (!results) {
-          setNewsData([]);
-          return;
-        }
-        setNewsData(results);
-      } catch (error) {
-        console.error(error);
-        setError(error);
-      }
-    }, 500);
+  const username = localStorage.getItem("username");
+  const textRef = useRef("");
+
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
   };
 
-  // Fetch genres when component mounts
+  const handleSearch = async () => {
+    const inputValue = textRef.current.value.trim();
+    if (!inputValue) {
+      try {
+        const data = await fetchAllNews(null, selectedGenre || null);
+        setNewsData(data);
+      } catch (err) {
+        console.error(err);
+        setError(err);
+      } finally {
+        textRef.current.value = "";
+      }
+      return;
+    }
+
+    try {
+      const results = await searchForGame(inputValue);
+      setNewsData(results || []);
+    } catch (err) {
+      console.error(err);
+      setError(err);
+    } finally {
+      textRef.current.value = "";
+    }
+  };
+
   useEffect(() => {
     async function fetchGenreOptions() {
       try {
@@ -43,13 +60,11 @@ function News() {
     fetchGenreOptions();
   }, []);
 
-  // Fetch default news when selectedGenre changes (only when not searching)
   useEffect(() => {
     async function getNews() {
       try {
         setLoading(true);
-        const genreFilter = selectedGenre === "" ? null : selectedGenre;
-        const data = await fetchAllNews(null, genreFilter);
+        const data = await fetchAllNews(null, selectedGenre || null);
         setNewsData(data);
       } catch (err) {
         console.error("Error fetching news:", err);
@@ -58,7 +73,6 @@ function News() {
         setLoading(false);
       }
     }
-    // Only trigger if no search term is currently active (optional logic)
     getNews();
   }, [selectedGenre]);
 
@@ -66,53 +80,85 @@ function News() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
-      <h1>News</h1>
-      {/* Dropdown for genres */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="genre-select" style={{ marginRight: "0.5rem" }}>
-          Filter by Genre:
-        </label>
-        <select
-          id="genre-select"
-          value={selectedGenre}
-          onChange={(e) => setSelectedGenre(e.target.value)}
-        >
-          <option value="">All Genres</option>
-          {genres.map((genre) => (
-            <option key={genre.slug} value={genre.slug}>
-              {genre.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      {/* Search bar */}
-      <div className="search-bar">
-        <input
-          onChange={handleSearch}
-          type="text"
-          placeholder="Search for Game"
-          style={{ marginBottom: "1rem" }}
-        />
-      </div>
-      {/* Display search results or default news */}
-      <div>
-        {newsData.map((item) => (
-          <div
-            key={item.slug}
-            style={{
-              border: "1px solid #ccc",
-              margin: "1rem",
-              padding: "1rem",
-            }}
+
+    <div className="news-page">
+      {/* Left sidebar */}
+      <GenreSidebar
+        genres={genres}
+        selectedGenre={selectedGenre}
+        onSelectGenre={(slug) => setSelectedGenre(slug)}
+      />
+
+      {/* Main content area */}
+      <div className="news-content">
+        <h1>News and Trending Games For {username} </h1>
+        <SavedGamesFolder />
+        {/* If you still want the dropdown, keep it here or remove */}
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor="genre-select" style={{ marginRight: "0.5rem" }}>
+            Filter by Genre:
+          </label>
+          <select
+            id="genre-select"
+            value={selectedGenre}
+            onChange={(e) => setSelectedGenre(e.target.value)}
           >
+            <option value="">All Genres</option>
+            {genres.map((genre) => (
+              <option key={genre.slug} value={genre.slug}>
+                {genre.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Search bar */}
+        <div className="search-bar">
+          <input
+            ref={textRef}
+            type="text"
+            placeholder="Search for Game"
+            onKeyDown={handleKeyPress}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
+
+        {/* Display news */}
+        {newsData.map((item) => (
+          <div className="game-item" key={item.slug}>
             <h2>{item.name}</h2>
             <p>Released: {item.released}</p>
+
+            <div className="btn-container">
+              <button
+                className="my-games-button"
+                onClick={() => AddNewsGamesToGameList({id : item.id})}
+              >
+                Add to My games
+                <span className="plus-icon" />
+              </button>
+              <button
+                className="wishlist-button"
+                onClick={() => AddToWishList({ item })}
+              >
+                Add to Wishlist
+                <span className="gift-icon" />
+              </button>
+              <button
+                className="collection-button"
+                onClick={() => SaveToCollection({ item })}
+              >
+                Save to Collection
+                <span className="folder-icon" />
+              </button>
+            </div>
+
             <img
               src={item.background_image}
               alt={item.name}
               style={{ width: "300px", height: "auto" }}
             />
+
             <div>
               <strong>Platforms:</strong>
               <ul>

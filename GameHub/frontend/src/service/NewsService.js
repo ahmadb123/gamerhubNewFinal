@@ -1,5 +1,6 @@
 const apiUrl = 'http://localhost:8080';
 
+const jwtToken = localStorage.getItem("jwtToken");
 // fetch news- 
 
 // recent news for the homepage - 
@@ -88,6 +89,28 @@ export const searchForGame = async (searchGame) =>{
         const data = await response.json();
         const flattened = data.flatMap(item => item.results || []);
         return flattened;
+    }catch(error){
+        console.error(error);
+        throw error;
+    }
+};
+
+
+// get game detail by id 
+export const getGameDetailById = async () =>{
+    try{
+        const response = await fetch(`${apiUrl}/api/news/get-game-by-id`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + jwtToken,
+            },
+        });
+        if(!response.ok){
+            throw new Error(`Failed to fetch game detail. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
     }catch(error){
         console.error(error);
         throw error;

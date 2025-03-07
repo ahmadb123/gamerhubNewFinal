@@ -27,7 +27,7 @@ export const getRecentGames = async () => {
         return data.titles || [];
     }catch(error){
         console.error(error);
-        toast.error("Failed to fetch Xbox recent games.");
+        console.error("Failed to fetch Xbox recent games.");
         throw error;
     }
 };

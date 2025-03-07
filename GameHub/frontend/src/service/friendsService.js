@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 
 const apiUrl = 'http://localhost:8080';
 
@@ -12,7 +11,7 @@ export const fetchXboxFriends = async () =>{
     console.log("XBOX FRIENFS FETCH tokens - UHS:", uhs, "XSTS_token:", XSTS_token);
 
     if (!uhs || !XSTS_token) {
-        toast.error("Xbox authentication tokens missing. Please log in again.");
+        console.error("Xbox authentication tokens missing. Please log in again.");
         throw new Error("Xbox authentication tokens missing.");
     }
 
@@ -31,7 +30,7 @@ export const fetchXboxFriends = async () =>{
         return data.people || [];
     }catch(error){
         console.error(error);
-        toast.error("Failed to fetch Xbox friends.");
+        console.error("Failed to fetch Xbox friends.");
         throw error;
     }
 };
