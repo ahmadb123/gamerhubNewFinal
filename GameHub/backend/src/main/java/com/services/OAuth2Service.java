@@ -22,7 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class OAuth2Service {
     private final String CLIENT_ID = "0a23b968-9e79-4cba-b337-862adab7a8e2";
-    private final String REDIRECT_URI = "http://localhost:3000";
+    // private final String REDIRECT_URI = "http://localhost:3000";
+    private final String REDIRECT_URI = "my-new-project://auth";
     private final String TOKEN_URL = "https://login.live.com/oauth20_token.srf";
 
     @Autowired
@@ -37,7 +38,19 @@ public class OAuth2Service {
         "&scope=XboxLive.signin XboxLive.offline_access" +
         "&code_challenge=" + codeChallenge +
         "&code_challenge_method=S256";
+        
     }
+
+    public String generateAuthUrlForMobiles(String codeChallenge) {
+        return "https://login.live.com/oauth20_authorize.srf" +
+               "?client_id=" + CLIENT_ID +
+               "&response_type=code" +
+               "&redirect_uri=" + REDIRECT_URI +
+               "&scope=XboxLive.signin XboxLive.offline_access" +
+               "&code_challenge=" + codeChallenge +
+               "&code_challenge_method=S256";
+    }
+    
 
     // exhcnage code for token - 
     public ResponseEntity<String> exchangeCodeForToken(String code, String codeVerifier){
@@ -65,6 +78,31 @@ public class OAuth2Service {
             throw new RuntimeException("Token exchange failed", e);
         }
     }
+
+    public ResponseEntity<String> exchangeCodeForTokenMobile(String code, String codeVerifier, String redirectUri) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String body = "client_id=" + CLIENT_ID +
+                      "&redirect_uri=" + redirectUri +
+                      "&code=" + code +
+                      "&code_verifier=" + codeVerifier +
+                      "&grant_type=authorization_code";
+        
+        HttpEntity<String> request = new HttpEntity<>(body, headers);
+        
+        try {
+            System.out.println("Mobile request body: " + body);
+            ResponseEntity<String> response = restTemplate.exchange(TOKEN_URL, HttpMethod.POST, request, String.class);
+            System.out.println("Mobile token response: " + response.getBody());
+            return response;
+        } catch (Exception e) {
+            System.err.println("Error during mobile token exchange: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Mobile token exchange failed", e);
+        }
+    }
+    
+
 
     // parse token 
     public String parseAccessToken(String responseBody) throws Exception{

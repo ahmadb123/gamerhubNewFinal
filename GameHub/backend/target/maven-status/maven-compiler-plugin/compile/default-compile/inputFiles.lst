@@ -47,6 +47,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/CallBackResponse.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/GameLastPlayed.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/LoginResponse.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/MobileLoginResponse.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/RecentGamesXbox.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/TitleId.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/XboxPeopleFriends.java
@@ -69,5 +70,6 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/CurrentDate.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/JWT.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/PKCEUtil.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/StoreCodeVerifier.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/TimeConverter.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/XboxProfileMapper.java
