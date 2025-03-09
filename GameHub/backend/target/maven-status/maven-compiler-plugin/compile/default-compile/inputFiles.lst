@@ -10,6 +10,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/config/SecurityConfig.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/CommunityInsightController/PostNewsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/FriendsController/FriendsController.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/GameTrailerFromYoutubeController/GameTrailersController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/LoginController/Authentication.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/NewsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SaveUserGamesController/SaveGamesController.java
@@ -59,10 +60,17 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxProfileAchievements/MediaAssets.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxProfileAchievements/Progression.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxProfileAchievements/TitleAssociations.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/High.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/Id.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/Items.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/Snippet.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/Thumbnails.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/YoutubeDataForGameVideos/YoutubeVideosModel.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/AchievementsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/AuthService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/FriendsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/GameClipsServiceXbox.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/GameTrailerFromYoutubeService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/NewsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/OAuth2Service.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/PostNewsService.java

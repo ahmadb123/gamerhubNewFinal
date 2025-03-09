@@ -85,6 +85,8 @@ public class NewsService {
                     newsResults.setSlug(result.get("slug").asText());
                     newsResults.setReleased(result.get("released").asText());
                     newsResults.setUpdated(result.get("updated").asText());
+                    newsResults.setRating(Double.parseDouble(result.get("rating").asText()));
+                    newsResults.setRatingTop(Integer.parseInt(result.get("rating_top").asText()));
     
                     // Background image
                     if (result.has("background_image") && !result.get("background_image").isNull()) {
@@ -122,6 +124,39 @@ public class NewsService {
                             allPlatforms.setPlatform(platform);
                             newsResults.getPlatforms().add(allPlatforms);
                         }
+                    }
+
+                    if(result.has("ratings") && !result.get("ratings").isNull()){
+                        List<Ratings> allRatings  = new ArrayList<>();
+                        int totalCount = 0;
+                        double totalScoreSum = 0;
+                        for(JsonNode ratingNode : result.get("ratings")){
+                            Ratings ratings = new Ratings();
+                            int score = ratingNode.get("id").asInt();
+                            int count = ratingNode.get("count").asInt();
+                            ratings.setId(score);
+                            ratings.setTitle(ratingNode.get("title").asText());
+                            ratings.setCount(count);
+                            ratings.setPercent(ratingNode.get("percent").asDouble());
+                            allRatings.add(ratings);
+
+                            totalCount += count;
+                            totalScoreSum += score * count;
+                        }
+                        // calculate average rating
+                        double averageRating = (totalCount > 0) ?  totalScoreSum / totalCount : 0;
+                        newsResults.setAverageRating(averageRating);
+
+                        // sort rating by count - 
+                        allRatings.sort((r1, r2) -> r2.getCount() - r1.getCount());
+
+                        // get only top 5 
+                        int topCount = Math.min(5, allRatings.size());
+                        for(int i = 0; i < topCount; i++){
+                            newsResults.getRatings().add(allRatings.get(i));
+                        }
+
+                        newsResults.setRatingTop(topCount);
                     }
     
                     resultsList.add(newsResults);
@@ -181,6 +216,7 @@ public class NewsService {
                     
                     newsResults.setName(result.get("name").asText());
                     newsResults.setSlug(result.get("slug").asText());
+                    newsResults.setId(result.get("id").asLong());
                     newsResults.setPlayTime(Integer.parseInt(result.get("playtime").asText()));
                     newsResults.setUpdated(result.get("updated").asText());
                     newsResults.setRating(Double.parseDouble(result.get("rating").asText()));
@@ -236,14 +272,36 @@ public class NewsService {
                     }
     
                     if(result.has("ratings") && !result.get("ratings").isNull()){
+                        List<Ratings> allRatings  = new ArrayList<>();
+                        int totalCount = 0;
+                        double totalScoreSum = 0;
                         for(JsonNode ratingNode : result.get("ratings")){
                             Ratings ratings = new Ratings();
-                            ratings.setId(ratingNode.get("id").asInt());
+                            int score = ratingNode.get("id").asInt();
+                            int count = ratingNode.get("count").asInt();
+                            ratings.setId(score);
                             ratings.setTitle(ratingNode.get("title").asText());
-                            ratings.setCount(ratingNode.get("count").asInt());
+                            ratings.setCount(count);
                             ratings.setPercent(ratingNode.get("percent").asDouble());
-                            newsResults.getRatings().add(ratings);
+                            allRatings.add(ratings);
+
+                            totalCount += count;
+                            totalScoreSum += score * count;
                         }
+                        // calculate average rating
+                        double averageRating = (totalCount > 0) ?  totalScoreSum / totalCount : 0;
+                        newsResults.setAverageRating(averageRating);
+
+                        // sort rating by count - 
+                        allRatings.sort((r1, r2) -> r2.getCount() - r1.getCount());
+
+                        // get only top 5 
+                        int topCount = Math.min(5, allRatings.size());
+                        for(int i = 0; i < topCount; i++){
+                            newsResults.getRatings().add(allRatings.get(i));
+                        }
+
+                        newsResults.setRatingTop(topCount);
                     }
                     
                     resultsList.add(newsResults);
@@ -255,6 +313,59 @@ public class NewsService {
             e.printStackTrace();
         }
         return newsList;
+    }
+
+    // get game by id = 
+    public NewsResults getGameById(long gameId){
+        try{
+            // Fix URL string concatenation: added slash after "games"
+            String url = "https://api.rawg.io/api/games/" + gameId + "?key=" + API_KEY;
+            RestTemplate restTemplate = new RestTemplate();
+            JsonNode response = restTemplate.getForObject(url, JsonNode.class);
+            // since this returns only one game we can directly return the response
+            if(response != null && response.size() > 0){
+                NewsResults newsResult = new NewsResults();
+                newsResult.setId(response.get("id").asLong());
+                newsResult.setName(response.get("name").asText());
+                newsResult.setSlug(response.get("slug").asText());
+                newsResult.setDesc(response.get("description").asText());
+                newsResult.setUpdated(response.get("updated").asText());
+                newsResult.setRating(response.get("rating").asDouble());
+                newsResult.setRatingTop(response.get("rating_top").asInt());
+                newsResult.setBackground_image(response.get("background_image").asText());
+                newsResult.setWebsite(response.get("website").asText());    
+                // loop over ratings 
+                if(response.has("ratings") && !response.get("ratings").isNull()){
+                    List<Ratings> allRatings  = new ArrayList<>();
+                    int totalCount = 0;
+                    double totalScoreSum = 0;
+                    for(JsonNode ratingNode : response.get("ratings")){
+                        Ratings ratings = new Ratings();
+                        int score = ratingNode.get("id").asInt();
+                        int count = ratingNode.get("count").asInt();
+                        ratings.setId(score);
+                        ratings.setTitle(ratingNode.get("title").asText());
+                        ratings.setCount(count);
+                        ratings.setPercent(ratingNode.get("percent").asDouble());
+                        allRatings.add(ratings);
+                        totalCount += count;
+                        totalScoreSum += score * count;
+                    }
+                    double averageRating = (totalCount > 0) ?  totalScoreSum / totalCount : 0;
+                    newsResult.setAverageRating(averageRating);
+                    allRatings.sort((r1, r2) -> r2.getCount() - r1.getCount());
+                    int topCount = Math.min(5, allRatings.size());
+                    for(int i = 0; i < topCount; i++){
+                        newsResult.getRatings().add(allRatings.get(i));
+                    }
+                    newsResult.setRatingTop(topCount);
+                }
+                return newsResult;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*
@@ -277,9 +388,7 @@ public class NewsService {
                     gameDetails.setId(response.get("id").asLong());
                     gameDetails.setName(response.get("name").asText());
                     gameDetails.setSlug(response.get("slug").asText());
-                    gameDetails.setReleased(response.get("released").asText());
-                    // Parse and set other details as needed
-                    
+                    gameDetails.setReleased(response.get("released").asText());                    
                     gameDetailsList.add(gameDetails);
                 }
             } catch (Exception e) {
@@ -290,5 +399,4 @@ public class NewsService {
         
         return gameDetailsList;
     }
-    
-}    
+}

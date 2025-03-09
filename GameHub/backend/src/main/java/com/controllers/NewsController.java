@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;   
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -139,6 +140,7 @@ public class NewsController {
         }
     }
 
+    // this api is for ** SAVING GAME **
     @GetMapping("/get-game-by-id")
     public ResponseEntity<?> getGameById(@RequestHeader("Authorization") String authHeader){
         try{
@@ -151,6 +153,20 @@ public class NewsController {
                 return ResponseEntity.badRequest().body("Invalid token");
             }
             List<NewsResults> gameDetails = newsService.getSavedGameDetails(userId);
+            return ResponseEntity.ok(gameDetails);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                .status(500)
+                .body("Failed to fetch game: " + e.getMessage());
+        }
+    }
+
+    // api for looking up a game by its id - 
+    @GetMapping("/search-game-by-id/{gameId}")
+    public ResponseEntity<?> getGameById(@PathVariable long gameId){
+        try{
+            NewsResults gameDetails = newsService.getGameById(gameId);
             return ResponseEntity.ok(gameDetails);
         }catch(Exception e){
             e.printStackTrace();

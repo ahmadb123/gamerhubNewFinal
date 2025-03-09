@@ -16,10 +16,13 @@ public class NewsResults {
     private String background_image; // Background image of the game
     private double rating; // Rating of the game
     private String updated; // Last updated date of the game
+    private double averageRating; // Average rating of the game
     private List <ShortScreenShotNews> short_screenshots = new ArrayList<>();
     private List <Genres> genres = new ArrayList<>(); // Genres of the game
     private int ratingTop; // Rating top of the game
+    private String desc; // Description of the game
     private List<Ratings> ratings = new ArrayList<>(); // Ratings of the game
+    private String website;  // game website official link
 
     // Getters and Setters
 
@@ -29,6 +32,30 @@ public class NewsResults {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public void setWebsite(String website){
+        this.website = website;
+    }
+
+    public String getWebsite(){
+        return website;
     }
 
 
