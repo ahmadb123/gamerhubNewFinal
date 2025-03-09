@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
-
+import NavHelper  from '../component/NavHelper';
 import {
   fetchXboxProfile,
   fetchPSNProfile,
@@ -64,6 +64,17 @@ class HomePage extends Component {
     // For custom friend list from your backend
     friendsList: [], // Mismatch corrected: we store the entire friend object(s) here
     isFriendsDropdownOpen: false,
+    // state for dropdwon visibility 
+    accountOptionVisible: false,
+  };
+
+  // methods to handle mouse hover events - 
+  mouseOverToggle = () =>{
+    this.setState({accountOptionVisible: true});
+  };
+
+  mouseOutToggle = () =>{
+    this.setState({accountOptionVisible: false});
   };
 
   componentDidMount() {
@@ -304,6 +315,9 @@ class HomePage extends Component {
   navigateNews = () => {
     this.props.navigate("/news");
   }
+  navigateMyGames = () => {
+    this.props.navigate("/mygames");
+  }
 
   // share news
   handleShareNews = async (news) => {
@@ -402,37 +416,52 @@ class HomePage extends Component {
                       "/default-avatar.png"
                     }
                     alt="User Avatar"
-                  />
-                  <span>{searchResult.profile.gamertag}</span>
+                  />                  
+                    <span>{searchResult.profile.gamertag}</span>
                 </div>
               )}
             </div>
 
             {/* Account Info Section with Linked Profiles Toggle */}
-            <div className="account-section">
-              <div className="gamertag-display">
-                <p>{accountInfo.gamertag}</p>
-                {/* Show toggle arrow only if there are linked profiles */}
-                {nonSignedLinkedProfiles.length > 0 && (
-                  <button
-                    onClick={this.toggleLinkedProfiles}
-                    className="toggle-linked-profiles"
-                  >
-                    {showLinkedProfiles ? "▲" : "▼"}
-                  </button>
-                )}
-              </div>
-              {accountInfo && (
+            <div className="account-section" 
+                onMouseEnter={() => this.setState({ accountOptionVisible: true })} 
+                onMouseLeave={() => this.setState({ accountOptionVisible: false })}
+              >
+                <div className="gamertag-display">
+                  <p>{accountInfo.gamertag}</p>
+                  {nonSignedLinkedProfiles.length > 0 && (
+                    <button
+                      onClick={this.toggleLinkedProfiles}
+                      className="toggle-linked-profiles"
+                    >
+                      {showLinkedProfiles ? "▲" : "▼"}
+                    </button>
+                  )}
+                </div>
+
+                {/* Profile Image */}
                 <img
                   src={accountInfo.appDisplayPicRaw}
                   alt="Profile"
-                  style={{
-                    borderRadius: "50%",
-                    width: "50px",
-                    height: "50px",
-                  }}
+                  className="profile-image"
                 />
-              )}
+
+                {/* Hover Dropdown */}
+                {this.state.accountOptionVisible && (
+                  <div className="account-options-dropdown">
+                    <ul>
+                      <li>Profile</li>
+                      <li>Friends</li>
+                      <li>
+                        <NavHelper page="/my-games">My Games</NavHelper>
+                      </li>
+                      <li>Wishlist</li>
+                      <li>Collections</li>
+                      <li>Settings</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
               {/* Render additional linked profiles when toggled */}
               {showLinkedProfiles && (
                 <div className="linked-profiles">
@@ -452,7 +481,7 @@ class HomePage extends Component {
                   ))}
                 </div>
               )}
-            </div>
+            {/* </div> */}
 
             {/* Only show mailbox if we have at least one pending request */}
             {pendingRequests.length > 0 && (

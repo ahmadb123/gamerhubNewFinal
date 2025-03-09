@@ -116,3 +116,24 @@ export const getGameDetailById = async () =>{
         throw error;
     }
 };
+
+
+export const fetchGameDetails = async ({id}) => {
+    try{
+        const response = await fetch(`${apiUrl}/api/news/search-game-by-id/${id}`,{
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if(!response.ok){
+            throw new Error(`Failed to fetch game details. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    }catch(error){
+        console.error(error);
+        throw error;
+    }
+};

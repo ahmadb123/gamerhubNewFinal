@@ -22,6 +22,7 @@ export const AddNewsGamesToGameList = async ({id}) => {
     }
     const data = await response.json();
     return {success: true, message: "Game saved successfully"};
+
     }catch(error){
         console.error(error);
         throw error;

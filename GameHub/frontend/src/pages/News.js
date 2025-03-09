@@ -1,52 +1,61 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchAllNews, getGenres, searchForGame } from "../service/NewsService";
+import { fetchAllNews, searchForGame, getGenres } from "../service/NewsService";
 import { AddNewsGamesToGameList, AddToWishList, SaveToCollection } from "../NewsHelper/AddNewsGamesToGameList";
-import SavedGamesFolder from "../component/SavedGameFolder";
-import GenreSidebar from "../NewsHelper/GenreSideBar";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import "../assests/News.css";
+import { checkAccountType } from "../utility/CheckAccountType";
 
 function News() {
-  const [genres, setGenres] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [searchParams] = useSearchParams();
+  const selectedGenre = searchParams.get('genre') || '';
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const username = localStorage.getItem("username");
   const textRef = useRef("");
-
+  const navigate = useNavigate();
+  const username = localStorage.getItem("username");
+  const [genres, setGenres] = useState([]); // Added genres state
+  const [hoveredGameSlug, setHoveredGameSlug] = useState(null);
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
+    if (event.key === "Enter") handleSearch();
+  };
+
+  const handleImageClick = (game) => {
+    navigate(`/news/game/${game.id}`);
   };
 
   const handleSearch = async () => {
     const inputValue = textRef.current.value.trim();
-    if (!inputValue) {
+    
+    try {
+      if (!inputValue) {
+        const data = await fetchAllNews(null, selectedGenre || null);
+        setNewsData(data);
+      } else {
+        const results = await searchForGame(inputValue);
+        setNewsData(results || []);
+      }
+    } catch (err) {
+      setError(err);
+    }
+    textRef.current.value = "";
+  };
+
+  useEffect(() => {
+    async function getNews() {
       try {
+        setLoading(true);
         const data = await fetchAllNews(null, selectedGenre || null);
         setNewsData(data);
       } catch (err) {
-        console.error(err);
         setError(err);
       } finally {
-        textRef.current.value = "";
+        setLoading(false);
       }
-      return;
     }
-
-    try {
-      const results = await searchForGame(inputValue);
-      setNewsData(results || []);
-    } catch (err) {
-      console.error(err);
-      setError(err);
-    } finally {
-      textRef.current.value = "";
-    }
-  };
+    getNews();
+  }, [selectedGenre]);
 
   useEffect(() => {
     async function fetchGenreOptions() {
@@ -60,138 +69,77 @@ function News() {
     fetchGenreOptions();
   }, []);
 
-  useEffect(() => {
-    async function getNews() {
-      try {
-        setLoading(true);
-        const data = await fetchAllNews(null, selectedGenre || null);
-        setNewsData(data);
-      } catch (err) {
-        console.error("Error fetching news:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    getNews();
-  }, [selectedGenre]);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
+    <>
+      <h1>News and Trending Games For {username}</h1>
+      <div style={{ marginBottom: "1rem" }}>
+        <label htmlFor="genre-select" style={{ marginRight: "0.5rem" }}>
+          Filter by Genre:
+        </label>
+        <select
+          id="genre-select"
+          value={selectedGenre}
+          onChange={(e) => navigate(e.target.value ? `/news?genre=${e.target.value}` : '/news')}
+        >
+          <option value="">All Genres</option>
+          {genres.map((genre) => (
+            <option key={genre.slug} value={genre.slug}>
+              {genre.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    <div className="news-page">
-      {/* Left sidebar */}
-      <GenreSidebar
-        genres={genres}
-        selectedGenre={selectedGenre}
-        onSelectGenre={(slug) => setSelectedGenre(slug)}
-      />
-
-      {/* Main content area */}
-      <div className="news-content">
-        <h1>News and Trending Games For {username} </h1>
-        <SavedGamesFolder />
-        {/* If you still want the dropdown, keep it here or remove */}
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="genre-select" style={{ marginRight: "0.5rem" }}>
-            Filter by Genre:
-          </label>
-          <select
-            id="genre-select"
-            value={selectedGenre}
-            onChange={(e) => setSelectedGenre(e.target.value)}
-          >
-            <option value="">All Genres</option>
-            {genres.map((genre) => (
+      <div className="search-bar">
+        <input
+          ref={textRef}
+          type="text"
+          placeholder="Search for Game"
+          onKeyDown={handleKeyPress}
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+      
+      {newsData.map((item) => (
+        <div className="game-item" key={item.slug}>
+          <img
+            src={item.background_image}
+            alt={item.name}
+            style={{ width: "300px", height: "auto" }}
+            onClick={() => handleImageClick({ id: item.id })}
+            onMouseEnter={() => setHoveredGameSlug(item.slug)}
+            onMouseLeave={() => setHoveredGameSlug(null)}
+          />
+          <div>
+            {checkAccountType(item.platforms.map((p) => p.platform.name))}
+          </div>
+          <h2>{item.name}</h2>
+          {hoveredGameSlug === item.slug && (
+           <div className="game-mini-details">
+            <p>Release: {item.released}</p>
+            <div className="genre-for-game">
+            <p>Genres: 
+            {item.genres.map((genre) => (
               <option key={genre.slug} value={genre.slug}>
-                {genre.name}
+               {genre.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        {/* Search bar */}
-        <div className="search-bar">
-          <input
-            ref={textRef}
-            type="text"
-            placeholder="Search for Game"
-            onKeyDown={handleKeyPress}
-          />
-          <button onClick={handleSearch}>Search</button>
-        </div>
-
-        {/* Display news */}
-        {newsData.map((item) => (
-          <div className="game-item" key={item.slug}>
-            <h2>{item.name}</h2>
-            <p>Released: {item.released}</p>
-
-            <div className="btn-container">
-              <button
-                className="my-games-button"
-                onClick={() => AddNewsGamesToGameList({id : item.id})}
-              >
-                Add to My games
-                <span className="plus-icon" />
-              </button>
-              <button
-                className="wishlist-button"
-                onClick={() => AddToWishList({ item })}
-              >
-                Add to Wishlist
-                <span className="gift-icon" />
-              </button>
-              <button
-                className="collection-button"
-                onClick={() => SaveToCollection({ item })}
-              >
-                Save to Collection
-                <span className="folder-icon" />
-              </button>
+            </p>
             </div>
-
-            <img
-              src={item.background_image}
-              alt={item.name}
-              style={{ width: "300px", height: "auto" }}
-            />
-
-            <div>
-              <strong>Platforms:</strong>
-              <ul>
-                {item.platforms.map((p) => (
-                  <li key={p.platform.slug}>{p.platform.name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <strong>Genres:</strong>
-              <ul>
-                {item.genres.map((g) => (
-                  <li key={g.slug}>{g.name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <strong>Screenshots:</strong>
-              <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto" }}>
-                {item.short_screenshots.map((shot, index) => (
-                  <img
-                    key={index}
-                    src={shot.image}
-                    alt={`${item.name} screenshot ${index + 1}`}
-                    style={{ width: "150px", height: "auto" }}
-                  />
-                ))}
-              </div>
+            <div className="game-rating" >
+              <p>Rating: </p>
+              {item.rating > 0 ? item.rating : item.averageRating}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+          )}
+          <div className="btn-container">
+          </div>
+        </div>
+      ))}
+    </>
   );
 }
 
