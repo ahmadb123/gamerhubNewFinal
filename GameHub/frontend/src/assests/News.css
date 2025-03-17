@@ -2,204 +2,312 @@
 
 /* Global page background and text styles */
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #121212; /* Dark background */
-    color: #fff;
-    font-family: 'Roboto', sans-serif;
-  }
-  
-  /* Container that holds sidebar and news content side by side */
-  .news-page {
-    display: flex;
-    min-height: 100vh;
-    align-items: flex-start; 
+  margin: 0;
+  padding: 0;
+  background-color: #121212; /* Dark background */
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
 }
-  
-  
-  /* Main content area */
-  .news-content {
-    flex: 1;
-    padding: 2rem;
-    margin-left: 220px;
-  }
-  
-  
-  /* Search bar styling */
-  .search-bar {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .search-bar input {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #333;
-    background-color: #1c1c1c;
-    color: #fff;
-    outline: none;
-  }
-  
-  .search-bar input::placeholder {
-    color: #777;
-  }
-  
-  .search-bar button {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #555;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .search-bar button:hover {
-    background-color: #555;
-  }
-  
-  /* Game item (news) styling */
-  .game-item {
-    background-color: #1f1f1f;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .game-item h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.4rem;
-    color: #fff;
-  }
-  
-  .game-item p {
-    margin: 0 0 1rem 0;
-    color: #bbb;
-  }
-  
-  .game-item img {
-    max-width: 100%;
-    border-radius: 8px;
-  }
-  
-  .game-item strong {
-    color: #fff;
-  }
-  
-  .game-item ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-  }
-  
-  .game-item li {
-    margin-bottom: 0.25rem;
-    color: #ccc;
-  }
-  
-  /* Buttons container inside each game item */
-  .btn-container {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  /* Example “RAWG-like” buttons */
-  .my-games-button {
-    background-color: #ffffff;
-    color: #000;
-    border: none;
-    border-radius: 50px;
-    padding: 0.5rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .my-games-button .plus-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background-color: #4caf50; /* green circle */
-    border-radius: 50%;
-    margin-left: 0.5rem;
-    text-align: center;
-    line-height: 24px;
-    color: #fff;
-    font-weight: bold;
-  }
-  
-  .my-games-button .plus-icon::before {
-    content: '+';
-  }
-  
-  .wishlist-button {
-    background-color: transparent;
-    color: #fff;
-    border: 1px solid #fff;
-    border-radius: 50px;
-    padding: 0.5rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  
-  .wishlist-button:hover {
-    background-color: #fff;
-    color: #000;
-  }
-  
-  .wishlist-button .gift-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-left: 0.5rem;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  
-  .wishlist-button .gift-icon::before {
-    content: '🎁';
-  }
-  
-  .collection-button {
-    background-color: transparent;
-    color: #fff;
-    border: 1px solid #fff;
-    border-radius: 50px;
-    padding: 0.5rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  
-  .collection-button:hover {
-    background-color: #fff;
-    color: #000;
-  }
-  
-  .collection-button .folder-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-left: 0.5rem;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  
-  .collection-button .folder-icon::before {
-    content: '📁';
-  }
-  
+
+/* Container that holds sidebar and news content side by side */
+.news-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start; 
+}
+
+
+/* Main content area */
+.news-content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 220px;
+}
+
+
+/* Search bar styling */
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.search-bar input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #1c1c1c;
+  color: #fff;
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: #777;
+}
+
+.search-bar button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-bar button:hover {
+  background-color: #555;
+}
+
+/* Game item (news) styling */
+.game-item {
+  width: 250px;          /* fixed card width */
+  background-color: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-sizing: border-box;
+  overflow: hidden;      /* hide any overflow from large images */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-item h2 {
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+}
+
+.game-item p {
+  margin: 0 0 1rem 0;
+  color: #bbb;
+}
+
+.game-item img {
+  width: 100%;              /* fill the card’s width */
+  height: 150px;            /* fixed height for uniformity */
+  object-fit: cover;        /* crops instead of distorting */
+  background-color: #000;   /* ensures black behind image if any leftover space */
+  border-radius: 8px;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* or use 'contain' if you want the entire image visible */
+  display: block;        /* remove default inline spacing */
+  border-radius: 8px;
+}
+
+
+
+.game-item strong {
+  color: #fff;
+}
+
+.game-item ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.game-item li {
+  margin-bottom: 0.25rem;
+  color: #ccc;
+}
+
+.game-mini-details {
+  background-color: #1f1f1f;
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  min-height: 50px; /* keep a uniform height if desired */
+}
+.game-mini-details p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.game-mini-details .value {
+  padding-left: 1rem; /* Adjust padding as needed */
+  color: #fff;        /* You can change the color to suit your design */
+}
+.genre-for-game {
+  display: flex;
+  flex-wrap: wrap;   /* allow genres to wrap onto new lines */
+  gap: 0.5rem;      /* Increase gap to help items wrap nicely */
+}
+
+.genre-for-game .genre {
+  background-color: #333;
+  padding: 0.2rem 0.2rem;
+  border-radius: 4px;
+  color: darkslategray;
+  font-size: 0.65rem;
+  font-weight: 100;
+}
+
+/* Buttons container inside each game item */
+.btn-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Example “RAWG-like” buttons */
+.my-games-button {
+  background-color: #ffffff;
+  color: #000;
+  border: none;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.my-games-button .plus-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #4caf50; /* green circle */
+  border-radius: 50%;
+  margin-left: 0.5rem;
+  text-align: center;
+  line-height: 24px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.my-games-button .plus-icon::before {
+  content: '+';
+}
+
+.wishlist-button {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.wishlist-button:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.wishlist-button .gift-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left: 0.5rem;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.wishlist-button .gift-icon::before {
+  content: '🎁';
+}
+
+.collection-button {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.collection-button:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.collection-button .folder-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left: 0.5rem;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.collection-button .folder-icon::before {
+  content: '📁';
+}
+
+/* Preview and extra info styling */
+.card-media {
+position: relative;
+width: 300px;    /* fixed width */
+height: 200px;   /* fixed height */
+background-color: #000;
+overflow: hidden;
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+/* Preview div styled to show background image */
+.game-card-video-preview {
+background-position: 50%;
+background-size: cover;
+background-repeat: no-repeat;
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+transition: opacity 0.3s linear;
+z-index: 1;
+}
+
+/* Iframe video fills the container */
+.card-video {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+border: none;
+z-index: 2;
+}
+
+/* Extra info on hover */
+.game-extra-info {
+margin-top: 0.5rem;
+color: #ccc;
+font-size: 0.9rem;
+}
+
+.news-grid {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;             /* space between cards */
+justify-content: center;
+}
+
+.platforms{
+  padding-top: 1rem;
+}

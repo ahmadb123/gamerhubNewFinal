@@ -103,42 +103,55 @@ function News() {
         <button onClick={handleSearch}>Search</button>
       </div>
       
-      {newsData.map((item) => (
-        <div className="game-item" key={item.slug}>
-          <img
-            src={item.background_image}
-            alt={item.name}
-            style={{ width: "300px", height: "auto" }}
-            onClick={() => handleImageClick({ id: item.id })}
-            onMouseEnter={() => setHoveredGameSlug(item.slug)}
-            onMouseLeave={() => setHoveredGameSlug(null)}
-          />
-          <div>
-            {checkAccountType(item.platforms.map((p) => p.platform.name))}
-          </div>
-          <h2>{item.name}</h2>
-          {hoveredGameSlug === item.slug && (
-           <div className="game-mini-details">
-            <p>Release: {item.released}</p>
-            <div className="genre-for-game">
-            <p>Genres: 
-            {item.genres.map((genre) => (
-              <option key={genre.slug} value={genre.slug}>
-               {genre.name}
-              </option>
-            ))}
-            </p>
+      <div className="news-grid">
+        {newsData.map((item) => (
+          <div className="game-item" key={item.slug}>
+            <img
+              src={item.background_image}
+              alt={item.name}
+              style={{ width: "300px", height: "auto" }}
+              onClick={() => handleImageClick({ id: item.id })}
+              onMouseEnter={() => setHoveredGameSlug(item.slug)}
+              onMouseLeave={() => setHoveredGameSlug(null)}
+            />
+            <div className="platforms">
+              {checkAccountType(item.platforms.map((p) => p.platform.name))}
             </div>
-            <div className="game-rating" >
-              <p>Rating: </p>
-              {item.rating > 0 ? item.rating : item.averageRating}
+            <h2>{item.name}</h2>
+            {hoveredGameSlug === item.slug && (
+              <div className="game-mini-details">
+                <p>
+                  <span className="label">Release:</span>
+                  <span className="value">{item.released}</span>
+                </p>
+                <div className="genre-for-game">
+                  <p>
+                    <span className="label">Genres:</span>
+                    <span className="value">
+                      {item.genres.map((genre) => (
+                        <span key={genre.slug} className="genre">
+                          {genre.name}
+                        </span>
+                      ))}
+                    </span>
+                  </p>
+                </div>
+                <div className="game-rating">
+                  <p>
+                    <span className="label">Rating:</span>
+                    <span className="value">
+                      {item.rating > 0 ? item.rating : item.averageRating}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="btn-container">
             </div>
           </div>
-          )}
-          <div className="btn-container">
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </>
   );
 }

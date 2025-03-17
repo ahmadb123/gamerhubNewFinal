@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { handleLogin, exchangeCodeForTokens } from "../service/XboxAuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXbox, faPlaystation, faSteam } from "@fortawesome/free-brands-svg-icons";
+import { handleSteamLogin } from "../service/SteamAuthService";
 
 
 const apiUrl = 'http://localhost:8080';
@@ -17,19 +18,27 @@ function LandingPage() {
             localStorage.setItem("platform", "xbox");
             navigate("/main");
         };
+       
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("code")) {
             handleXboxLogin();
         }
+        if(localStorage.getItem("platform") === "steam"){
+            navigate("/main");
+        }
+
     }, [navigate]);
 
     const handlePlatformLogin = async (platform) => {
         if (platform === "xbox") {
             await handleLogin();
         }
-        // Add similar logic for PSN and Steam if needed
+        else if(platform === "steam"){
+            await handleSteamLogin();
+        }
     };
+    
 
     return (
         <div className="landing-page" style={{ textAlign: "center", marginTop: "50px" }}>

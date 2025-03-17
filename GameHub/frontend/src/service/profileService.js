@@ -60,23 +60,35 @@ export const fetchPSNProfile = async () => {
 };
 
 // Fetch Steam profile
+// export const fetchSteamProfile = async () => {
+//     try {
+//         const response = await fetch(`${apiUrl}/api/steam/profile`, {
+//             method: "GET",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`Failed to fetch Steam profile. Status: ${response.status}`);
+//         }
+
+//         return await response.json();
+//     } catch (error) {
+//         console.error(error);
+//         console.error("Failed to fetch Steam profile.");
+//         throw error;
+//     }
+// };
+
+// src/service/profileService.js
+
 export const fetchSteamProfile = async () => {
-    try {
-        const response = await fetch(`${apiUrl}/api/steam/profile`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Steam profile. Status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        console.error("Failed to fetch Steam profile.");
-        throw error;
-    }
-};
+    // Replace this with your actual API call later
+    return {
+      gamertag: "SteamUser",
+      appDisplayPicRaw: "/default-avatar.png",
+      // Include any other required fields here
+    };
+  };
+  
