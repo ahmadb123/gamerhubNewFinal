@@ -36,40 +36,19 @@ public class FriendsController {
     @Autowired
     private FriendsRepository friendsRepository;
     @PostMapping("/add")
-    public ResponseEntity<?> addFriend(@RequestParam String userNameOFRequest, @RequestHeader("Authorization") String authHeader){
-        try{
-            if(authHeader == null || !authHeader.startsWith("Bearer ")){
-                return ResponseEntity.status(401).body("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7);
-            String loggedInUser = jwt.extractUsername(token);
-            if(loggedInUser == null){
-                System.out.println("Invalid token or username not found");
-                return ResponseEntity.status(401).body("Invalid token or username not found");
-            }
-
-            // get the user we want to add as a friend - 
-
-            Optional<User> requesterOpt = userRepository.findByUsername(loggedInUser);
-            Optional<User> targetUserOpt = userRepository.findByUsername(userNameOFRequest);
-
-            if (!requesterOpt.isPresent()) {
-                return ResponseEntity.status(404).body("Requester not found");
-            }
-            if (!targetUserOpt.isPresent()) {
-                return ResponseEntity.status(404).body("Target user not found");
-            }
-
-            User requester = requesterOpt.get();
-            User targetUser = targetUserOpt.get();
-
-            // send friend request - 
-            friendsService.sendFriendRequest(requester, targetUser);
-            return ResponseEntity.ok("Friend request sent");
-        }catch(Exception e){
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Internal Server Error");
-        }
+    public ResponseEntity<?> addFriend(@RequestHeader("Authorization") String authHeader,
+        @RequestParam("userNameOFRequest") String targetUserName) {
+        // Extract token (assume "Bearer " prefix)
+        String token = authHeader.replace("Bearer ", "");
+        String requesterUserName = jwt.extractUsername(token);
+        // Find users
+        User requester = userRepository.findByUsername(requesterUserName)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        User target = userRepository.findByUsername(targetUserName)
+            .orElseThrow(() -> new RuntimeException("Target user not found"));
+        // Process friend request.
+        friendsService.sendFriendRequest(requester, target);
+        return ResponseEntity.ok("Friend request sent");
     }
     @PostMapping("/accept")
     public ResponseEntity<?> acceptRequest(@RequestParam String userNameOFRequest, @RequestHeader("Authorization") String authHeader){

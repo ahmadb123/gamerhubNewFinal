@@ -7,6 +7,9 @@ public class XboxRecentGameDTO {
     private String displayImage;
     private String lastTimePlayedFormatted;
 
+    // empty constructor
+    public XboxRecentGameDTO() {
+    }
     public XboxRecentGameDTO(Long id, String gameName, String titleId, String displayImage, String lastTimePlayedFormatted) {
         this.id = id;
         this.gameName = gameName;

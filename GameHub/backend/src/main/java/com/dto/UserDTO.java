@@ -8,6 +8,9 @@ public class UserDTO {
     
     // setters and getters- 
  
+    // empty constructor -=
+    public UserDTO() {
+    }
     public UserDTO(String username){
         this.username = username;
     }

@@ -160,4 +160,8 @@ public class XboxProfile {
     public void setXuid(String xuid) {
         this.xuid = xuid;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

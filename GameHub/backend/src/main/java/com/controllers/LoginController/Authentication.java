@@ -30,7 +30,8 @@ public class Authentication {
         String token = authService.authenticate(userDto.getUsername(), userDto.getPassword());
         Long userId = jwt.extractUserId(token);
         String username = jwt.extractUsername(token);
-        return ResponseEntity.ok(new AuthResponseDTO(token, userId, username)); // call construction
+        AuthResponseDTO response = new AuthResponseDTO(token, userId, username);
+        return ResponseEntity.ok(response); // call construction
     }
 
 @PostMapping("/register")

@@ -15,6 +15,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/NewsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SaveUserGamesController/SaveGamesController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SearchUserController.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SteamController/SteamAuthenticationController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxAuthenticationController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxFriendsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxGameClipsController.java
@@ -46,6 +47,8 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/ShortScreenShotNews.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Store.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Stores.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamAuthResponse.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamLoginResponse.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/UserModel/User.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/UserSavedGames/MyGames.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/CallBackResponse.java
@@ -75,6 +78,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/OAuth2Service.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/PostNewsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SaveGamesService.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SteamOpenIDService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/TokenService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/UserDetailsService/UserService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/XboxProfileService.java

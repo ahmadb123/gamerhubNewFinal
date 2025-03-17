@@ -334,6 +334,7 @@ public class NewsService {
                 newsResult.setRatingTop(response.get("rating_top").asInt());
                 newsResult.setBackground_image(response.get("background_image").asText());
                 newsResult.setWebsite(response.get("website").asText());    
+                newsResult.setBackground_image_additional(response.get("background_image_additional").asText());
                 // loop over ratings 
                 if(response.has("ratings") && !response.get("ratings").isNull()){
                     List<Ratings> allRatings  = new ArrayList<>();
@@ -388,7 +389,8 @@ public class NewsService {
                     gameDetails.setId(response.get("id").asLong());
                     gameDetails.setName(response.get("name").asText());
                     gameDetails.setSlug(response.get("slug").asText());
-                    gameDetails.setReleased(response.get("released").asText());                    
+                    gameDetails.setReleased(response.get("released").asText());  
+                    gameDetails.setBackground_image(response.get("background_image").asText());                  
                     gameDetailsList.add(gameDetails);
                 }
             } catch (Exception e) {

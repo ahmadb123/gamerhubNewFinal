@@ -42,7 +42,8 @@ public class XboxAuthenticationController {
         // Generate the authorization URL
         String url = oAuth2Service.generateAuthUrl(codeChallenge);
 
-        LoginResponse response = new LoginResponse(url);
+        LoginResponse response = new LoginResponse();
+        response.setRedirectUrl(url);
         return ResponseEntity.ok(response);
     }
 
@@ -96,7 +97,10 @@ public class XboxAuthenticationController {
         String codeChallenge = PKCEUtil.generateCodeChallenge(codeVerifier);
         
         String url = oAuth2Service.generateAuthUrlForMobiles(codeChallenge);
-        return ResponseEntity.ok(new MobileLoginResponse(url, codeVerifier));
+        MobileLoginResponse response = new MobileLoginResponse();
+        response.setAuthUrl(url);
+        response.setCodeVerifier(codeVerifier);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/mobile-callback")

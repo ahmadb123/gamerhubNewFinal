@@ -22,7 +22,10 @@ public class NewsResults {
     private int ratingTop; // Rating top of the game
     private String desc; // Description of the game
     private List<Ratings> ratings = new ArrayList<>(); // Ratings of the game
+    private String background_image_additional; // Additional background image of the game
     private String website;  // game website official link
+    // for testing - 
+    private String setContentText;
 
     // Getters and Setters
 
@@ -36,6 +39,14 @@ public class NewsResults {
 
     public double getAverageRating() {
         return averageRating;
+    }
+
+    public void setContentText(String setContentText) {
+        this.setContentText = setContentText;
+    }
+
+    public String getContentText() {
+        return setContentText;
     }
 
     public void setAverageRating(double averageRating) {
@@ -161,5 +172,13 @@ public class NewsResults {
 
     public void setGenres(List<Genres> genres) {
         this.genres = genres;
+    }
+
+    public String getBackground_image_additional() {
+        return background_image_additional;
+    }
+
+    public void setBackground_image_additional(String background_image_additional) {
+        this.background_image_additional = background_image_additional;
     }
 }

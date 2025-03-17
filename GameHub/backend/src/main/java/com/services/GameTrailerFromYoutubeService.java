@@ -17,6 +17,12 @@ import com.models.YoutubeDataForGameVideos.YoutubeVideosModel;
 
 @Service
 public class GameTrailerFromYoutubeService {
+    private RestTemplate restTemplate;
+
+    public GameTrailerFromYoutubeService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public YoutubeVideosModel getGameTrailerFromYoutube(String gameName) {
         YoutubeVideosModel youtubeVideosModel = new YoutubeVideosModel();
         List<Items> items = new ArrayList<>();
@@ -35,12 +41,12 @@ public class GameTrailerFromYoutubeService {
             String q = URLEncoder.encode(gameName + " official trailer", StandardCharsets.UTF_8.toString());
             String type = "video";
             String maxResults = "1";
+            // String apiKey = "AIzaSyA3MszyspWnJq6VHVi0EgPYjcX6mPGa_BE";
             String apiKey = "AIzaSyDDtdbmwUp-Syj___LRYSfkedx6iNSZkxg";
             String baseUrl = "https://www.googleapis.com/youtube/v3/search";
             String url = baseUrl + "?part=" + part + "&q=" + q + "&type=" + type + "&maxResults=" + maxResults + "&key=" + apiKey;
 
             // call the api
-            RestTemplate restTemplate = new RestTemplate();
             JsonNode response = restTemplate.getForObject(url, JsonNode.class);
 
             // Ensure that the response and its "items" array exist and have at least one item.
