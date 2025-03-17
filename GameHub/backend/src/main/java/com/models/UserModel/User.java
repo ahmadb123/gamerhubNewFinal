@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.models.FriendsModel.Friends;
+import com.models.Steam.SteamUserProfile.SteamProfile;
 import com.models.UserSavedGames.MyGames;
 import com.models.XboxModel.XboxProfile;
 
@@ -39,8 +40,8 @@ public class User {
     private List<MyGames> myGames;
     // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     // private List<PSNProfile> psnProfiles = new ArrayList<>();
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<SteamProfile> steamProfiles = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SteamProfile> steamProfiles = new ArrayList<>();
 
     
     
@@ -104,6 +105,14 @@ public class User {
 
     public void setMyGames(List<MyGames> myGames) {
         this.myGames = myGames;
+    }
+
+    public List<SteamProfile> getSteamProfiles() {
+        return steamProfiles;
+    }
+
+    public void setSteamProfiles(List<SteamProfile> steamProfiles) {
+        this.steamProfiles = steamProfiles;
     }
     
 }

@@ -1,13 +1,37 @@
 package com.models.Steam.SteamUserProfile;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.models.UserModel.User;
+
+import jakarta.persistence.*;
+
 /*
  * presents players response from Steam API
+ * it also represents the players data in the database
  */
-public class Players {
+
+
+@Entity
+@Table(name = "steam_profiles")
+public class SteamProfile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+    @Column(name = "steam_id")
     private String steamid;
+
+    @Column(name = "steam_name")
+    private String personaname;
+
     private int communityvisibilitystate;
     private int profilestate;
-    private String personaname;
     private String profileurl;
     private String avatar;
     private String avatarmedium;
@@ -21,11 +45,11 @@ public class Players {
     private int personastateflags;
 
     // empty constructor
-    public Players() {
+    public SteamProfile() {
     }
 
     // Constructor
-    public Players(String steamid, int communityvisibilitystate, int profilestate, String personaname, String profileurl,
+    public SteamProfile(String steamid, int communityvisibilitystate, int profilestate, String personaname, String profileurl,
             String avatar, String avatarmedium, String avatarfull, String avatarhash, long lastlogoff, int personastate,
             String realname, String primaryclanid, long timecreated, int personastateflags) {
         this.steamid = steamid;
@@ -163,5 +187,14 @@ public class Players {
 
     public void setPersonastateflags(int personastateflags) {
         this.personastateflags = personastateflags;
+    }
+
+    // Added getter and setter for user
+    public User getUser() {
+        return user;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
     }
 }
