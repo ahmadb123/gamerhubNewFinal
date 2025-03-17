@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.models.Steam.SteamAuthResponse;
+import com.models.Steam.SteamLoginResponse;
 import com.services.SteamOpenIDService;
 
 @RestController
-@RequestMapping("/steam")
+@RequestMapping("steam")
 public class SteamAuthenticationController {
 
     @Autowired
@@ -28,36 +32,46 @@ public class SteamAuthenticationController {
 
     // Endpoint to initiate the Steam login process.
     @GetMapping("/login")
-    public ResponseEntity<?> login(HttpSession session) {
+    public ResponseEntity<SteamLoginResponse> login(HttpSession session) {
         try {
-            // Generate the login URL using the SteamOpenIDService.
             String redirectUrl = steamOpenIDService.generateLoginUrl(session);
-            // Return the URL in a structured response model.
-            // Alternatively, you could perform a redirect immediately if preferred.
-            return ResponseEntity.ok().body(Collections.singletonMap("redirectURL", redirectUrl));
+            return ResponseEntity.ok(new SteamLoginResponse(redirectUrl, null));
         } catch(Exception e) {
             return ResponseEntity.status(500)
-                    .body(Collections.singletonMap("error", "Error initiating Steam login: " + e.getMessage()));
+                    .body(new SteamLoginResponse(null, "Error initiating Steam login: " + e.getMessage()));
         }
     }
-
-    // Endpoint to handle the return/callback from Steam.
     @GetMapping("/return")
     public void steamReturn(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException {
         try {
             String steamId = steamOpenIDService.verifyResponse(request, session);
             if (steamId != null) {
-                // Optionally, store the SteamID in session for later use
                 session.setAttribute("steamId", steamId);
-                // Redirect to the frontend URL (which was externalized in your properties)
-                
-                response.sendRedirect(frontendReturnUrl);
+                SteamAuthResponse authResponse = new SteamAuthResponse("true", steamId, null);
+                String redirectUrl = buildRedirectUrl(authResponse);
+                response.sendRedirect(redirectUrl);
             } else {
-                response.sendRedirect("http://localhost:3000/login?error=verification_failed");
+                SteamAuthResponse authResponse = new SteamAuthResponse("false", null, "Verification failed");
+                String redirectUrl = buildRedirectUrl(authResponse);
+                response.sendRedirect(redirectUrl);
             }
         } catch (Exception e) {
-            String errorMsg = URLEncoder.encode(e.getMessage(), "UTF-8");
-            response.sendRedirect("http://localhost:3000/login?error=" + errorMsg);
+            SteamAuthResponse authResponse = new SteamAuthResponse("false", null, e.getMessage());
+            String redirectUrl = buildRedirectUrl(authResponse);
+            response.sendRedirect(redirectUrl);
         }
+    }
+    private String buildRedirectUrl(SteamAuthResponse authResponse) throws IOException {
+        String baseUrl = frontendReturnUrl;
+        StringBuilder redirectUrl = new StringBuilder(baseUrl);
+        redirectUrl.append("?success=").append(authResponse.getSuccess());
+        
+        if (authResponse.getSteamID() != null) {
+            redirectUrl.append("&steamID=").append(URLEncoder.encode(authResponse.getSteamID(), StandardCharsets.UTF_8.toString()));
+        }
+        if (authResponse.getError() != null) {
+            redirectUrl.append("&error=").append(URLEncoder.encode(authResponse.getError(), StandardCharsets.UTF_8.toString()));
+        }
+        return redirectUrl.toString();
     }
 }

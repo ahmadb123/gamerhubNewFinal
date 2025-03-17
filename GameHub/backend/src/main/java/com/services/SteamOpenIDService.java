@@ -40,9 +40,7 @@ public class SteamOpenIDService {
         
         // Build the authentication request using your configured realm
         AuthRequest authReq = consumerManager.authenticate(discoveryInfo, steamRealm);
-        
-        // Remove explicit setting of assoc_type because AuthRequest does not support setParameter
-        
+                
         // Return the complete redirect URL
         return authReq.getDestinationUrl(true);
     }
@@ -67,7 +65,6 @@ public class SteamOpenIDService {
         // 5) If verified, extract the claimed ID (SteamID)
         if (verification.getVerifiedId() != null) {
             String claimedId = verification.getVerifiedId().getIdentifier();
-            // Convert "https://steamcommunity.com/openid/id/76561198012345678" to "76561198012345678"
             String steamId = claimedId.replace("https://steamcommunity.com/openid/id/", "");
             return steamId;
         } else {
