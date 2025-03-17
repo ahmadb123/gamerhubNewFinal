@@ -1,9 +1,9 @@
 
 const apiUrl = 'http://localhost:8080';
+const jwtToken = localStorage.getItem("jwtToken");
 
 // Fetch Xbox profile
 export const fetchXboxProfile = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
     const uhs = localStorage.getItem("uhs");
     const XSTS_token = localStorage.getItem("XSTS_token");
 
@@ -66,6 +66,7 @@ export const fetchSteamProfile = async () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + jwtToken
         },
       });
       console.log("Steam profile response status:", response.status);

@@ -31,3 +31,4 @@ export const getRecentGames = async () => {
         throw error;
     }
 };
+

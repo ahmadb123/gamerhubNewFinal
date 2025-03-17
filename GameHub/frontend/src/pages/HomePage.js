@@ -15,6 +15,7 @@ import { getRecentGames } from "../service/RecentGamesXbox";
 import { fetchRecentNews } from "../service/NewsService";
 import { postNews } from "../service/PostNewsService";
 import { checkAccountType } from "../utility/CheckAccountType";
+import {getSteamRecentPlayedAndOwnedGames} from "../service/SteamRecentPlayedAndOwnedGames";
 import {
   searchUserProfile,
   getAllLinkedProfiles,
@@ -114,42 +115,36 @@ class HomePage extends Component {
           // Fetch friends for Xbox
           try {
             const friends = await fetchXboxFriends();
-            this.setState({ friends, isFetchingFriends: false });
-          } catch (error) {
-            console.error(error);
-            toast.error("Failed to fetch friends list.");
-          }
-
-          // Fetch linked profiles
-          try {
+            const recentGames = await getRecentGames(); // Xbox games
             const linkedProfiles = await getAllLinkedProfiles();
-            this.setState({ linkedProfiles });
+            this.setState({ 
+              friends, 
+              recentGames,
+              linkedProfiles,
+              isFetchingFriends: false,
+              isFetchingRecentGames: false 
+            });
           } catch (error) {
-            console.error(error);
-            toast.error("Failed to fetch linked profiles.");
+            console.error("Xbox data fetch error:", error);
           }
-        }
-
-        // steam - 
-        // if (platform === "steam") {
-        //   // fetch profile info for steam - 
-        // }
-
-        // Fetch recent games
-        try {
-          const recentGames = await getRecentGames();
+        }      
+      // Fetch recent games and played games for Steam
+      else if (platform === "steam") {
+        try{
+          const recentGames = await getSteamRecentPlayedAndOwnedGames();
           this.setState({ recentGames, isFetchingRecentGames: false });
-        } catch (error) {
+        }catch(error){
           console.error(error);
           toast.error("Failed to fetch recent games.");
         }
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem("platform");
-        toast.error("Failed to fetch profile information.");
-        window.location.href = "/";
       }
-    };
+    }catch (error) {
+      console.error(error);
+      localStorage.removeItem("platform");
+      toast.error("Failed to fetch profile information.");
+      window.location.href = "/";
+    }
+  };
 
     fetchAccountInfo();
     this.checkForPendingRequests();
