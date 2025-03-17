@@ -58,37 +58,38 @@ export const fetchPSNProfile = async () => {
         throw error;
     }
 };
-
-// Fetch Steam profile
-// export const fetchSteamProfile = async () => {
-//     try {
-//         const response = await fetch(`${apiUrl}/api/steam/profile`, {
-//             method: "GET",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-
-//         if (!response.ok) {
-//             throw new Error(`Failed to fetch Steam profile. Status: ${response.status}`);
-//         }
-
-//         return await response.json();
-//     } catch (error) {
-//         console.error(error);
-//         console.error("Failed to fetch Steam profile.");
-//         throw error;
-//     }
-// };
-
-// src/service/profileService.js
-
 export const fetchSteamProfile = async () => {
-    // Replace this with your actual API call later
-    return {
-      gamertag: "SteamUser",
-      appDisplayPicRaw: "/default-avatar.png",
-      // Include any other required fields here
-    };
-  };
+    const steamId = localStorage.getItem("steamId");
+    console.log("Fetching Steam profile with steamId:", steamId);
+    try {
+      const response = await fetch(`${apiUrl}/api/steam/userinfo/getUserInfo?steamId=${steamId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Steam profile response status:", response.status);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Steam profile. Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Steam profile data:", data);
+      // Map Steam data to a common format
+      if (data.players && data.players.length > 0) {
+        const player = data.players[0];
+        return {
+          gamertag: player.personaname, // use personaname as gamertag
+          appDisplayPicRaw: player.avatarfull, // use avatarfull as profile pic
+          realname: player.realname,
+          profileurl: player.profileurl,
+          // include any other fields your UI expects
+        };
+      }
+      throw new Error("No Steam player found");
+    } catch (error) {
+      console.error(error);
+      console.error("Failed to fetch Steam profile.");
+      throw error;
+    }
+};
   

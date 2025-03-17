@@ -6,9 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXbox, faPlaystation, faSteam } from "@fortawesome/free-brands-svg-icons";
 import { handleSteamLogin } from "../service/SteamAuthService";
 
-
-const apiUrl = 'http://localhost:8080';
-
 function LandingPage() {
     const navigate = useNavigate();
 
@@ -18,27 +15,35 @@ function LandingPage() {
             localStorage.setItem("platform", "xbox");
             navigate("/main");
         };
-       
+
+        const handleSteamReturn = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const steamID = urlParams.get("steamID");
+            if (steamID) {
+                localStorage.setItem("steamId", steamID); // ensure key matches the fetch service
+                localStorage.setItem("platform", "steam");
+                navigate("/main");
+            }
+        };
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("code")) {
             handleXboxLogin();
         }
-        if(localStorage.getItem("platform") === "steam"){
-            navigate("/main");
+        // Check for steamID in URL and navigate to main if present.
+        if (urlParams.get("steamID")) {
+            handleSteamReturn();
         }
-
     }, [navigate]);
 
     const handlePlatformLogin = async (platform) => {
         if (platform === "xbox") {
             await handleLogin();
         }
-        else if(platform === "steam"){
+        if (platform === "steam") {
             await handleSteamLogin();
         }
     };
-    
 
     return (
         <div className="landing-page" style={{ textAlign: "center", marginTop: "50px" }}>

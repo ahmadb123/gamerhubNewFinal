@@ -82,11 +82,11 @@ class HomePage extends Component {
     const platform = localStorage.getItem("platform");
     console.log("HomePage mounting with platform:", platform);
 
-    // if (!platform) {
-    //   toast.error("No platform selected. Please log in again.");
-    //   window.location.href = "/";
-    //   return;
-    // }
+    if (!platform) {
+      toast.error("No platform selected. Please log in again.");
+      window.location.href = "/";
+      return;
+    }
 
     // pick the right profile fetcher
     const profileFetchers = {
@@ -129,6 +129,11 @@ class HomePage extends Component {
             toast.error("Failed to fetch linked profiles.");
           }
         }
+
+        // steam - 
+        // if (platform === "steam") {
+        //   // fetch profile info for steam - 
+        // }
 
         // Fetch recent games
         try {
