@@ -1,4 +1,3 @@
-
 const apiUrl = 'http://localhost:8080';
 
 
@@ -34,3 +33,49 @@ export const fetchXboxFriends = async () =>{
         throw error;
     }
 };
+export const fetchSteamFriends = async () => {
+    const jwtToken = localStorage.getItem("jwtToken");
+    try {
+      const response = await fetch(`${apiUrl}/api/steam/userinfo/get-friends`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + jwtToken,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Steam friends. Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Steam friends data:", data);
+      
+      // Transform the friends array so that it matches the UI format
+      const friends = data.friends.map(friend => {
+        // Extract the hash from the low-quality avatar URL.
+        const avatarHash = friend.friendAvatar
+          .replace("https://avatars.steamstatic.com/", "")
+          .replace(".jpg", "");
+      
+        // Construct the high-quality URL.
+        const fullAvatarUrl = `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/${avatarHash.slice(0, 2)}/${avatarHash}_full.jpg`;
+      
+        return {
+          gamertag: friend.friendName,
+          displayPicRaw: fullAvatarUrl,  // Full-quality avatar URL
+          realName: friend.friendName,
+          presenceState: "Offline",
+          presenceText: "Offline",
+          friendSince: friend.friendSince,
+          relationship: friend.relationship,
+          steamId: friend.steamId,
+          profileImg: fullAvatarUrl,     // If needed elsewhere, use the same high-quality URL
+        };
+      });
+      
+      return friends || [];
+      
+    } catch (error) {
+      console.error("Failed to fetch Steam friends:", error);
+      throw error;
+    }
+  };

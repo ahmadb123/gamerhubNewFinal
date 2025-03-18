@@ -10,12 +10,12 @@ import {
   fetchSteamProfile,
 } from "../service/profileService";
 
-import { fetchXboxFriends } from "../service/friendsService";
+import { fetchXboxFriends, fetchSteamFriends } from "../service/friendsService";
 import { getRecentGames } from "../service/RecentGamesXbox";
 import { fetchRecentNews } from "../service/NewsService";
 import { postNews } from "../service/PostNewsService";
 import { checkAccountType } from "../utility/CheckAccountType";
-import {getSteamRecentPlayedAndOwnedGames} from "../service/SteamRecentPlayedAndOwnedGames";
+import {getSteamRecentPlayedGames} from "../service/SteamRecentPlayedAndOwnedGames";
 import {
   searchUserProfile,
   getAllLinkedProfiles,
@@ -131,8 +131,9 @@ class HomePage extends Component {
       // Fetch recent games and played games for Steam
       else if (platform === "steam") {
         try{
-          const recentGames = await getSteamRecentPlayedAndOwnedGames();
-          this.setState({ recentGames, isFetchingRecentGames: false });
+          const recentGames = await getSteamRecentPlayedGames();
+          const friends = await fetchSteamFriends();
+          this.setState({ friends, recentGames, isFetchingRecentGames: false, isFetchingFriends:false});
         }catch(error){
           console.error(error);
           toast.error("Failed to fetch recent games.");
@@ -704,10 +705,11 @@ class HomePage extends Component {
                           <img src={game.displayImage} alt={game.name} />
                           <div className="game-name">{game.name}</div>
                           <div className="game-info">
-                            {game.titleHistory &&
-                            game.titleHistory.lastTimePlayedFormatted
-                              ? `Last Played: ${game.titleHistory.lastTimePlayedFormatted}`
-                              : "Playtime not available"}
+                            {game.titleHistory && game.titleHistory.lastTimePlayedFormatted
+                              ? `Play Time In The Last 2 Weeks: ${game.titleHistory.lastTimePlayedFormatted}`
+                              : "Recent Playtime: Not available"}
+                            <br />
+                            {game.totalPlaytime ? `Total Playtime: ${game.totalPlaytime}` : ""}
                           </div>
                           <div className="game-devices">
                             {game.devices && game.devices.length > 0
@@ -723,7 +725,6 @@ class HomePage extends Component {
                 </div>
               </section>
             </div>
-
             {/* FRIENDS LIST (Xbox friends, if platform is Xbox) */}
             <aside className="friends-list">
               <h2>Friends</h2>
