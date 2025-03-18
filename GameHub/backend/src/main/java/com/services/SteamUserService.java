@@ -20,100 +20,169 @@ public class SteamUserService {
     public SteamUserService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+    
     private final String STEAM_API_KEY = "79292D739A20F25E05BC6F85697FCB2C"; 
 
-    public UserInfo getUserInfo(String steamID){
+    public UserInfo getUserInfo(String steamID) {
         UserInfo userInfo = new UserInfo();
         List<SteamProfile> players = new ArrayList<>();
-        try{
-            /*
-             * Params for the Steam API
-             * 1. steamid
-             * 2. API key
-             */
-
+        try {
             String url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" 
                          + STEAM_API_KEY + "&steamids=" + steamID;
-            // call the api - 
-            RestTemplate restTemplate = new RestTemplate();
             JsonNode response = restTemplate.getForObject(url, JsonNode.class);
-            // get the players from the response
-            if((response != null && response.has("response")) && response.get("response").has("players")){
-                JsonNode playerNode = response.get("response").get("players");
-                SteamProfile player = new SteamProfile();
-                player.setSteamid(playerNode.get(0).get("steamid").asText());
-                player.setCommunityvisibilitystate(playerNode.get(0).get("communityvisibilitystate").asInt());
-                player.setProfilestate(playerNode.get(0).get("profilestate").asInt());
-                player.setPersonaname(playerNode.get(0).get("personaname").asText());
-                player.setProfileurl(playerNode.get(0).get("profileurl").asText());
-                player.setAvatar(playerNode.get(0).get("avatar").asText());
-                player.setAvatarmedium(playerNode.get(0).get("avatarmedium").asText());
-                player.setAvatarfull(playerNode.get(0).get("avatarfull").asText());
-                player.setAvatarhash(playerNode.get(0).get("avatarhash").asText());
-                player.setLastlogoff(playerNode.get(0).get("lastlogoff").asLong());
-                player.setPersonastate(playerNode.get(0).get("personastate").asInt());
-                player.setRealname(playerNode.get(0).get("realname").asText());
-                player.setPrimaryclanid(playerNode.get(0).get("primaryclanid").asText());
-                player.setTimecreated(playerNode.get(0).get("timecreated").asLong());
-                player.setPersonastateflags(playerNode.get(0).get("personastateflags").asInt());
-                players.add(player);
-                userInfo.setPlayers(players);
+            if (response != null && response.has("response") && response.get("response").has("players")) {
+                JsonNode playersNode = response.get("response").get("players");
+                if (playersNode.isArray() && playersNode.size() > 0) {
+                    JsonNode firstPlayer = playersNode.get(0);
+                    SteamProfile player = new SteamProfile();
+                    player.setSteamid(getTextValue(firstPlayer, "steamid", ""));
+                    player.setCommunityvisibilitystate(getIntValue(firstPlayer, "communityvisibilitystate", 0));
+                    player.setProfilestate(getIntValue(firstPlayer, "profilestate", 0));
+                    player.setPersonaname(getTextValue(firstPlayer, "personaname", ""));
+                    player.setProfileurl(getTextValue(firstPlayer, "profileurl", ""));
+                    player.setAvatar(getTextValue(firstPlayer, "avatar", ""));
+                    player.setAvatarmedium(getTextValue(firstPlayer, "avatarmedium", ""));
+                    player.setAvatarfull(getTextValue(firstPlayer, "avatarfull", ""));
+                    player.setAvatarhash(getTextValue(firstPlayer, "avatarhash", ""));
+                    player.setLastlogoff(getLongValue(firstPlayer, "lastlogoff", 0L));
+                    player.setPersonastate(getIntValue(firstPlayer, "personastate", 0));
+                    player.setRealname(getTextValue(firstPlayer, "realname", ""));
+                    player.setPrimaryclanid(getTextValue(firstPlayer, "primaryclanid", ""));
+                    player.setTimecreated(getLongValue(firstPlayer, "timecreated", 0L));
+                    player.setPersonastateflags(getIntValue(firstPlayer, "personastateflags", 0));
+                    players.add(player);
+                    userInfo.setPlayers(players);
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return userInfo;
+    }
+    // get user steam played/owned games
+    public UserInfo getUserOnwedAndPlayedGames(String steamId) {
+    UserInfo userInfo = new UserInfo();
+    List<UserOwnedAndPlayedGames> ownedAndPlayedGames = new ArrayList<>();
+    try {
+        String url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=" 
+                     + STEAM_API_KEY + "&steamid=" + steamId + "&include_appinfo=1&include_played_free_games=1";
+        if (steamId == null) {
+            return null;
+        }
+        JsonNode response = restTemplate.getForObject(url, JsonNode.class);
+        if (response != null && response.has("response")) {
+            JsonNode responseNode = response.get("response");
+            if (responseNode.has("game_count")) {
+                userInfo.setGame_count(getIntValue(responseNode, "game_count", 0));
+            }
+            if (responseNode.has("games")) {
+                JsonNode gamesArray = responseNode.get("games");
+                if (gamesArray.isArray()) {
+                    int loopLimit = Math.min(gamesArray.size(), 5); // only process up to 5 games
+                    for (int i = 0; i < loopLimit; i++) {
+                        JsonNode gameNode = gamesArray.get(i);
+                        UserOwnedAndPlayedGames game = new UserOwnedAndPlayedGames();
+                        game.setAppid(getIntValue(gameNode, "appid", 0));
+                        game.setName(getTextValue(gameNode, "name", ""));
+                        game.setPlaytime_forever(getIntValue(gameNode, "playtime_forever", 0));
+                        game.setImg_icon_url(getTextValue(gameNode, "img_icon_url", ""));
+                        
+                        JsonNode communityNode = gameNode.get("has_community_visible_stats");
+                        game.setHas_community_visible_stats(communityNode != null && !communityNode.isNull() ? communityNode.asBoolean() : false);
+                        
+                        game.setPlaytime_windows_forever(getIntValue(gameNode, "playtime_windows_forever", 0));
+                        game.setPlaytime_mac_forever(getIntValue(gameNode, "playtime_mac_forever", 0));
+                        game.setPlaytime_linux_forever(getIntValue(gameNode, "playtime_linux_forever", 0));
+                        game.setPlaytime_deck_forever(getIntValue(gameNode, "playtime_deck_forever", 0));
+                        game.setRtime_last_played(getIntValue(gameNode, "rtime_last_played", 0));
+                        game.setPlaytime_disconnected(getIntValue(gameNode, "playtime_disconnected", 0));
+                        
+                        ownedAndPlayedGames.add(game);
+                    }
+                    userInfo.setOwenedAndPlayedGames(ownedAndPlayedGames);
+                }
+            }
+        }
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
+    return userInfo;
+    }
+
+    // get recent played games - 
+    public UserInfo getRecentPlayedGames(String steamId){
+        UserInfo userInfo = new UserInfo();
+        List<UserOwnedAndPlayedGames> recentPlayedGames = new ArrayList<>();
+        try{
+            /*
+             * url - 
+             * https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/
+             * ?key=79292D739A20F25E05BC6F85697FCB2C&steamid=76561199052752509
+             */
+            String url = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=" 
+                         + STEAM_API_KEY + "&steamid=" + steamId;
+            if(steamId == null){
+                return null;
+            }
+            // if the result is less than 5.. append the rest of the games from 
+            // getUserOnwedAndPlayedGames
+            JsonNode response = restTemplate.getForObject(url, JsonNode.class);
+            if(response != null && response.has("response")){
+                JsonNode responseNode = response.get("response");
+                if(responseNode.has("games")){
+                    JsonNode gamesArray = responseNode.get("games");
+                    if(gamesArray.isArray()){
+                        int loopLimit = Math.min(gamesArray.size(), 5); // only process up to 5 games
+                        for(int i = 0; i < loopLimit; i++){
+                            JsonNode gameNode = gamesArray.get(i);
+                            UserOwnedAndPlayedGames game = new UserOwnedAndPlayedGames();
+                            game.setAppid(getIntValue(gameNode, "appid", 0));
+                            game.setName(getTextValue(gameNode, "name", ""));
+                            game.setPlaytime_2weeks(getIntValue(gameNode, "playtime_2weeks", 0));
+                            game.setPlaytime_forever(getIntValue(gameNode, "playtime_forever", 0));
+                            game.setImg_icon_url(getTextValue(gameNode, "img_icon_url", ""));
+                            recentPlayedGames.add(game);
+                        }
+                    }
+                }
+                // if we get less than 5 games, get the rest from getUserOnwedAndPlayedGames
+                if(recentPlayedGames.size() < 5){
+                    UserInfo userOwnedGames = getUserOnwedAndPlayedGames(steamId);
+                    if(userOwnedGames != null && userOwnedGames.getOwenedAndPlayedGames() != null){
+                        List<UserOwnedAndPlayedGames> ownedGames = userOwnedGames.getOwenedAndPlayedGames();
+                        for (UserOwnedAndPlayedGames game : ownedGames) {
+                            // Check if the game is already in recentPlayedGames by comparing appid.
+                            boolean alreadyExists = recentPlayedGames.stream()
+                            .anyMatch(g -> g.getAppid() == game.getAppid());
+                            if(!alreadyExists){
+                                recentPlayedGames.add(game);
+                                if(recentPlayedGames.size() >= 5){
+                                    break; // Stop if we have 5 games
+                                }
+                            }
+                        }
+                    }
+                }
+                userInfo.setOwenedAndPlayedGames(recentPlayedGames);
             }
         }catch(Exception e){
             e.printStackTrace();
         }
         return userInfo;
     }
+    // Helper methods to safely extract values from JsonNode
+    private String getTextValue(JsonNode node, String field, String defaultValue) {
+        JsonNode value = node.get(field);
+        return (value != null && !value.isNull()) ? value.asText() : defaultValue;
+    }
 
-    // get user steam played/owned games - 
-    public UserInfo getUserOnwedAndPlayedGames(String steamId){
-        UserInfo userInfo = new UserInfo();
-        List<UserOwnedAndPlayedGames> ownedAndPlayedGames = new ArrayList<>();
-        try{
-            /*
-             * Params for the Steam API
-             * steamid
-             * API key
-             * include_appinfo
-             * include_played_free_games
-             */
-            String url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=" 
-                         + STEAM_API_KEY + "&steamid=" + steamId + "&include_appinfo=1&include_played_free_games=1";
-            if(steamId == null){
-                return null;
-            }
-            // call the api -
-            JsonNode response = restTemplate.getForObject(url, JsonNode.class);
-            // get games and game count - 
-            if(response != null && response.has("response") && response.get("response").has("game_count")){
-                userInfo.setGame_count(response.get("response").get("game_count").asInt());
-            }
-            if(response != null && response.has("response") && response.get("response").has("games")){
-                for(int i = 0; i < response.get("response").get("games").size(); i++){
-                    UserOwnedAndPlayedGames game = new UserOwnedAndPlayedGames();
-                    game.setAppid(response.get("response").get("games").get(i).get("appid").asInt());
-                    game.setName(response.get("response").get("games").get(i).get("name").asText());
-                    game.setPlaytime_forever(response.get("response").get("games").get(i).get("playtime_forever").asInt());
-                    game.setImg_icon_url(response.get("response").get("games").get(i).get("img_icon_url").asText());
-                    {
-                        // Retrieve the current game node
-                        JsonNode gameNode = response.get("response").get("games").get(i);
-                        JsonNode hasCommunity = gameNode.get("has_community_visible_stats");
-                        game.setHas_community_visible_stats(hasCommunity != null && !hasCommunity.isNull() ? hasCommunity.asBoolean() : false);
-                    }
-                    game.setPlaytime_windows_forever(response.get("response").get("games").get(i).get("playtime_windows_forever").asInt());
-                    game.setPlaytime_mac_forever(response.get("response").get("games").get(i).get("playtime_mac_forever").asInt());
-                    game.setPlaytime_linux_forever(response.get("response").get("games").get(i).get("playtime_linux_forever").asInt());
-                    game.setPlaytime_deck_forever(response.get("response").get("games").get(i).get("playtime_deck_forever").asInt());
-                    game.setRtime_last_played(response.get("response").get("games").get(i).get("rtime_last_played").asInt());
-                    game.setPlaytime_disconnected(response.get("response").get("games").get(i).get("playtime_disconnected").asInt());
-                    ownedAndPlayedGames.add(game);
-                }
-                userInfo.setOwenedAndPlayedGames(ownedAndPlayedGames);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return userInfo;
+    private int getIntValue(JsonNode node, String field, int defaultValue) {
+        JsonNode value = node.get(field);
+        return (value != null && !value.isNull()) ? value.asInt() : defaultValue;
+    }
+
+    private long getLongValue(JsonNode node, String field, long defaultValue) {
+        JsonNode value = node.get(field);
+        return (value != null && !value.isNull()) ? value.asLong() : defaultValue;
     }
 }

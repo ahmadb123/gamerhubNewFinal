@@ -52,7 +52,11 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamAuthResponse.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamLoginResponse.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamUserProfile/SteamProfile.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamUserProfile/SteamUserFriends/Friends.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamUserProfile/SteamUserFriends/FriendsList.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamUserProfile/UserInfo.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/Steam/SteamUserProfile/UserOwnedAndPlayedGames.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/UserModel/LinkedProfiles.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/UserModel/User.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/UserSavedGames/MyGames.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/XboxModel/CallBackResponse.java
@@ -84,9 +88,11 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SaveGamesService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SteamOpenIDService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SteamProfileService.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SteamUserFriendsListService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/SteamUserService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/TokenService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/UserDetailsService/UserService.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/UserLinkedProfilesService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/XboxProfileService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/XboxRecentGamesService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/utility/CurrentDate.java

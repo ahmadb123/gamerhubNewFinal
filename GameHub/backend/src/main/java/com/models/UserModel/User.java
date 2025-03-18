@@ -5,6 +5,7 @@
 package com.models.UserModel;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.models.FriendsModel.Friends;
@@ -13,9 +14,12 @@ import com.models.UserSavedGames.MyGames;
 import com.models.XboxModel.XboxProfile;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,9 +47,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SteamProfile> steamProfiles = new ArrayList<>();
 
-    
-    
-    // Getters
+    // describe user's all connected profiles- xbox, steam, psn including their gamertgs-?>
+    // use linked list?
+
+    @ElementCollection
+    @CollectionTable(name = "user_linked_profiles", joinColumns = @JoinColumn(name = "user_id"))
+    private List<LinkedProfiles> linkedProfiles = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -66,7 +74,13 @@ public class User {
         this.isAuthorized = isAuthorized;
     }
 
-    // Setters
+    public List<LinkedProfiles> getLinkedProfiles() {
+        return linkedProfiles;
+    }
+
+    public void setLinkedProfiles(List<LinkedProfiles> linkedProfiles) {
+        this.linkedProfiles = linkedProfiles;
+    }
 
     public void setId(Long id) {
         this.id = id;

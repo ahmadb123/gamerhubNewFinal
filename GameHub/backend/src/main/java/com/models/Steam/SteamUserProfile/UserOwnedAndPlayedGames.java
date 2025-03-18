@@ -12,6 +12,7 @@ public class UserOwnedAndPlayedGames {
     private int playtime_deck_forever;
     private int rtime_last_played;
     private int playtime_disconnected;
+    private int playtime_2weeks;
 
     // empty constructor
     public UserOwnedAndPlayedGames() {
@@ -104,5 +105,13 @@ public class UserOwnedAndPlayedGames {
 
     public void setPlaytime_disconnected(int playtime_disconnected) {
         this.playtime_disconnected = playtime_disconnected;
+    }
+
+    public int getPlaytime_2weeks() {
+        return playtime_2weeks;
+    }
+
+    public void setPlaytime_2weeks(int playtime_2weeks) {
+        this.playtime_2weeks = playtime_2weeks;
     }
 }

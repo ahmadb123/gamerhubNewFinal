@@ -1,5 +1,6 @@
 package com.controllers.XboxController;
 import com.services.TokenService;
+import com.services.UserLinkedProfilesService;
 import com.services.XboxProfileService;
 import com.utility.JWT;
 import com.dto.XboxProfileDTO;
@@ -33,6 +34,8 @@ public class XboxProfileController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserLinkedProfilesService userLinkedProfilesService;
 
     private final String PROFILE_API_URL = "https://profile.xboxlive.com/users/me/profile/settings?settings=Gamertag,GameDisplayName,AppDisplayPicRaw,GameDisplayPicRaw,AccountTier,TenureLevel,Gamerscore";
 
@@ -48,6 +51,7 @@ public class XboxProfileController {
 
             String token = authHeader.substring(7);
             String username = jwt.extractUsername(token);
+            Long userId = jwt.extractUserId(token);
             if (username == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token or username not found");
             }
@@ -77,10 +81,13 @@ public class XboxProfileController {
             tokenService.setXuid(profileDTO.getId());
             
             // to link user and xboxprofile get username from Authentication controller-  
-            
             // save to db- 
             xboxProfileService.saveProfile(profileDTO, user);
-
+            // also save the profile platform, and gamertag to the linkedp profile table
+            if(userId != null){
+                User foundUserById = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                userLinkedProfilesService.addXboxProfileToLinkedProfiles(foundUserById);
+            }
             return ResponseEntity.ok(profileDTO);
         } catch (Exception e) {
             e.printStackTrace();
