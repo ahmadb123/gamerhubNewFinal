@@ -18,6 +18,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SearchUserController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SteamController/SteamAuthenticationController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SteamController/SteamUserInfoController.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/UserLinkedProfilesController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxAuthenticationController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxFriendsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/XboxController/XboxGameClipsController.java

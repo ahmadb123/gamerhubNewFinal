@@ -12,6 +12,13 @@ import jakarta.persistence.Embeddable;
 public class LinkedProfiles {
     private String platform;
     private String gamertag;
+    // if xbox-> save xuid and uhs in a list.
+    private String xuid; 
+    private String uhs;
+    // if steam-> save steam id in a list.
+    private String steamId;
+
+
 
 
     // empty constructor
@@ -42,4 +49,27 @@ public class LinkedProfiles {
         this.gamertag = gamertag;
     }
 
+    public String getXuid() {
+        return xuid;
+    }
+
+    public void setXuid(String xuid) {
+        this.xuid = xuid;
+    }
+
+    public String getUhs() {
+        return uhs;
+    }
+
+    public void setUhs(String uhs) {
+        this.uhs = uhs;
+    }
+
+    public String getSteamId() {
+        return steamId;
+    }
+
+    public void setSteamId(String steamId) {
+        this.steamId = steamId;
+    }
 }

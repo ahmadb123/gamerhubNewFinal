@@ -40,7 +40,7 @@ public class XboxProfileService {
         dto.setAccountTier(getValue(settingsNode, "AccountTier"));
         dto.setTenureLevel(parseIntSafe(getValue(settingsNode, "TenureLevel")));
         dto.setGamerscore(parseIntSafe(getValue(settingsNode, "Gamerscore")));
-        dto.setXuid(tokenService.getXuid());
+        dto.setXuid(xuid);
         dto.setUhs(tokenService.getUhs());
         dto.setXsts(tokenService.getXstsToken());
         return dto;

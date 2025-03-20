@@ -1,6 +1,9 @@
 package com.services;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +28,6 @@ public class UserLinkedProfilesService {
 
     // This class will handle the logic for managing user linked profiles
     // It will interact with the database to save, update, and retrieve linked profiles
-
-    // since we are using linked list we should store the data for each platform using linkelist->
-    private LinkedList<LinkedProfiles> linkedProfiles = new LinkedList<>(); // stores all platform and gamertags
-    // xbox platform-
-    private LinkedList<XboxProfile> xboxProfiles = new LinkedList<>();
-    // steam platform-
-    private LinkedList<SteamProfile> steamProfiles = new LinkedList<>();
     // for futrue work - psn
     private boolean userHasXboxProfile = false;
     private boolean userHasSteamProfile = false;
@@ -65,23 +61,30 @@ public class UserLinkedProfilesService {
         }
         return userHasSteamProfile;
     }
-
-    // Helper method to check if a linked profile exists
-    private boolean isAlreadyLinked(User user, String platform, String gamertag) {
-        return user.getLinkedProfiles().stream()
-                .anyMatch(lp -> lp.getPlatform().equals(platform) && lp.getGamertag().equals(gamertag));
-    }
-    
     // Updated method: now accepts a User object and checks for duplicates
     public void addXboxProfileToLinkedProfiles(User user) {
         if(checkIfUserHasXboxProfile(user.getId())){
             for(XboxProfile xboxProfile : user.getXboxProfiles()){
                 if(xboxProfile.getUser().getId().equals(user.getId())){
                     String gamertag = xboxProfile.getXboxGamertag();
-                    if(!isAlreadyLinked(user, "Xbox", gamertag)){
+                    // Look for an existing linked profile with the same platform and gamertag
+                    Optional<LinkedProfiles> existingLinkedProfile = user.getLinkedProfiles().stream()
+                            .filter(lp -> lp.getPlatform().equals("Xbox") && lp.getGamertag().equals(gamertag))
+                            .findFirst();
+                    if(existingLinkedProfile.isPresent()){
+                        // Update existing linked profile if needed
+                        LinkedProfiles lp = existingLinkedProfile.get();
+                        if(lp.getXuid() == null || lp.getUhs() == null) {
+                            lp.setXuid(xboxProfile.getXuid());
+                            lp.setUhs(xboxProfile.getUhs());
+                        }
+                    } else {
+                        // Create a new linked profile if not already present
                         LinkedProfiles linkedProfile = new LinkedProfiles();
                         linkedProfile.setPlatform("Xbox");
                         linkedProfile.setGamertag(gamertag);
+                        linkedProfile.setXuid(xboxProfile.getXuid());
+                        linkedProfile.setUhs(xboxProfile.getUhs());
                         user.getLinkedProfiles().add(linkedProfile);
                     }
                 }
@@ -89,22 +92,50 @@ public class UserLinkedProfilesService {
             userRepository.save(user);
         }
     }
-
+    
     // Updated steam method to check for duplicates
     public void addSteamProfileToLinkedProfiles(User user){
         if(checkIfUserHasSteamProfile(user.getId())){
             for(SteamProfile steamProfile : user.getSteamProfiles()){
                 if(steamProfile.getUser().getId().equals(user.getId())){
                     String gamertag = steamProfile.getPersonaname();
-                    if(!isAlreadyLinked(user, "Steam", gamertag)){
+                    // Look for an existing linked profile with the same platform and gamertag
+                    Optional<LinkedProfiles> existingLinkedProfile = user.getLinkedProfiles().stream()
+                            .filter(lp -> lp.getPlatform().equals("Steam") && lp.getGamertag().equals(gamertag))
+                            .findFirst();
+                    if(existingLinkedProfile.isPresent()){
+                        // Update the steamId if it's null
+                        LinkedProfiles lp = existingLinkedProfile.get();
+                        if(lp.getSteamId() == null) {
+                            lp.setSteamId(steamProfile.getSteamid());
+                        }
+                    } else {
+                        // Create a new linked profile if not already present
                         LinkedProfiles linkedProfile = new LinkedProfiles();
                         linkedProfile.setPlatform("Steam");
                         linkedProfile.setGamertag(gamertag);
+                        linkedProfile.setSteamId(steamProfile.getSteamid());
                         user.getLinkedProfiles().add(linkedProfile);
                     }
                 }
             }
             userRepository.save(user);
         }
+    }
+    
+    /*
+     * Retrieve all linked profiles for a user
+     * @param userId the ID of the user
+     * return list of linked profiles
+     */
+    public List<LinkedProfiles> getAllLinkedProfiles(Long userId){
+        // find the user by id->
+        return userRepository.findById(userId)
+                .map(user -> {
+                    addXboxProfileToLinkedProfiles(user);
+                    addSteamProfileToLinkedProfiles(user);
+                    return new ArrayList<>(user.getLinkedProfiles());
+                })
+                .orElse(new ArrayList<>()); // Return empty list if user not found
     }
 }
