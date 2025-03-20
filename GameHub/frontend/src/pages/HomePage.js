@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
-import NavHelper  from '../component/NavHelper';
+import NavHelper from "../component/NavHelper";
 import {
   fetchXboxProfile,
   fetchPSNProfile,
@@ -15,25 +15,27 @@ import { getRecentGames } from "../service/RecentGamesXbox";
 import { fetchRecentNews } from "../service/NewsService";
 import { postNews } from "../service/PostNewsService";
 import { checkAccountType } from "../utility/CheckAccountType";
-import {getSteamRecentPlayedGames} from "../service/SteamRecentPlayedAndOwnedGames";
+import { getSteamRecentPlayedGames } from "../service/SteamRecentPlayedAndOwnedGames";
 import {
   searchUserProfile,
-  getAllLinkedProfiles,
-} from "../service/searchUserProfile"; // Added getAllLinkedProfiles
-import { addFriend } from "../service/AddFriendService"; // add friend service
+} from "../service/searchUserProfile";
+import {switchUserAccount} from "../utility/SwitchUserAccount";
 import {
+  addFriend,
   checkFriendRequest,
   acceptFriendRequest,
   getAllFriends,
 } from "../service/AddFriendService";
 
+import { getAllLinkedProfiles } from "../service/UserLinkedProfiles";
+
 class HomePage extends Component {
   state = {
     accountInfo: null,
-    platform: null,
+    platform: localStorage.getItem("platform") ||  null,
     isFetching: true,
 
-    friends: [], // from fetchXboxFriends (Xbox only)
+    friends: [],
     isFetchingFriends: true,
 
     recentGames: [],
@@ -52,36 +54,55 @@ class HomePage extends Component {
     selectedUserGames: [],
     showMoreSelectedUserGames: false,
 
-    // For linked profiles (for example, Xbox linked accounts)
+    // Linked profiles (only additional accounts, not including the logged in user)
     linkedProfiles: [],
-    showLinkedProfiles: false, // Controls whether the linked profiles list is visible
 
+    // Pending friend requests
     pendingRequests: [],
     showPendingList: false,
 
-    showFriendList: false,
-    acceptFriendRequest: [],
-
     // For custom friend list from your backend
-    friendsList: [], // Mismatch corrected: we store the entire friend object(s) here
+    friendsList: [],
     isFriendsDropdownOpen: false,
-    // state for dropdwon visibility 
+
+    // Dropdown visibility for account section
     accountOptionVisible: false,
   };
 
-  // methods to handle mouse hover events - 
-  mouseOverToggle = () =>{
-    this.setState({accountOptionVisible: true});
-  };
+  componentDidMount(){
+    this.fetchData();
+  }
 
-  mouseOutToggle = () =>{
-    this.setState({accountOptionVisible: false});
-  };
+  componentDidUpdate(prevProps, prevState) {
+    const currentPlatform = localStorage.getItem("platform");
+    if (currentPlatform !== prevState.platform) {
+      this.setState({ platform: currentPlatform }, () => {
+        this.fetchData(true);
+      });
+    }
+  }
 
-  componentDidMount() {
+  fetchData = (isPlatformSwitch = false) => {
     this.fetchNews();
+    this.fetchAccountInfo(isPlatformSwitch);
+    this.checkForPendingRequests();
+    this.fetchFriendsList();
+  };
+
+  fetchAccountInfo = async (isPlatformSwitch = false) => {
+    if (isPlatformSwitch) {
+      this.setState({
+        isFetching: true,
+        friends: [],
+        recentGames: [],
+        isFetchingFriends: true,
+        isFetchingRecentGames: true,
+      });
+    }
+
+  
     const platform = localStorage.getItem("platform");
-    console.log("HomePage mounting with platform:", platform);
+    console.log("Fetching data for platform:", platform);
 
     if (!platform) {
       toast.error("No platform selected. Please log in again.");
@@ -89,7 +110,6 @@ class HomePage extends Component {
       return;
     }
 
-    // pick the right profile fetcher
     const profileFetchers = {
       xbox: fetchXboxProfile,
       psn: fetchPSNProfile,
@@ -103,56 +123,139 @@ class HomePage extends Component {
       return;
     }
 
-    this.setState({ platform });
+    try {
+      const accountInfo = await fetchProfile();
+      this.setState({ accountInfo, isFetching: false });
 
-    // load the user account info, then friends & linked profiles if needed
-    const fetchAccountInfo = async () => {
-      try {
-        const accountInfo = await fetchProfile();
-        this.setState({ accountInfo, isFetching: false });
+      const linkedProfilesResponse = await getAllLinkedProfiles();
+      const combinedProfiles = Array.isArray(linkedProfilesResponse)
+        ? linkedProfilesResponse.flat()
+        : [
+            ...(linkedProfilesResponse.xboxLinkedProfiles || []),
+            ...(linkedProfilesResponse.steamLinkedProfiles || []),
+          ];
+      this.setState({ linkedProfiles: combinedProfiles });
 
-        if (platform === "xbox") {
-          // Fetch friends for Xbox
-          try {
-            const friends = await fetchXboxFriends();
-            const recentGames = await getRecentGames(); // Xbox games
-            const linkedProfiles = await getAllLinkedProfiles();
-            this.setState({ 
-              friends, 
-              recentGames,
-              linkedProfiles,
-              isFetchingFriends: false,
-              isFetchingRecentGames: false 
-            });
-          } catch (error) {
-            console.error("Xbox data fetch error:", error);
-          }
-        }      
-      // Fetch recent games and played games for Steam
-      else if (platform === "steam") {
-        try{
-          const recentGames = await getSteamRecentPlayedGames();
-          const friends = await fetchSteamFriends();
-          this.setState({ friends, recentGames, isFetchingRecentGames: false, isFetchingFriends:false});
-        }catch(error){
-          console.error(error);
-          toast.error("Failed to fetch recent games.");
-        }
+      if (platform === "xbox") {
+        const [friends, recentGames] = await Promise.all([
+          fetchXboxFriends(),
+          getRecentGames(),
+        ]);
+        this.setState({
+          friends,
+          recentGames,
+          isFetchingFriends: false,
+          isFetchingRecentGames: false,
+        });
+      } else if (platform === "steam") {
+        const [friends, recentGames] = await Promise.all([
+          fetchSteamFriends(),
+          getSteamRecentPlayedGames(),
+        ]);
+        this.setState({
+          friends,
+          recentGames,
+          isFetchingFriends: false,
+          isFetchingRecentGames: false,
+        });
       }
-    }catch (error) {
+    } catch (error) {
       console.error(error);
       localStorage.removeItem("platform");
       toast.error("Failed to fetch profile information.");
       window.location.href = "/";
     }
   };
+  //   componentDidMount() {
+  //   this.fetchNews();
+  //   const platform = localStorage.getItem("platform");
+  //   console.log("HomePage mounting with platform:", platform);
 
-    fetchAccountInfo();
-    this.checkForPendingRequests();
+  //   if (!platform) {
+  //     toast.error("No platform selected. Please log in again.");
+  //     window.location.href = "/";
+  //     return;
+  //   }
 
-    // Optionally fetch the custom friend list from your own backend
-    this.fetchFriendsList();
-  }
+  //   // Pick the right profile fetcher
+  //   const profileFetchers = {
+  //     xbox: fetchXboxProfile,
+  //     psn: fetchPSNProfile,
+  //     steam: fetchSteamProfile,
+  //   };
+
+  //   const fetchProfile = profileFetchers[platform];
+  //   if (!fetchProfile) {
+  //     toast.error("Unsupported platform. Please log in again.");
+  //     window.location.href = "/";
+  //     return;
+  //   }
+
+  //   this.setState({ platform });
+
+  //   const fetchAccountInfo = async () => {
+  //     try {
+  //       const accountInfo = await fetchProfile();
+  //       this.setState({ accountInfo, isFetching: false });
+
+  //       // Fetch linked profiles and combine two array lists into one
+  //       try {
+  //         const linkedProfilesResponse = await getAllLinkedProfiles();
+  //         // If getAllLinkedProfiles returns an array of two arrays:
+  //         const combinedProfiles = Array.isArray(linkedProfilesResponse)
+  //           ? linkedProfilesResponse.flat()
+  //           : // Otherwise, if it returns an object with two arrays:
+  //             [
+  //               ...(linkedProfilesResponse.xboxLinkedProfiles || []),
+  //               ...(linkedProfilesResponse.steamLinkedProfiles || []),
+  //             ];
+  //         this.setState({ linkedProfiles: combinedProfiles });
+  //       } catch (error) {
+  //         console.error("Error fetching linked profiles:", error);
+  //       }
+
+  //       if (platform === "xbox") {
+  //         try {
+  //           const friends = await fetchXboxFriends();
+  //           const recentGames = await getRecentGames();
+  //           this.setState({
+  //             friends,
+  //             recentGames,
+  //             isFetchingFriends: false,
+  //             isFetchingRecentGames: false,
+  //           });
+  //         } catch (error) {
+  //           console.error("Xbox data fetch error:", error);
+  //         }
+  //       } else if (platform === "steam") {
+  //         try {
+  //           const friends = await fetchSteamFriends();
+  //           const recentGames = await getSteamRecentPlayedGames();
+  //           this.setState({
+  //             friends,
+  //             recentGames,
+  //             isFetchingFriends: false,
+  //             isFetchingRecentGames: false,
+  //           });
+  //         } catch (error) {
+  //           console.error(error);
+  //           toast.error("Failed to fetch recent games (Steam).");
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       localStorage.removeItem("platform");
+  //       toast.error("Failed to fetch profile information.");
+  //       window.location.href = "/";
+  //     }
+  //   };
+
+  //   fetchAccountInfo();
+  //   this.checkForPendingRequests();
+  //   this.fetchFriendsList();
+  // }
+
+  // ----- Data Fetching Helpers -----
 
   fetchNews = async () => {
     this.setState({ isFetchingRecentNews: true });
@@ -166,10 +269,9 @@ class HomePage extends Component {
     }
   };
 
-  // fetch the custom friend list from your backend
   fetchFriendsList = async () => {
     try {
-      const friendsList = await getAllFriends(); // from AddFriendService
+      const friendsList = await getAllFriends();
       console.log("All friends list:", friendsList);
       this.setState({ friendsList });
     } catch (err) {
@@ -177,31 +279,13 @@ class HomePage extends Component {
     }
   };
 
-  // Toggle the collapsible friend list
-  toggleFriendsDropDown = async () => {
-    // If about to open the dropdown, refresh the data (optional)
-    if (!this.state.isFriendsDropdownOpen) {
-      await this.fetchFriendsList();
-    }
-    this.setState((prev) => ({
-      isFriendsDropdownOpen: !prev.isFriendsDropdownOpen,
-    }));
-  };
+  // ----- Pending Friend Requests -----
 
-  // If you want to navigate to a friend’s page
-  navigateToFriendPage = (friendId) => {
-    this.props.navigate(`/user/${friendId}`);
-  };
-
-  // Check for pending friend requests
   checkForPendingRequests = async () => {
     try {
       const pendingRequests = await checkFriendRequest();
       console.log("Pending friend requests:", pendingRequests);
       this.setState({ pendingRequests });
-      if (this.state.pendingRequests[0]?.status === "accept") {
-        this.setState({ showFriendList: true, showPendingList: false });
-      }
     } catch (err) {
       console.error("Failed to fetch pending friend requests:", err);
     }
@@ -211,38 +295,35 @@ class HomePage extends Component {
     this.setState((prev) => ({ showPendingList: !prev.showPendingList }));
   };
 
-  // handle accept button
   handleAcceptBtn = async () => {
     try {
-      // username of requester from the pending request
       const username = this.state.pendingRequests[0].username;
       const acceptFriend = await acceptFriendRequest(username);
       console.log("Accepting friend request:", acceptFriend);
-      this.setState({ acceptFriendRequest: acceptFriend });
+      this.checkForPendingRequests();
+      this.fetchFriendsList();
     } catch (err) {
       console.error("Failed to accept friend request:", err);
     }
   };
 
-  // handle adding a friend
-  handleFriendBtn = async () => {
-    try {
-      const userToRequest = this.state.selectedUserProfile.username;
-      console.log("Adding friend:", userToRequest);
+  // ----- Friend List -----
 
-      const result = await addFriend(userToRequest);
-      if (result.success) {
-        toast.success("Friend request sent successfully.");
-      } else {
-        toast.error("Failed to send friend request.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to send friend request.");
+  toggleFriendsDropDown = async () => {
+    if (!this.state.isFriendsDropdownOpen) {
+      await this.fetchFriendsList();
     }
+    this.setState((prev) => ({
+      isFriendsDropdownOpen: !prev.isFriendsDropdownOpen,
+    }));
   };
 
-  // handle search user change
+  navigateToFriendPage = (friendId) => {
+    this.props.navigate(`/user/${friendId}`);
+  };
+
+  // ----- Search Handling -----
+
   handleSearchChange = async (event) => {
     const newQuery = event.target.value;
     this.setState({ searchQuery: newQuery, selectedUser: null }, async () => {
@@ -250,11 +331,9 @@ class HomePage extends Component {
         this.setState({ searchResult: null });
         return;
       }
-
       try {
         const result = await searchUserProfile(newQuery);
         console.log("Search result:", result);
-
         if (result) {
           this.setState({
             searchResult: result,
@@ -276,7 +355,6 @@ class HomePage extends Component {
     });
   };
 
-  // Close the selected user profile box
   handleCloseBtn = () => {
     this.setState({
       selectedUser: null,
@@ -285,47 +363,35 @@ class HomePage extends Component {
     });
   };
 
-  // Toggle to show more user games (for search results)
   toggleShowMoreSelectedUserGames = () => {
     this.setState((prevState) => ({
       showMoreSelectedUserGames: !prevState.showMoreSelectedUserGames,
     }));
   };
 
-  // Toggle to show/hide the linked profiles list
-  toggleLinkedProfiles = () => {
-    this.setState((prevState) => ({
-      showLinkedProfiles: !prevState.showLinkedProfiles,
-    }));
+  // ----- Add Friend from Search -----
+
+  handleFriendBtn = async () => {
+    try {
+      const userToRequest = this.state.selectedUserProfile.username;
+      console.log("Adding friend:", userToRequest);
+      const result = await addFriend(userToRequest);
+      if (result.success) {
+        toast.success("Friend request sent successfully.");
+      } else {
+        toast.error("Failed to send friend request.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send friend request.");
+    }
   };
 
-  // Toggle to show more games (own profile)
-  handleShowMoreGames = () => {
-    this.setState((prevState) => ({
-      showMoreGames: !prevState.showMoreGames,
-    }));
-  };
+  // ----- News Sharing -----
 
-  // navigation helpers
-  navigateClips = () => {
-    this.props.navigate("/clips");
-  };
-  navigateCommunity = () => {
-    this.props.navigate("/community");
-  };
-  navigateNews = () => {
-    this.props.navigate("/news");
-  }
-  navigateMyGames = () => {
-    this.props.navigate("/mygames");
-  }
-
-  // share news
   handleShareNews = async (news) => {
     const contentText = `Check out this news: ${news.name}`;
-    const sharedNewsId = news.slug; 
-    console.log("Sharing news with ID:", sharedNewsId);
-
+    const sharedNewsId = news.slug;
     try {
       const result = await postNews(contentText, sharedNewsId);
       if (result.success) {
@@ -339,8 +405,27 @@ class HomePage extends Component {
     }
   };
 
+  // ----- Navigation Buttons -----
+
+  navigateClips = () => {
+    this.props.navigate("/clips");
+  };
+
+  navigateCommunity = () => {
+    this.props.navigate("/community");
+  };
+
+  navigateNews = () => {
+    this.props.navigate("/news");
+  };
+
+  navigateMyGames = () => {
+    this.props.navigate("/my-games");
+  };
+
+  // ----- Render -----
+
   render() {
-    // Destructure the main state variables you need in render
     const {
       accountInfo,
       isFetching,
@@ -356,20 +441,20 @@ class HomePage extends Component {
       selectedUserGames,
       showMoreSelectedUserGames,
       linkedProfiles,
-      showLinkedProfiles,
       pendingRequests,
       showPendingList,
-      // newly destructured:
       friendsList,
       isFriendsDropdownOpen,
+      accountOptionVisible,
+      platform,
     } = this.state;
 
     if (isFetching) {
       return <p>Loading profile...</p>;
     }
 
-    // Filter out linked profiles so that only unsinged (other) profiles are shown
-    const nonSignedLinkedProfiles = linkedProfiles.filter(
+    // Filter out the logged-in account from the linkedProfiles list
+    const nonSignedLinkedProfiles = (linkedProfiles || []).filter(
       (profile) => profile.gamertag !== accountInfo.gamertag
     );
 
@@ -383,7 +468,7 @@ class HomePage extends Component {
               News
             </button>
             <button onClick={this.navigateClips} className="nav-button">
-              CLIPS
+              Clips
             </button>
             <button onClick={this.navigateCommunity} className="nav-button">
               Community Insight
@@ -398,7 +483,6 @@ class HomePage extends Component {
                 value={searchQuery || ""}
                 onChange={this.handleSearchChange}
               />
-              {/* If user typed >=3 chars and we have a searchResult, show a preview */}
               {searchQuery.length >= 3 && searchResult && (
                 <div
                   className="search-result-preview"
@@ -417,74 +501,72 @@ class HomePage extends Component {
                       "/default-avatar.png"
                     }
                     alt="User Avatar"
-                  />                  
-                    <span>{searchResult.profile.gamertag}</span>
+                  />
+                  <span>{searchResult.profile.gamertag}</span>
                 </div>
               )}
             </div>
 
-            {/* Account Info Section with Linked Profiles Toggle */}
-            <div className="account-section" 
-                onMouseEnter={() => this.setState({ accountOptionVisible: true })} 
-                onMouseLeave={() => this.setState({ accountOptionVisible: false })}
-              >
-                <div className="gamertag-display">
-                  <p>{accountInfo.gamertag}</p>
-                  {nonSignedLinkedProfiles.length > 0 && (
-                    <button
-                      onClick={this.toggleLinkedProfiles}
-                      className="toggle-linked-profiles"
-                    >
-                      {showLinkedProfiles ? "▲" : "▼"}
-                    </button>
-                  )}
-                </div>
-
-                {/* Profile Image */}
-                <img
-                  src={accountInfo.appDisplayPicRaw}
-                  alt="Profile"
-                  className="profile-image"
-                />
-
-                {/* Hover Dropdown */}
-                {this.state.accountOptionVisible && (
-                  <div className="account-options-dropdown">
-                    <ul>
-                      <li>Profile</li>
-                      <li>Friends</li>
-                      <li>
-                        <NavHelper page="/my-games">My Games</NavHelper>
-                      </li>
-                      <li>Wishlist</li>
-                      <li>Collections</li>
-                      <li>Settings</li>
-                    </ul>
-                  </div>
-                )}
+            {/* Account Section (Gamertag + Avatar) */}
+            <div
+              className="account-section"
+              onMouseEnter={() =>
+                this.setState({ accountOptionVisible: true })
+              }
+              onMouseLeave={() =>
+                this.setState({ accountOptionVisible: false })
+              }
+            >
+              <div className="gamertag-display">
+                <p>
+                  {accountInfo.gamertag} ({platform})
+                </p>
               </div>
-              {/* Render additional linked profiles when toggled */}
-              {showLinkedProfiles && (
-                <div className="linked-profiles">
-                  {nonSignedLinkedProfiles.map((profile, index) => (
-                    <div key={index} className="linked-profile-item">
-                      <img
-                        src={profile.appDisplayPicRaw}
-                        alt="Linked Profile"
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                      <span>{profile.gamertag}</span>
-                    </div>
-                  ))}
+              <img
+                src={accountInfo.appDisplayPicRaw}
+                alt="Profile"
+                className="profile-image"
+              />
+
+              {/* Hover Dropdown: Linked Profiles & Menu Options */}
+              {accountOptionVisible && (
+                <div className="account-options-dropdown">
+                  <div className="linked-profiles-dropdown">
+                    {nonSignedLinkedProfiles.length > 0 ? (
+                      nonSignedLinkedProfiles.map((profile, index) => (
+                        <div key={index} className="linked-profile-item">
+                          <span className="linked-gamertag">
+                            {profile.gamertag}
+                          </span>
+                          <span className="linked-platform">
+                            ({profile.platform})
+                            <button 
+                              onClick={() => switchUserAccount(profile.platform, this.props.navigate)}
+                            >
+                              Switch
+                            </button>
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-linked-accounts">No linked accounts</p>
+                    )}
+                  </div>
+                  <ul>
+                    <li>Profile</li>
+                    <li>Friends</li>
+                    <li>
+                      <NavHelper page="/my-games">My Games</NavHelper>
+                    </li>
+                    <li>Wishlist</li>
+                    <li>Collections</li>
+                    <li>Settings</li>
+                  </ul>
                 </div>
               )}
-            {/* </div> */}
+            </div>
 
-            {/* Only show mailbox if we have at least one pending request */}
+            {/* Pending Friend Requests / Mailbox */}
             {pendingRequests.length > 0 && (
               <>
                 <button
@@ -504,9 +586,12 @@ class HomePage extends Component {
                         {pendingRequests.map((req) => (
                           <li key={req.id}>
                             <p>
-                              {req.username} sent a follow request ({req.status})
+                              {req.username} sent a follow request (
+                              {req.status})
                             </p>
-                            <button onClick={this.handleAcceptBtn}>Accept</button>
+                            <button onClick={this.handleAcceptBtn}>
+                              Accept
+                            </button>
                             <button>Decline</button>
                           </li>
                         ))}
@@ -519,7 +604,7 @@ class HomePage extends Component {
           </nav>
         </header>
 
-        {/* Collapsible "My Friends" section (outside nav if you prefer) */}
+        {/* Collapsible "My Friends" section */}
         <div
           className="friends-drop-down"
           onClick={this.toggleFriendsDropDown}
@@ -531,7 +616,6 @@ class HomePage extends Component {
           </span>
         </div>
 
-        {/* If open, show the friend list */}
         {isFriendsDropdownOpen && (
           <div className="friends-dropdown-content" style={{ marginLeft: "32px" }}>
             {friendsList.length === 0 ? (
@@ -539,14 +623,10 @@ class HomePage extends Component {
             ) : (
               <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
                 {friendsList.map((friend) => {
-                  // If your friend object includes an array of xboxProfiles,
-                  // let's assume the first one holds the gamertag
-                  
                   let gamertag = "";
                   if (friend.xboxProfiles && friend.xboxProfiles.length > 0) {
                     gamertag = friend.xboxProfiles[0].xboxGamertag;
                   }
-
                   return (
                     <li
                       key={friend.id}
@@ -568,7 +648,6 @@ class HomePage extends Component {
         )}
 
         <div className="container">
-          {/* If a user was found (via search) and we have user profile data */}
           {selectedUserProfile && (
             <div className="selected-user-container">
               <button className="close-btn" onClick={this.handleCloseBtn}>
@@ -588,7 +667,6 @@ class HomePage extends Component {
                 className="selected-user-avatar"
               />
 
-              {/* Show some recent games for the searched user */}
               <div className="selected-user-games">
                 <h3>Recent Games</h3>
                 <div className="selected-user-games-list">
@@ -651,7 +729,6 @@ class HomePage extends Component {
                                   )
                                 : "N/A"}
                             </p>
-
                             <div className="news-extra-details">
                               <p className="news-release-date">
                                 Release Date: {newsItem.released}
@@ -705,11 +782,9 @@ class HomePage extends Component {
                           <img src={game.displayImage} alt={game.name} />
                           <div className="game-name">{game.name}</div>
                           <div className="game-info">
-                            {game.titleHistory && game.titleHistory.lastTimePlayedFormatted
-                              ? `Play Time In The Last 2 Weeks: ${game.titleHistory.lastTimePlayedFormatted}`
-                              : "Recent Playtime: Not available"}
-                            <br />
-                            {game.totalPlaytime ? `Total Playtime: ${game.totalPlaytime}` : ""}
+                            {game.titleHistory?.lastTimePlayedFormatted
+                              ? `Last Played: ${game.titleHistory.lastTimePlayedFormatted}`
+                              : "Recent Playtime: N/A"}
                           </div>
                           <div className="game-devices">
                             {game.devices && game.devices.length > 0
@@ -725,7 +800,8 @@ class HomePage extends Component {
                 </div>
               </section>
             </div>
-            {/* FRIENDS LIST (Xbox friends, if platform is Xbox) */}
+
+            {/* FRIENDS LIST */}
             <aside className="friends-list">
               <h2>Friends</h2>
               <div className="content-box">
