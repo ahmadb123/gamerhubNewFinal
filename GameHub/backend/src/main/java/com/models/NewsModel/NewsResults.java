@@ -1,7 +1,6 @@
 package com.models.NewsModel;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,9 +23,13 @@ public class NewsResults {
     private List<Ratings> ratings = new ArrayList<>(); // Ratings of the game
     private String background_image_additional; // Additional background image of the game
     private String website;  // game website official link
+    private List<AddedByStatus> addedByStatus = new ArrayList<>(); // added by status
+    private List<Developers> developers = new ArrayList<>(); // developers of the game
     // for testing - 
     private String setContentText;
-
+    private int added; // number of times the game has been added to the library
+    private String metacritic_url; // metacritic url of the game
+    private int reviews_count; // number of reviews for the game
     // Getters and Setters
 
     public long getId() {
@@ -36,6 +39,19 @@ public class NewsResults {
     public void setId(long id) {
         this.id = id;
     }
+
+    public String getMetacritic_url() {
+        return metacritic_url;
+    }
+
+    public void setMetacritic_url(String metacritic_url) {
+        this.metacritic_url = metacritic_url;
+    }
+
+    public String getSetContentText() {
+        return setContentText;
+    }
+
 
     public double getAverageRating() {
         return averageRating;
@@ -51,6 +67,14 @@ public class NewsResults {
 
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public int getAdded() {
+        return added;
+    }
+
+    public void setAdded(int added) {
+        this.added = added;
     }
 
     public String getDesc() {
@@ -146,6 +170,14 @@ public class NewsResults {
         this.rating = rating;
     }
 
+    public int getReviews_count() {
+        return reviews_count;
+    }
+
+    public void setReviews_count(int reviews_count) {
+        this.reviews_count = reviews_count;
+    }
+
     public String getUpdated() {
         return updated;
     }
@@ -181,4 +213,21 @@ public class NewsResults {
     public void setBackground_image_additional(String background_image_additional) {
         this.background_image_additional = background_image_additional;
     }
+
+    public List<AddedByStatus> getAddedByStatus() {
+        return addedByStatus;
+    }
+
+    public void setAddedByStatus(List<AddedByStatus> addedByStatus) {
+        this.addedByStatus = addedByStatus;
+    }
+
+    public List<Developers> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(List<Developers> developers) {
+        this.developers = developers;
+    }
+
 }

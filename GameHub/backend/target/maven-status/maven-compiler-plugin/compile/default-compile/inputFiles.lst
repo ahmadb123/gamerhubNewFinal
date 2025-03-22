@@ -1,5 +1,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/DemoApplication.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/FriendsRepository.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/MessagesRepository/DirectMessageRepository.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/MessagesRepository/DirectMessageSessionRepository.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/PostNewsRepository.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/SteamProfileRepository.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/Repository/UserRepository.java
@@ -9,10 +11,12 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/config/AppConfig.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/config/CorsConfig.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/config/SecurityConfig.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/config/WebSocketConfig.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/CommunityInsightController/PostNewsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/FriendsController/FriendsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/GameTrailerFromYoutubeController/GameTrailersController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/LoginController/Authentication.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/MessageController/DirectMessageController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/NewsController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SaveUserGamesController/SaveGamesController.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/controllers/SearchUserController.java
@@ -32,6 +36,8 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/UserDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/XboxProfileDTO.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/dto/XboxRecentGameDTO.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/ChatsAndDirectMessages/DirectMessageSession.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/ChatsAndDirectMessages/DirectMessages.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/CommunityInsight/PostNews.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/DataModelAccountLinks/XboxRecentGame.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/FriendsModel/Friends.java
@@ -39,6 +45,8 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/GameClipRecordXbox/GameClips.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/GameClipRecordXbox/GameClipsUri.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/GameClipRecordXbox/Thumbnail.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/AddedByStatus.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Developers.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/GameDetails.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Genres.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/News.java
@@ -47,6 +55,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Platform.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Platforms.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Ratings.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Requirement.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/ShortScreenShotNews.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Store.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/models/NewsModel/Stores.java
@@ -83,6 +92,7 @@
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/FriendsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/GameClipsServiceXbox.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/GameTrailerFromYoutubeService.java
+/Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/MessagesService/DirectMessagesService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/NewsService.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/OAuth2Service.java
 /Users/ahmadbishara/Desktop/GameHub/backend/src/main/java/com/services/PostNewsService.java

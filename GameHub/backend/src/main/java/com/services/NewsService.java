@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.models.NewsModel.Developers;
 import com.models.NewsModel.Genres;
 import com.models.NewsModel.News;
 import com.models.NewsModel.NewsResults;
 import com.models.NewsModel.Platform;
 import com.models.NewsModel.Platforms;
 import com.models.NewsModel.Ratings;
+import com.models.NewsModel.Requirement;
 import com.models.NewsModel.ShortScreenShotNews;
 import com.models.NewsModel.Store;
 import com.models.NewsModel.Stores;
@@ -145,7 +147,8 @@ public class NewsService {
                         }
                         // calculate average rating
                         double averageRating = (totalCount > 0) ?  totalScoreSum / totalCount : 0;
-                        newsResults.setAverageRating(averageRating);
+                        String formattedAvgRating = String.format("%.2f", averageRating);
+                        newsResults.setAverageRating(Double.parseDouble(formattedAvgRating));
 
                         // sort rating by count - 
                         allRatings.sort((r1, r2) -> r2.getCount() - r1.getCount());
@@ -290,7 +293,8 @@ public class NewsService {
                         }
                         // calculate average rating
                         double averageRating = (totalCount > 0) ?  totalScoreSum / totalCount : 0;
-                        newsResults.setAverageRating(averageRating);
+                        String formattedAvgRating = String.format("%.2f", averageRating);
+                        newsResults.setAverageRating(Double.parseDouble(formattedAvgRating));
 
                         // sort rating by count - 
                         allRatings.sort((r1, r2) -> r2.getCount() - r1.getCount());
@@ -335,6 +339,10 @@ public class NewsService {
                 newsResult.setBackground_image(response.get("background_image").asText());
                 newsResult.setWebsite(response.get("website").asText());    
                 newsResult.setBackground_image_additional(response.get("background_image_additional").asText());
+                newsResult.setMetacritic_url(response.get("metacritic_url").asText());
+                newsResult.setAdded(response.get("added").asInt());
+                newsResult.setReviews_count(response.get("reviews_count").asInt());
+                newsResult.setReleased(response.get("released").asText());
                 // loop over ratings 
                 if(response.has("ratings") && !response.get("ratings").isNull()){
                     List<Ratings> allRatings  = new ArrayList<>();
@@ -360,6 +368,53 @@ public class NewsService {
                         newsResult.getRatings().add(allRatings.get(i));
                     }
                     newsResult.setRatingTop(topCount);
+                }
+                if(response.has("genres") && !response.get("genres").isNull()){
+                    for(JsonNode genreNode : response.get("genres")){
+                        Genres genreObj = new Genres();
+                        genreObj.setId(genreNode.get("id").asInt());
+                        genreObj.setName(genreNode.get("name").asText());
+                        genreObj.setSlug(genreNode.get("slug").asText());
+                        genreObj.setImage_background(genreNode.get("image_background").asText());
+                        newsResult.getGenres().add(genreObj);
+                    }
+                }
+                if(response.has("platforms") && !response.get("platforms").isNull()){
+                    for(JsonNode platformNode : response.get("platforms")){
+                        Platform platform = new Platform();
+                        Platforms allPlatforms = new Platforms();
+                        JsonNode platformJson = platformNode.get("platform");
+                        platform.setName(platformJson.get("name").asText());
+                        platform.setSlug(platformJson.get("slug").asText());
+                        allPlatforms.setPlatform(platform);
+                        JsonNode releaseDate = platformNode.get("released_at");
+                        if(releaseDate != null && !releaseDate.isNull()){
+                            allPlatforms.setReleased_at(releaseDate.asText());
+                        }
+                        if(platformNode.has("requirements") && !platformNode.get("requirements").isNull()){
+                           Requirement requirements = new Requirement();
+                            JsonNode requirementNode = platformNode.get("requirements");
+                            if(requirementNode.has("minimum") && !requirementNode.get("minimum").isNull()){
+                                requirements.setMinimum(requirementNode.get("minimum").asText());
+                            }
+                            if(requirementNode.has("recommended") && !requirementNode.get("recommended").isNull()){
+                                requirements.setRecommended(requirementNode.get("recommended").asText());
+                            }
+                            allPlatforms.setRequirements(requirements);
+                        }
+                        newsResult.getPlatforms().add(allPlatforms);
+                    }
+                }
+                if(response.has("developers") && !response.get("developers").isNull()){
+                    for(JsonNode developerNode : response.get("developers")){
+                        Developers developers = new Developers();
+                        developers.setId(developerNode.get("id").asInt());
+                        developers.setName(developerNode.get("name").asText());
+                        developers.setSlug(developerNode.get("slug").asText());
+                        developers.setGames_count(developerNode.get("games_count").asInt());
+                        developers.setImage_background(developerNode.get("image_background").asText());
+                        newsResult.getDevelopers().add(developers);
+                    }
                 }
                 return newsResult;
             }

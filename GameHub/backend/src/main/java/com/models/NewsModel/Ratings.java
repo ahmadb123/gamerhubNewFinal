@@ -1,5 +1,9 @@
 package com.models.NewsModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Ratings {
     private int id;
     private String title;
