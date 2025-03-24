@@ -1,10 +1,12 @@
 package com.controllers.MessageController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.Repository.UserRepository;
 import com.Repository.MessagesRepository.DirectMessageSessionRepository;
+import com.dto.DirectMessageDTO;
 import com.dto.DirectMessageSessionDTO;
 import com.models.ChatsAndDirectMessages.DirectMessageSession;
 import com.models.ChatsAndDirectMessages.DirectMessages;
@@ -50,22 +53,18 @@ public class DirectMessageController {
     private DirectMessageSessionRepository directMessageSessionRepository;
     // WebSocket endpoint to handle sending direct messages in real time.
     @MessageMapping("/direct-message/{sessionId}/send")
-    public void handleDirectMessage(@DestinationVariable Long sessionId, DirectMessages message){
+    public void handleDirectMessage(@DestinationVariable Long sessionId, DirectMessages message, @Header("Authorization") String header) {
         // save the message=>
+        if(header == null){
+            throw new RuntimeException("Authorization header is missing");
+        }
+        String jwtToken = header.substring(7);
+        Long senderId = jwt.extractUserId(jwtToken);
+        User sender = userRepository.findById(senderId).orElseThrow(() -> new RuntimeException("User not found")); 
         // the session id could be retrieved from both user 1 and 2?
-        DirectMessages savedMessage = directMessagesService.sendMessage(message.getSender(), sessionId, message.getContent());
-        // Broadcast the saved message to all subscribers on the topic.
-        messagingTemplate.convertAndSend("/topic/direct-message/" + sessionId, savedMessage);
-    }
-
-    // REST endpoint to fetch all messages for a given session.
-    @GetMapping("/api/direct-messages/{sessionId}")
-    public List<DirectMessages> getAllMessages(@PathVariable Long sessionId){
-       // get session 
-        DirectMessageSession session = directMessageSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
-        // return all messages
-        return directMessagesService.getAllMessagesFromSession(session);
+        DirectMessages savedMessage = directMessagesService.sendMessage(sender, sessionId, message.getContent());
+        DirectMessageDTO dto = new DirectMessageDTO(savedMessage.getSender().getUsername(), savedMessage.getContent());
+        messagingTemplate.convertAndSend("/topic/direct-message/" + sessionId, dto);
     }
 
     //  controller for if the user is starting a new session or not->
@@ -115,6 +114,24 @@ public class DirectMessageController {
         // dto to return
         DirectMessageSessionDTO sessionDTO = DirectMessageSessionDTO.fromEntity(session);
         return ResponseEntity.ok(sessionDTO);
+    }
+
+    @GetMapping("/api/get-message-session/{sessionId}")
+    public ResponseEntity<?> getAllSessionMessages(@PathVariable Long sessionId) {
+        try {
+            if(sessionId == null){
+                return ResponseEntity.badRequest().body("Session id is missing");
+            }
+            DirectMessageSession session = directMessageSessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new RuntimeException("Session not found"));
+            List<DirectMessages> messages = directMessagesService.getAllMessagesFromSession(session);
+            List<DirectMessageDTO> dtoList = messages.stream()
+                    .map(msg -> new DirectMessageDTO(msg.getSender().getUsername(), msg.getContent()))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtoList);
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body("Session not found");
+        }
     }
 
 }
