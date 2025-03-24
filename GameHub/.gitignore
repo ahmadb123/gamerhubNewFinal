@@ -1,0 +1,7 @@
+node_modules/
+node_modules/.cache/
+.cache/
+dist/
+build/
+GameHub/frontend/node_modules/
+GameHub/frontend/node_modules/.cache/

@@ -10,6 +10,7 @@ import ClipsPage from "./pages/ClipsPage";
 import MyGames from "./pages/MyGamesPage";
 import GameLayout from './component/GameLayout';
 import GameDetail from './component/GameDetails';
+import DirectMessages from "./pages/DirectMessages";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/clips" element={<ClipsPage />} />
         <Route path="/my-games" element={<MyGames />} />
         <Route path="*" element={<LandingPage />} />
+        <Route path="/direct-messages" element={<DirectMessages />} />
       </Routes>
     </Router>
   );
