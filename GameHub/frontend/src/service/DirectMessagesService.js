@@ -3,7 +3,7 @@
  */
 
 import SockJS from "sockjs-client";
-import { over } from "stompjs";
+import { Stomp } from "@stomp/stompjs";
 const apiUrl = "http://localhost:8080";
 const jwtToken = localStorage.getItem("jwtToken");
 
@@ -97,7 +97,7 @@ export const connectWebSocket = async ({ sessionId, onMessageReceived }) => {
         disconnectWebSocket();
     }
   const socket = new SockJS(`${apiUrl}/ws`);
-  stompClient = over(socket);
+  stompClient = Stomp.over(socket);
   stompClient.connect(
     {},
     (frame) => {
