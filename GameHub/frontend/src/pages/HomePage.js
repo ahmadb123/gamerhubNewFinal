@@ -28,7 +28,7 @@ import {
 } from "../service/AddFriendService";
 
 import { getAllLinkedProfiles } from "../service/UserLinkedProfiles";
-
+const username = localStorage.getItem("username");
 class HomePage extends Component {
   state = {
     accountInfo: null,
@@ -166,94 +166,6 @@ class HomePage extends Component {
       window.location.href = "/";
     }
   };
-  //   componentDidMount() {
-  //   this.fetchNews();
-  //   const platform = localStorage.getItem("platform");
-  //   console.log("HomePage mounting with platform:", platform);
-
-  //   if (!platform) {
-  //     toast.error("No platform selected. Please log in again.");
-  //     window.location.href = "/";
-  //     return;
-  //   }
-
-  //   // Pick the right profile fetcher
-  //   const profileFetchers = {
-  //     xbox: fetchXboxProfile,
-  //     psn: fetchPSNProfile,
-  //     steam: fetchSteamProfile,
-  //   };
-
-  //   const fetchProfile = profileFetchers[platform];
-  //   if (!fetchProfile) {
-  //     toast.error("Unsupported platform. Please log in again.");
-  //     window.location.href = "/";
-  //     return;
-  //   }
-
-  //   this.setState({ platform });
-
-  //   const fetchAccountInfo = async () => {
-  //     try {
-  //       const accountInfo = await fetchProfile();
-  //       this.setState({ accountInfo, isFetching: false });
-
-  //       // Fetch linked profiles and combine two array lists into one
-  //       try {
-  //         const linkedProfilesResponse = await getAllLinkedProfiles();
-  //         // If getAllLinkedProfiles returns an array of two arrays:
-  //         const combinedProfiles = Array.isArray(linkedProfilesResponse)
-  //           ? linkedProfilesResponse.flat()
-  //           : // Otherwise, if it returns an object with two arrays:
-  //             [
-  //               ...(linkedProfilesResponse.xboxLinkedProfiles || []),
-  //               ...(linkedProfilesResponse.steamLinkedProfiles || []),
-  //             ];
-  //         this.setState({ linkedProfiles: combinedProfiles });
-  //       } catch (error) {
-  //         console.error("Error fetching linked profiles:", error);
-  //       }
-
-  //       if (platform === "xbox") {
-  //         try {
-  //           const friends = await fetchXboxFriends();
-  //           const recentGames = await getRecentGames();
-  //           this.setState({
-  //             friends,
-  //             recentGames,
-  //             isFetchingFriends: false,
-  //             isFetchingRecentGames: false,
-  //           });
-  //         } catch (error) {
-  //           console.error("Xbox data fetch error:", error);
-  //         }
-  //       } else if (platform === "steam") {
-  //         try {
-  //           const friends = await fetchSteamFriends();
-  //           const recentGames = await getSteamRecentPlayedGames();
-  //           this.setState({
-  //             friends,
-  //             recentGames,
-  //             isFetchingFriends: false,
-  //             isFetchingRecentGames: false,
-  //           });
-  //         } catch (error) {
-  //           console.error(error);
-  //           toast.error("Failed to fetch recent games (Steam).");
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //       localStorage.removeItem("platform");
-  //       toast.error("Failed to fetch profile information.");
-  //       window.location.href = "/";
-  //     }
-  //   };
-
-  //   fetchAccountInfo();
-  //   this.checkForPendingRequests();
-  //   this.fetchFriendsList();
-  // }
 
   // ----- Data Fetching Helpers -----
 
@@ -423,6 +335,9 @@ class HomePage extends Component {
     this.props.navigate("/my-games");
   };
 
+  navigateToMessages = () =>{
+    this.props.navigate("/direct-messages");
+  };
   // ----- Render -----
 
   render() {
@@ -473,7 +388,9 @@ class HomePage extends Component {
             <button onClick={this.navigateCommunity} className="nav-button">
               Community Insight
             </button>
-
+            <button onClick={this.navigateToMessages} className="nav-button">
+              Direct Messages
+            </button>
             {/* SEARCH BAR */}
             <div className="search-bar">
               <input
@@ -518,6 +435,7 @@ class HomePage extends Component {
               }
             >
               <div className="gamertag-display">
+              <div className="username-display">  Welcome on GamerHub {username} </div>
                 <p>
                   {accountInfo.gamertag} ({platform})
                 </p>

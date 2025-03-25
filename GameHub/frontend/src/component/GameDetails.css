@@ -1,11 +1,27 @@
 .game-detail-container {
+  position: relative;
+  background: transparent; 
   display: flex;
   gap: 2rem;
   margin: 2rem;
   color: #fff;
-  background: #121212; /* dark background for a gaming look */
   padding: 1rem;
   border-radius: 8px;
+}
+
+
+.background-image-container {
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-size: auto;          /* updated to allow repeat */
+  background-position: center;
+  background-repeat: repeat;      /* updated to repeat the image */
+  opacity: 0.5;
+  filter: brightness(0.7) blur(1px); /* Added filter for clarity */
 }
 
 .left-column {

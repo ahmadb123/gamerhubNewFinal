@@ -89,6 +89,9 @@ function GameDetail() {
   return (
     <div className="game-detail-container">
       {/* Left column: Title, buttons, ratings, description, website, etc. */}
+      <div className='background-image-container'
+        style={{ backgroundImage: `url(${game.background_image})` }}
+      />
       <div className="left-column">
         <h1>{game.name}</h1>
 

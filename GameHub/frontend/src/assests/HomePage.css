@@ -656,6 +656,12 @@ body {
   background-color: #666;
 }
 
+.no-linked-accounts {
+  color: #888;
+  font-size: 12px;
+  padding: 8px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .main-content {
