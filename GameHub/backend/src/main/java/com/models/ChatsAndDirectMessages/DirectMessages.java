@@ -1,8 +1,13 @@
+
 package com.models.ChatsAndDirectMessages;
+
+import java.time.LocalDateTime;
 
 import com.models.UserModel.User;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,15 +38,23 @@ public class DirectMessages {
     // text/content->
     private String content;
 
+    // track read/delirved status
+    @Enumerated(EnumType.STRING)
+    private MessageStatus messageStatus = MessageStatus.SENT;
+
+    private LocalDateTime deliveredAt;
+
+    private LocalDateTime readAt; 
     // constructor
 
     public DirectMessages() {
     }
 
-    public DirectMessages(DirectMessageSession session, User sender, String content) {
+    public DirectMessages(DirectMessageSession session, User sender, String content, MessageStatus messageStatus) {
         this.session = session;
         this.sender = sender;
         this.content = content;
+        this.messageStatus = messageStatus;
     }
 
     public Long getId() {
@@ -76,5 +89,27 @@ public class DirectMessages {
         this.content = content;
     }
 
+    public MessageStatus getMessageStatus() {
+        return messageStatus;
+    }
 
+    public void setMessageStatus(MessageStatus messageStatus) {
+        this.messageStatus = messageStatus;
+    }
+
+    public LocalDateTime getDeliveredAt() {
+        return deliveredAt;
+    }
+
+    public void setDeliveredAt(LocalDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+
+    public LocalDateTime getReadAt() {
+        return readAt;
+    }
+
+    public void setReadAt(LocalDateTime readAt) {
+        this.readAt = readAt;
+    }
 }

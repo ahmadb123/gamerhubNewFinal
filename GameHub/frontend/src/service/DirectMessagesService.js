@@ -93,26 +93,25 @@ export const getSessionMessages = async ({ sessionId }) => {
 
 // Function to connect to the WebSocket and subscribe to the topic for the given session.
 export const connectWebSocket = async ({ sessionId, onMessageReceived }) => {
-    if(stompClient){
-        disconnectWebSocket();
-    }
-  const socket = new SockJS(`${apiUrl}/ws`);
-  stompClient = Stomp.over(socket);
-  stompClient.connect(
-    {},
-    (frame) => {
-      console.log("Connected: " + frame);
-      // Subscribe to the topic for this session
-      stompClient.subscribe(`/topic/direct-message/${sessionId}`, (message) => {
-        if (message.body) {
-          onMessageReceived(JSON.parse(message.body));
-        }
-      });
-    },
-    (error) => {
-      console.error("WebSocket connection error:", error);
-    }
-  );
+  return new Promise((resolve) => {
+    if (stompClient) disconnectWebSocket();
+
+    stompClient = Stomp.over(() => new SockJS(`${apiUrl}/ws`));
+    stompClient.connect(
+      {},
+      (frame) => {
+        console.log("Connected: " + frame);
+        stompClient.subscribe(`/topic/direct-message/${sessionId}`, (message) => {
+          if (message.body) onMessageReceived(JSON.parse(message.body));
+        });
+        resolve(); // Resolve promise when connected
+      },
+      (error) => {
+        console.error("Connection error:", error);
+        resolve(); // Still resolve to avoid hanging
+      }
+    );
+  });
 };
 
 // Function to disconnect from the WebSocket.
@@ -133,6 +132,19 @@ export const sendMessages = async ({ sessionId, message }) => {
         Authorization: "Bearer " + jwtToken,
       },
       JSON.stringify(message)
+    );
+  } else {
+    console.error("WebSocket is not connected");
+  }
+};
+
+// New method: send a read receipt.
+export const sendReadReceipt = ({ sessionId, receipt }) => {
+  if (stompClient) {
+    stompClient.send(
+      `/app/direct-message/${sessionId}/read`,
+      { Authorization: "Bearer " + jwtToken },
+      JSON.stringify(receipt)
     );
   } else {
     console.error("WebSocket is not connected");
