@@ -121,7 +121,7 @@
 }
 
 /* Status text for sent messages */
-.status {
+.message-status {
   display: block;
   font-size: 12px;
   color: rgba(0,0,0,0.6);

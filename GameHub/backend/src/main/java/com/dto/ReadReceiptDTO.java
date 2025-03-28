@@ -3,27 +3,30 @@ package com.dto;
 import com.models.ChatsAndDirectMessages.MessageStatus;
 
 public class ReadReceiptDTO {
+    private String eventType; // "READ_RECEIPT"
     private MessageStatus msgStatus;
     private Long sessionId;
     private String receiverUsername;
     private String timestamp;
+    private boolean active;
 
-
-    public ReadReceiptDTO(MessageStatus msgStatus, Long sessionId, String receiverUsername, String timestamp) {
+    public ReadReceiptDTO(MessageStatus msgStatus, Long sessionId, String receiverUsername, String timestamp, String eventType, boolean active) {
         this.msgStatus = msgStatus;
         this.sessionId = sessionId;
         this.receiverUsername = receiverUsername;
         this.timestamp = timestamp;
+        this.eventType = eventType;
+        this.active = active;
     }
 
     public ReadReceiptDTO() {
     }
 
-    public MessageStatus getType() {
+    public MessageStatus getMsgStatus() {
         return msgStatus;
     }
 
-    public void setType(MessageStatus msgStatus) {
+    public void setMsgStatus(MessageStatus msgStatus) {
         this.msgStatus = msgStatus;
     }
 
@@ -50,4 +53,21 @@ public class ReadReceiptDTO {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 }
