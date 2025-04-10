@@ -177,6 +177,5 @@ public class DirectMessageController {
         receipt.setMsgStatus(MessageStatus.READ);
     
         messagingTemplate.convertAndSend("/topic/direct-message/" + sessionId, receipt);
-    }
-    
+    }    
 }

@@ -1,0 +1,51 @@
+/* src/components/Dropdown.css */
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropbtn {
+    background-color: black;
+    border: 1px solid #ccc;
+    color: white;
+    font-size: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .arrow {
+    margin-left: 8px;
+    font-size: 0.8em;
+  }
+  
+.dropdown-content {
+  top: 100%;         /* Appear just below the button */
+  left: 0;           /* Align to the left edge of the dropdown button */
+  margin-top: 4px;   /* Small gap below the button */
+  background-color: #ffffff;
+  min-width: 140px;
+  max-height: 200px; /* Limit the dropdown height */
+  overflow-y: auto;  /* Scroll if the content is taller than 200px */
+  border: 1px solid #ccc;
+  border-radius: 4px; /* Rounded corners (optional) */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  transform: translateY(4px);
+  right: 0;
+}
+
+  
+  .dropdown-content a {
+    color: #333;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    font-size: 12px;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  

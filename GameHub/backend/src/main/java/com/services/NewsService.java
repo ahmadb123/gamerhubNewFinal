@@ -26,6 +26,7 @@ public class NewsService {
     private SaveGamesService saveGamesService;
     private static final String API_KEY = "c6558e8ad9d54b4ca3697d0e63ac86ad";
     private static final String BASE_URL = "https://api.rawg.io/api/games";
+    
     public List<News> getNews(
         String startDate,
         String endDate,

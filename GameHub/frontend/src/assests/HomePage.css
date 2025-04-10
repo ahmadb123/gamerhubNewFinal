@@ -36,13 +36,19 @@ body {
   color: white;
   width: 100%;
   box-sizing: border-box;
+  /* Make the header stick to the top of the viewport */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensures that it stays above other content */
 }
+
 
 .logo {
   font-size: 24px;
 }
 
 .navbar {
+  position: sticky;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -218,18 +224,17 @@ body {
 }
 
 .friends-dropdown-content {
-  background-color: #222; /* or #1a1a1a */
+  position: absolute;
+  top: 80px; /* increased from 60px for more space down */
+  right: 16px;
+  z-index: 1100;
+  background-color: #222;
   color: #fff;
   border: 1px solid #444;
   width: 250px;
   border-radius: 4px;
   padding: 8px;
-  /* If you want it to appear below the button, you can position it absolutely */
-  position: absolute;
-  margin-top: 4px;
-  z-index: 999;
 }
-
 
 /* Main Content Layout */
 .main-content {
@@ -689,3 +694,5 @@ body {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+

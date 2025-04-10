@@ -3,7 +3,8 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
-import NavHelper from "../component/NavHelper";
+import Dropdown from "../utility/DropDownUtilityClass";
+import { fetchRecentNews, fetchNewsByOrder } from "../service/NewsService";
 import {
   fetchXboxProfile,
   fetchPSNProfile,
@@ -12,14 +13,12 @@ import {
 
 import { fetchXboxFriends, fetchSteamFriends } from "../service/friendsService";
 import { getRecentGames } from "../service/RecentGamesXbox";
-import { fetchRecentNews } from "../service/NewsService";
 import { postNews } from "../service/PostNewsService";
 import { checkAccountType } from "../utility/CheckAccountType";
 import { getSteamRecentPlayedGames } from "../service/SteamRecentPlayedAndOwnedGames";
 import {
   searchUserProfile,
 } from "../service/searchUserProfile";
-import {switchUserAccount} from "../utility/SwitchUserAccount";
 import {
   addFriend,
   checkFriendRequest,
@@ -28,7 +27,6 @@ import {
 } from "../service/AddFriendService";
 
 import { getAllLinkedProfiles } from "../service/UserLinkedProfiles";
-const username = localStorage.getItem("username");
 class HomePage extends Component {
   state = {
     accountInfo: null,
@@ -67,6 +65,17 @@ class HomePage extends Component {
 
     // Dropdown visibility for account section
     accountOptionVisible: false,
+
+    // New state for news selection options
+    newsSelectionOptions: [
+      { label: "Relevance", value: "-metacritic" },
+      { label: "Date added", value: "-added" },
+      { label: "Name", value: "name" },
+      { label: "Release date", value: "-released" },
+      { label: "Popularity", value: "-metacritic" },
+      { label: "Average rating", value: "-rating" },
+    ],
+    selectedOrder: { label: "Relevance", value: "-metacritic" },
   };
 
   componentDidMount(){
@@ -172,7 +181,9 @@ class HomePage extends Component {
   fetchNews = async () => {
     this.setState({ isFetchingRecentNews: true });
     try {
-      const news = await fetchRecentNews();
+      const { selectedOrder } = this.state;
+      const order = selectedOrder.value || "-metacritic";
+      const news = await fetchNewsByOrder(order);
       this.setState({ recentNews: news, isFetchingRecentNews: false });
     } catch (error) {
       console.error(error);
@@ -317,27 +328,18 @@ class HomePage extends Component {
     }
   };
 
-  // ----- Navigation Buttons -----
-
-  navigateClips = () => {
-    this.props.navigate("/clips");
+  // Handler for order selection from dropdown
+  handleOrderSelect = async (ordering) => {
+    console.log("Selected ordering parameter:", ordering);
+    try {
+      const newsByOrder = await fetchNewsByOrder(ordering);
+      this.setState({ recentNews: newsByOrder });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch news by order selection.");
+    }
   };
 
-  navigateCommunity = () => {
-    this.props.navigate("/community");
-  };
-
-  navigateNews = () => {
-    this.props.navigate("/news");
-  };
-
-  navigateMyGames = () => {
-    this.props.navigate("/my-games");
-  };
-
-  navigateToMessages = () =>{
-    this.props.navigate("/direct-messages");
-  };
   // ----- Render -----
 
   render() {
@@ -350,272 +352,27 @@ class HomePage extends Component {
       isFetchingRecentGames,
       recentNews,
       isFetchingRecentNews,
-      searchQuery,
-      searchResult,
-      selectedUserProfile,
-      selectedUserGames,
-      showMoreSelectedUserGames,
-      linkedProfiles,
-      pendingRequests,
-      showPendingList,
-      friendsList,
-      isFriendsDropdownOpen,
-      accountOptionVisible,
-      platform,
+      newsSelectionOptions,
+      selectedOrder,
     } = this.state;
 
     if (isFetching) {
       return <p>Loading profile...</p>;
     }
 
-    // Filter out the logged-in account from the linkedProfiles list
-    const nonSignedLinkedProfiles = (linkedProfiles || []).filter(
-      (profile) => profile.gamertag !== accountInfo.gamertag
-    );
-
     return (
-      <div className="gamerhub">
-        {/* HEADER / NAV */}
-        <header className="header">
-          <h1 className="logo">GamerHUB</h1>
-          <nav className="navbar">
-            <button onClick={this.navigateNews} className="nav-button">
-              News
-            </button>
-            <button onClick={this.navigateClips} className="nav-button">
-              Clips
-            </button>
-            <button onClick={this.navigateCommunity} className="nav-button">
-              Community Insight
-            </button>
-            <button onClick={this.navigateToMessages} className="nav-button">
-              Direct Messages
-            </button>
-            {/* SEARCH BAR */}
-            <div className="search-bar">
-              <input
-                type="text"
-                placeholder="Search User..."
-                className="search-input"
-                value={searchQuery || ""}
-                onChange={this.handleSearchChange}
-              />
-              {searchQuery.length >= 3 && searchResult && (
-                <div
-                  className="search-result-preview"
-                  onClick={() =>
-                    this.setState({
-                      selectedUser: searchResult,
-                      searchQuery: "",
-                      searchResult: null,
-                    })
-                  }
-                >
-                  <img
-                    className="search-avatar-preview"
-                    src={
-                      searchResult.profile.appDisplayPicRaw ||
-                      "/default-avatar.png"
-                    }
-                    alt="User Avatar"
-                  />
-                  <span>{searchResult.profile.gamertag}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Account Section (Gamertag + Avatar) */}
-            <div
-              className="account-section"
-              onMouseEnter={() =>
-                this.setState({ accountOptionVisible: true })
-              }
-              onMouseLeave={() =>
-                this.setState({ accountOptionVisible: false })
-              }
-            >
-              <div className="gamertag-display">
-              <div className="username-display">  Welcome on GamerHub {username} </div>
-                <p>
-                  {accountInfo.gamertag} ({platform})
-                </p>
-              </div>
-              <img
-                src={accountInfo.appDisplayPicRaw}
-                alt="Profile"
-                className="profile-image"
-              />
-
-              {/* Hover Dropdown: Linked Profiles & Menu Options */}
-              {accountOptionVisible && (
-                <div className="account-options-dropdown">
-                  <div className="linked-profiles-dropdown">
-                    {nonSignedLinkedProfiles.length > 0 ? (
-                      nonSignedLinkedProfiles.map((profile, index) => (
-                        <div key={index} className="linked-profile-item">
-                          <span className="linked-gamertag">
-                            {profile.gamertag}
-                          </span>
-                          <span className="linked-platform">
-                            ({profile.platform})
-                            <button 
-                              onClick={() => switchUserAccount(profile.platform, this.props.navigate)}
-                            >
-                              Switch
-                            </button>
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="no-linked-accounts">No linked accounts</p>
-                    )}
-                  </div>
-                  <ul>
-                    <li>Profile</li>
-                    <li>Friends</li>
-                    <li>
-                      <NavHelper page="/my-games">My Games</NavHelper>
-                    </li>
-                    <li>Wishlist</li>
-                    <li>Collections</li>
-                    <li>Settings</li>
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Pending Friend Requests / Mailbox */}
-            {pendingRequests.length > 0 && (
-              <>
-                <button
-                  className="mailbox-button"
-                  onClick={this.togglePendingList}
-                  style={{ position: "relative" }}
-                >
-                  Mailbox
-                  <span className="badge">{pendingRequests.length}</span>
-                </button>
-                {showPendingList && (
-                  <div className="pending-dropdown">
-                    {pendingRequests.length === 0 ? (
-                      <p>No pending requests</p>
-                    ) : (
-                      <ul>
-                        {pendingRequests.map((req) => (
-                          <li key={req.id}>
-                            <p>
-                              {req.username} sent a follow request (
-                              {req.status})
-                            </p>
-                            <button onClick={this.handleAcceptBtn}>
-                              Accept
-                            </button>
-                            <button>Decline</button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          </nav>
-        </header>
-
-        {/* Collapsible "My Friends" section */}
-        <div
-          className="friends-drop-down"
-          onClick={this.toggleFriendsDropDown}
-          style={{ cursor: "pointer", margin: "8px 16px" }}
-        >
-          <span>My Friends</span>
-          <span style={{ marginLeft: "8px" }}>
-            {isFriendsDropdownOpen ? "▲" : "▼"}
-          </span>
-        </div>
-
-        {isFriendsDropdownOpen && (
-          <div className="friends-dropdown-content" style={{ marginLeft: "32px" }}>
-            {friendsList.length === 0 ? (
-              <p style={{ padding: "8px" }}>No friends found.</p>
-            ) : (
-              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                {friendsList.map((friend) => {
-                  let gamertag = "";
-                  if (friend.xboxProfiles && friend.xboxProfiles.length > 0) {
-                    gamertag = friend.xboxProfiles[0].xboxGamertag;
-                  }
-                  return (
-                    <li
-                      key={friend.id}
-                      onClick={() => this.navigateToFriendPage(friend.id)}
-                      style={{
-                        padding: "8px",
-                        cursor: "pointer",
-                        borderBottom: "1px solid #ccc",
-                      }}
-                    >
-                      {friend.username}
-                      {gamertag ? ` - ${gamertag}` : ""}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-        )}
-
-        <div className="container">
-          {selectedUserProfile && (
-            <div className="selected-user-container">
-              <button className="close-btn" onClick={this.handleCloseBtn}>
-                X
-              </button>
-              <h2>Xbox Profile Details</h2>
-              <p>Gamertag: {selectedUserProfile.gamertag}</p>
-              <p>Account Tier: {selectedUserProfile.accountTier}</p>
-              <p>Gamerscore: {selectedUserProfile.gamerscore}</p>
-              <p>Tenure Level: {selectedUserProfile.tenureLevel}</p>
-              <button className="add-friend-button" onClick={this.handleFriendBtn}>
-                Add Friend
-              </button>
-              <img
-                src={selectedUserProfile.gameDisplayPicRaw}
-                alt="User Avatar"
-                className="selected-user-avatar"
-              />
-
-              <div className="selected-user-games">
-                <h3>Recent Games</h3>
-                <div className="selected-user-games-list">
-                  {selectedUserGames
-                    .slice(
-                      0,
-                      showMoreSelectedUserGames
-                        ? selectedUserGames.length
-                        : 2
-                    )
-                    .map((game, index) => (
-                      <div className="selected-user-game-card" key={index}>
-                        <img src={game.displayImage} alt={game.gameName} />
-                        <div>{game.gameName}</div>
-                      </div>
-                    ))}
-                </div>
-                {selectedUserGames.length > 2 && (
-                  <button
-                    onClick={this.toggleShowMoreSelectedUserGames}
-                    className="toggle-games-button"
-                  >
-                    {showMoreSelectedUserGames ? "Show Less" : "Show More"}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
           <div className="main-content">
             <div className="news-and-games">
+              {/* Order Selection Dropdown */}
+              <div className="order-dropdown">
+                <Dropdown
+                  options={newsSelectionOptions}
+                  defaultOption={selectedOrder}
+                  label="Order"
+                  onSelect={this.handleOrderSelect}
+                />
+              </div>
+
               {/* NEWS FEED */}
               <section className="news-feed">
                 <h2>News Feed</h2>
@@ -759,19 +516,6 @@ class HomePage extends Component {
               </div>
             </aside>
           </div>
-        </div>
-
-        <footer className="footer">
-          <p>About: Created by Ahmad Bishara</p>
-          <a
-            href="https://github.com/ahmadb123"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub: ahmadb123
-          </a>
-        </footer>
-      </div>
     );
   }
 }

@@ -22,6 +22,7 @@
   border-radius: 10px;
   overflow: hidden;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  position: relative; /* Added for positioning the close button */
 }
 
 /* Sidebar (friend list) styling */
@@ -31,6 +32,9 @@
   color: var(--sidebar-color);
   padding: 20px;
   overflow-y: auto;
+  /* Use flex if you want the button & heading on one line */
+  display:list-item;
+  justify-content: space-between;
 }
 
 .sidebar h2 {
@@ -171,3 +175,25 @@
   font-size: 18px;
   color: #888;
 }
+
+/* Updated close chat button styling */
+.close-window {
+  background-color: var(--s);
+  margin: 10px;
+  left: 0;
+  color: var(--chat-header-color);
+}
+
+.close-window button:hover {
+  padding: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: var(--sidebar-hover-bg);
+
+}
+
+.close-window button:before {
+  content: "\2190"; /* Unicode left arrow */
+  margin-right: 8px;
+}
+

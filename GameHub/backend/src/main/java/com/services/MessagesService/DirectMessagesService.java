@@ -41,6 +41,10 @@ public class DirectMessagesService {
         }
     }    
 
+    // public DirectMessageSession getOrCreateGroupSession(Set<User> participants){
+        
+    // }
+
     // Send a message with SENT status initially.
     public DirectMessages sendMessage(User sender, Long sessionId, String content){
         DirectMessageSession session = directMessageSessionRepository.findById(sessionId)

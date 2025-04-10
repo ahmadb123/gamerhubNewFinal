@@ -33,6 +33,7 @@ public class User {
     private String email;
     private String password;
     private boolean isAuthorized = false;
+    private String userBio;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friends> initiatedFriendRequest = new ArrayList<>();
     @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -126,6 +127,14 @@ public class User {
 
     public void setSteamProfiles(List<SteamProfile> steamProfiles) {
         this.steamProfiles = steamProfiles;
+    }
+
+    public String getUserBio() {
+        return userBio;
+    }
+
+    public void setUserBio(String userBio) {
+        this.userBio = userBio;
     }
     
 }

@@ -27,11 +27,14 @@ import { getAllFriends } from "../service/AddFriendService";
 import { getSessionOrCreate } from "../service/DirectMessagesService";
 import ChatWindow from "../components/ChatWindow";
 import '../assests/DirectMessages.css';
+import { useNavigate } from 'react-router-dom';
 
 function DirectMessages() {
   const [friends, setFriends] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
   const [activeFriend, setActiveFriend] = useState(null);
+  const nav = useNavigate();
+  const jwt = localStorage.getItem('jwtToken');
 
   // Fetch friends once when the component mounts.
   useEffect(() => {
@@ -64,10 +67,21 @@ function DirectMessages() {
     setActiveFriend(null);
   };
 
+  const handleCloseEntireDirectMessages = () =>{
+    if(jwt){
+      nav('/main');
+    }else{
+      nav('login');
+    } 
+  }
+
   return (
     <div className="direct-messages-container">
       <div className="sidebar">
         <h2>Chats</h2>
+        <div className="close-window">
+          <button onClick={handleCloseEntireDirectMessages}></button>
+        </div>
         <div className="friends-list">
           {friends.map((friend) => (
             <div

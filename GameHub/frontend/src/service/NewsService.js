@@ -54,6 +54,26 @@ export const fetchAllNews = async (platform , genre) => {
     }
 };
 
+// get news by order selecion->
+export const fetchNewsByOrder = async (selection) =>{
+    try{
+        const response = await fetch(`${apiUrl}/api/news/get-news-by-order-selection?order=${encodeURIComponent(selection)}`,{
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if(!response.ok){
+            throw new Error(`Failed to fetch news by order selection. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        const flattened = data.flatMap(item => item.results || []);
+        return flattened;
+    }catch(error){
+        console.error(error);
+        throw error;
+    }
+};
 // get all genres - 
 
 export const getGenres = async () => {

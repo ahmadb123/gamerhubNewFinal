@@ -94,3 +94,129 @@ export const fetchSteamProfile = async () => {
     }
 };
   
+
+
+// user update bio service function =-
+
+export const updateBio = async(bio) =>{
+  try{
+    const response = await fetch(`${apiUrl}/api/user/update-bio`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+      body: JSON.stringify({bio}),
+    });
+      if(response.ok){
+        const data = await response.json();
+        console.log("Bio updated successfully:", data);
+        return data.bio
+      }
+  }catch(error){
+    console.error("Failed to update bio:", error);
+  }
+}
+
+export const getUserBio = async () => {
+  try{
+    const response = await fetch(`${apiUrl}/api/user/get-bio`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+    });
+    if(response.ok){
+      const data = await response.json();
+      console.log("Bio fetched successfully:", data);
+      return data;
+    }
+  }catch(error){
+    console.error("Failed to fetch bio:", error);
+  }
+};
+
+export const updateUsername = async (newUsername) =>{
+  try{
+    const response = await fetch(`${apiUrl}/api/user/update-username`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+      body: JSON.stringify({newUsername}),
+    });
+    if(response.ok){
+      const data = await response.json();
+      console.log("Bio updated successfully:", data);
+      // update token 
+      localStorage.setItem("jwtToken", data.newToken);
+      return data.newUsername;
+    }
+  }catch(error){
+    console.error("Failed to update bio:", error);
+  }
+};
+
+export const getUsername = async () => {
+  try{
+    const response = await fetch(`${apiUrl}/api/user/get-username`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+    });
+    if(response.ok){
+      const data = await response.json();
+      console.log("Username fetched successfully:", data);
+      return data.username;
+    }
+  }catch(error){
+    console.error("Failed to fetch username:", error);
+  }
+};
+
+export const updatePassword = async ({currentPassword, newPassword}) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/user/update-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+      body: JSON.stringify({ currentPassword , newPassword}),
+    });
+    if(!response.ok){
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Error updating password. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.newPassword;
+  }catch(error){
+    console.error("Failed to update password:", error);
+    throw error;
+  }
+};
+
+export const getPassword = async () => {
+  try{
+    const response = await fetch(`${apiUrl}/api/user/get-password`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + jwtToken
+      },
+    });
+    if(!response.ok){
+      console.error("Failed to fetch password:", response.status);
+      return null;
+    }
+    const data = await response.json();
+    console.log("Password fetched successfully:", data);
+    return data.password;
+  }catch(error){
+    console.error("Failed to fetch password:", error);
+  }
+};
