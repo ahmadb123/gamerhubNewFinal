@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Repository.FriendsRepository;
 import com.Repository.UserRepository;
 import com.models.FriendsModel.Friends;
+import com.models.Steam.SteamUserProfile.SteamProfile;
 import com.models.UserModel.User;
-import com.models.XboxModel.XboxProfile;
 import com.services.FriendsService;
+import com.services.SteamUserService;
+import com.services.XboxRecentGamesService; // added import
 import com.utility.JWT;
-import com.dto.FriendWithXboxDTO;
+import com.dto.FriendsWithLinkedAccountsDTO;
 import com.dto.PendingRequestDTO;
 
 @RestController
@@ -35,6 +37,10 @@ public class FriendsController {
     private UserRepository userRepository; // Repository for User lookups
     @Autowired
     private FriendsRepository friendsRepository;
+    @Autowired
+    private XboxRecentGamesService xboxRecentGamesService; // newly added
+    @Autowired
+    private SteamUserService steamUserService; // newly added
     @PostMapping("/add")
     public ResponseEntity<?> addFriend(@RequestHeader("Authorization") String authHeader,
         @RequestParam("userNameOFRequest") String targetUserName) {
@@ -137,19 +143,30 @@ public class FriendsController {
             if (friends.isEmpty()) {
                 return ResponseEntity.ok(Collections.emptyList());
             }
+            
 
             // 2) Transform each friend into a DTO
-            List<FriendWithXboxDTO> friendDTOs = friends.stream()
+            List<FriendsWithLinkedAccountsDTO> friendDTOs = friends.stream()
                 .map(friend -> {
-                    FriendWithXboxDTO dto = new FriendWithXboxDTO();
+                    FriendsWithLinkedAccountsDTO dto = new FriendsWithLinkedAccountsDTO();
                     dto.setUserId(friend.getId());
                     dto.setUsername(friend.getUsername());
                     dto.setEmail(friend.getEmail());  
-                    
                     // Could fetch the entire list of XboxProfiles
                     dto.setXboxProfiles(friend.getXboxProfiles());
+                    dto.setSteamProfiles(friend.getSteamProfiles());
                     
-                    // If you only want the first profile or certain fields, handle that here
+                    // New logic: if friend has xbox profiles, fetch recent games
+                    if(friend.getXboxProfiles() != null && !friend.getXboxProfiles().isEmpty()){
+                        dto.setXboxRecentGames(xboxRecentGamesService.getRecentGamesByUsername(friend.getUsername()));
+                    }
+                    // New logic: if friend has steam profiles, fetch recent games
+                    if(friend.getSteamProfiles() != null && !friend.getSteamProfiles().isEmpty()){
+                        // Retrieve steam id from the first steam profile
+                        String steamId = friend.getSteamProfiles().get(0).getSteamid();
+                        dto.setSteamRecentGames(steamUserService.getRecentPlayedGames(steamId));
+                        System.out.println("Steam recent games: " + dto.getSteamRecentGames());
+                    }
                     return dto;
                 })
                 .collect(Collectors.toList());

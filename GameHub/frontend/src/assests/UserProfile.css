@@ -1,0 +1,35 @@
+.profile-container {
+  background-color: #000;
+  color: #ccc;
+  padding: 2rem;
+  border-radius: 8px;
+  font-family: sans-serif;
+  box-shadow: 0 0 15px rgba(0, 255, 107, 0.3);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.profile-container h1,
+.profile-container h2 {
+  color: #fff;
+  text-shadow: none;
+}
+
+.profile-container .nav-button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-container .nav-button:hover {
+  background-color: #555;
+}
+
+.profile-preview {
+  background-color: #111;
+  padding: 1rem;
+  border-radius: 8px;
+}

@@ -127,9 +127,13 @@ public class DirectMessageSession {
     }
 
     public DirectMessageSession(User userA, User userB) {
-        this.userA = userA;
-        this.userB = userB;
-        this.createdTime = LocalDate.now(); // Set the current time when session is created
+        if(userA.getId() < userB.getId()){
+            this.userA = userA;
+            this.userB = userB;
+        } else {
+            this.userA = userB;
+            this.userB = userA;
+        }
     }
 
     // Getters and setters

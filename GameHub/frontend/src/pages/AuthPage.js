@@ -22,7 +22,7 @@ function AuthPage(){
             });
         if(response.ok){
             console.log("complete success");
-            navigate('/login');
+            navigate("/platform-select"); // After registration
         }
         else{
             const data = await response.json();

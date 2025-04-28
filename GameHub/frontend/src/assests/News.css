@@ -21,7 +21,7 @@ body {
 .news-content {
   flex: 1;
   padding: 2rem;
-  margin-left: 220px;
+  /* margin-left: 220px; */
 }
 
 

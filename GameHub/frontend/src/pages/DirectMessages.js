@@ -1,42 +1,45 @@
-/**
- * direct messages page->
- */
-
-/* 
-    * things to import/fetch/get:
-    * 1.user data
-    * 2.Show the friend list on your DM page with a “+ Start New Convo” button.
-    * 3.When the user clicks on a friend, either
-    * 4.check if there’s an existing conversation (by calling a REST endpoint) or create a new one.
-    * once you have the session id, open a chat window for that friend.
-    * When the chat window opens, 
-    * use the REST endpoint (/api/direct-messages/{sessionId}) to load previous messages from that conversation.
-    * Real-Time Messaging with WebSockets:
-    * Use a library such as SockJS together with StompJS to connect to your backend WebSocket endpoint (configured in your backend at /ws).
-    * Subscribe to the topic (e.g., /topic/direct-message/{sessionId}) to listen for new messages.
-    * When a user sends a message, publish it to the destination
-    * (e.g., /app/direct-message/{sessionId}/send). The backend will then broadcast it to all subscribers.
-*/
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getAllFriends } from "../service/AddFriendService";
 import { getSessionOrCreate } from "../service/DirectMessagesService";
 import ChatWindow from "../components/ChatWindow";
-import '../assests/DirectMessages.css';
-import { useNavigate } from 'react-router-dom';
+import "../assests/DirectMessages.css";
+import { useNavigate } from "react-router-dom";
+import queryString from "query-string";
 
 function DirectMessages() {
   const [friends, setFriends] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
   const [activeFriend, setActiveFriend] = useState(null);
   const nav = useNavigate();
-  const jwt = localStorage.getItem('jwtToken');
+  const jwt = localStorage.getItem("jwtToken");
 
-  // Fetch friends once when the component mounts.
+  // read possible friendId from the URL ?friendId=7&ref=news:22
+  const params = queryString.parse(location.search);
+  const friendIdFromQuery = params.friendId;
+  const refParam = params.ref;
+
+  // If we have a friendId, auto-start a conversation
+  useEffect(() => {
+    if (friendIdFromQuery) {
+      autoStartConversation(friendIdFromQuery);
+    }
+  }, [friendIdFromQuery]);
+
+  const autoStartConversation = async (friendId) => {
+    try {
+      const session = await getSessionOrCreate({ userTwoId: friendId });
+      setActiveSession(session);
+
+      // The actual friend object might come from your friends list, or minimal placeholder
+      const friend = { userId: friendId, username: "Publisher" };
+      setActiveFriend(friend);
+    } catch (error) {
+      console.error("Error auto-starting conversation:", error);
+    }
+  };
+
+  // Load friend list
   useEffect(() => {
     async function fetchFriends() {
       try {
@@ -49,10 +52,11 @@ function DirectMessages() {
     fetchFriends();
   }, []);
 
-  // When a friend is clicked, either get the existing session or create a new one.
+  // Start or retrieve session on friend click
   const handleFriendClick = async (friend) => {
     try {
       const session = await getSessionOrCreate({ userTwoId: friend.userId });
+      console.log("user two id:" + friend.userId);
       setActiveSession(session);
       setActiveFriend(friend);
     } catch (error) {
@@ -61,19 +65,20 @@ function DirectMessages() {
     }
   };
 
-  // Add handler to close the chat window.
+  // Close the chat window
   const handleCloseChat = () => {
     setActiveSession(null);
     setActiveFriend(null);
   };
 
-  const handleCloseEntireDirectMessages = () =>{
-    if(jwt){
-      nav('/main');
-    }else{
-      nav('login');
-    } 
-  }
+  // If user wants to exit DM entirely
+  const handleCloseEntireDirectMessages = () => {
+    if (jwt) {
+      nav("/main");
+    } else {
+      nav("/login");
+    }
+  };
 
   return (
     <div className="direct-messages-container">
@@ -82,6 +87,7 @@ function DirectMessages() {
         <div className="close-window">
           <button onClick={handleCloseEntireDirectMessages}></button>
         </div>
+
         <div className="friends-list">
           {friends.map((friend) => (
             <div
@@ -94,16 +100,19 @@ function DirectMessages() {
           ))}
         </div>
       </div>
+
       <div className="chat-area">
         {activeSession ? (
-          <ChatWindow 
-            session={activeSession} 
+          <ChatWindow
+            session={activeSession}
             activeFriend={activeFriend}
             onClose={handleCloseChat}
           />
         ) : (
           <div className="empty-chat">
             <p>Select a friend to start a conversation</p>
+            {/* If there's a reference param, we can display it */}
+            {refParam && <p>Reply reference: {refParam}</p>}
           </div>
         )}
       </div>
@@ -112,4 +121,3 @@ function DirectMessages() {
 }
 
 export default DirectMessages;
-

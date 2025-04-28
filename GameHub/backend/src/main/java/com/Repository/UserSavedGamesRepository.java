@@ -14,5 +14,4 @@ public interface UserSavedGamesRepository extends JpaRepository<MyGames, Long> {
     
     @Query("select m.gameId from MyGames m where m.user.id = :userId")
     List<Long> findGameIdsByUserId(@Param("userId") Long userId);
-    
 }

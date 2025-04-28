@@ -50,4 +50,16 @@ public class UserInfo {
     public void setOwenedAndPlayedGames(List<UserOwnedAndPlayedGames> owenedAndPlayedGames) {
         this.owenedAndPlayedGames = owenedAndPlayedGames;
     }
+
+    @Override
+    public String toString() {
+        // Customize details as needed. For example:
+        StringBuilder sb = new StringBuilder();
+        sb.append("UserInfo{");
+        sb.append("game_count=").append(this.getGame_count()).append(", ");
+        sb.append("players=").append(this.getPlayers()).append(", ");
+        sb.append("ownedGames=").append(this.getOwenedAndPlayedGames());
+        sb.append("}");
+        return sb.toString();
+    }
 }

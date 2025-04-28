@@ -1,0 +1,105 @@
+/*  ─────────────────────────  Collections.css  ─────────────────────────── */
+/*  Dark-theme look & feel consistent with the rest of GamerHub            */
+
+:root {
+  --bg-card: #1e1e1e;
+  --bg-card-hover: #2a2a2a;
+  --bg-page: #121212;
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --accent: #28a745;
+}
+
+/* Page container */
+.collections-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* Section title */
+.collections-container h1 {
+  margin: 0 0 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Grid of collection “folders” */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Individual collection card */
+.collection-card {
+  background: var(--bg-card);
+  border: 1px solid #303030;
+  border-radius: 8px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.collection-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.collection-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.collection-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Grid of games inside an expanded collection */
+.games-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Game card (clickable link) */
+.game-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.game-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: filter 0.2s;
+}
+
+.game-card:hover img {
+  filter: brightness(0.85);
+}
+
+.game-card span {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.25;
+}
+
+@media (hover: none) {
+  .collection-card:hover,
+  .game-card:hover img {
+    transform: none;
+    filter: none;
+  }
+}

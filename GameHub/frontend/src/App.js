@@ -1,12 +1,14 @@
+// App.js
 import React from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AppRoutes from "./Routes";
 
-const App = () => {
-  return(
-    <div className="app">
+export default function App() {
+  return (
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
       <AppRoutes />
-    </div>
+    </>
   );
-};
-
-export default App;
+}

@@ -10,154 +10,180 @@ import "../assests/DirectMessages.css";
 
 function ChatWindow({ session, activeFriend, onClose }) {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const currentUser = localStorage.getItem("username");
-  const messagesEndRef = useRef(null);
+  const [input, setInput]       = useState("");
+  const currentUser             = localStorage.getItem("username");
+  const messagesEndRef          = useRef(null);
 
-  // Set the active flag when the chat window is open
-  useEffect(() => {
-    if (session && session.id) {
-      localStorage.setItem(`chatActive_${currentUser}_${session.id}`, "true");
-      return () => {
-        localStorage.removeItem(`chatActive_${currentUser}_${session.id}`);
-      };
-    }
-  }, [session, currentUser]);
+  // Render each line; if it’s “[...Reference] URL” show video if it’s an .mp4/.webm/.ogg
+  function renderMessageContent(content) {
+    return content.split("\n").map((line, idx) => {
+      const urlMatch = line.match(/(https?:\/\/[^\]\s]+)/);
+      if (urlMatch) {
+        const url   = urlMatch[1];
+        const text  = line.replace(urlMatch[0], "").replace(/[\[\]]/g, "").trim();
+        const isVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+  
+        return (
+          <div key={idx} style={{ margin: "0.5rem 0" }}>
+            {text && <p style={{ margin: 0 }}>{text}</p>}
+            {isVideo ? (
+              <video
+                src={url}
+                controls
+                style={{
+                  display: "block",
+                  maxWidth: "300px",
+                  borderRadius: "8px",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  const postIdMatch = content.match(/#(\d+)/);
+                  if (postIdMatch) {
+                    window.location.href = `/community?postId=${postIdMatch[1]}`;
+                  }
+                }}
+              />
+            ) : (
+              <img
+                src={url}
+                alt=""
+                style={{
+                  display: "block",
+                  maxWidth: "200px",
+                  borderRadius: "8px",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  const postIdMatch = content.match(/#(\d+)/);
+                  if (postIdMatch) {
+                    window.location.href = `/community?postId=${postIdMatch[1]}`;
+                  }
+                }}
+              />
+            )}
+          </div>
+        );
+      }
+  
+      return <p key={idx} style={{ margin: 0 }}>{line}</p>;
+    });
+  }
+  
 
-  // Scroll to bottom on new messages
+  // Scroll on new messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  // WebSocket message handler
-  const onMessageReceived = (rawMsg) => {
-    if (rawMsg.eventType === "READ_RECEIPT") {
-      // Update messages that I sent when a read receipt is received
-      setMessages(prevMessages =>
-        prevMessages.map(msg => {
-          if (msg.senderUsername === currentUser && msg.status !== "READ") {
-            return {
-              ...msg,
-              status: "READ",
-              readAt: rawMsg.readAt || rawMsg.timestamp
-            };
-          }
-          return msg;
-        })
-      );
-    } else {
-      // A new incoming message
-      const transformedMsg = {
-        id: rawMsg.id,
-        senderUsername: rawMsg.senderUsername,
-        content: rawMsg.content,
-        status: rawMsg.messageStatus,
-        deliveredAt: rawMsg.deliveredAt,
-        readAt: rawMsg.readAt
-      };
-
-      setMessages(prev => {
-        const existingIndex = prev.findIndex(m => m.id === transformedMsg.id);
-        if (existingIndex > -1) {
-          const updated = [...prev];
-          updated[existingIndex] = transformedMsg;
-          return updated;
-        }
-        return [...prev, transformedMsg];
-      });
-
-      // Only trigger read receipt if I'm not the sender
-      if (transformedMsg.senderUsername !== currentUser) {
-        sendReadToBackend();
-      }
-    }
-  };
-
-  // Load messages and connect to WebSocket
+  // Connect WS & load history
   useEffect(() => {
-    let isMounted = true;
+    if (!session?.id) return;
+    let mounted = true;
 
-    async function initializeWebSocket() {
-      if (session?.id) {
-        try {
-          // Connect WebSocket and wait for connection
-          await connectWebSocket({
-            sessionId: session.id,
-            onMessageReceived,
-            onConnect: () => isMounted && setIsWsConnected(true), // Update connection status
-            onDisconnect: () => isMounted && setIsWsConnected(false)
+    connectWebSocket({
+      sessionId: session.id,
+      onMessageReceived: (raw) => {
+        if (raw.eventType === "READ_RECEIPT") {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.senderUsername === currentUser && m.status !== "READ"
+                ? { ...m, status: "READ", readAt: raw.readAt || raw.timestamp }
+                : m
+            )
+          );
+        } else {
+          const msg = {
+            id: raw.id,
+            senderUsername: raw.senderUsername,
+            content: raw.content,
+            status: raw.messageStatus,
+            deliveredAt: raw.deliveredAt,
+            readAt: raw.readAt
+          };
+          setMessages((prev) => {
+            const idx = prev.findIndex((x) => x.id === msg.id);
+            if (idx > -1) {
+              const copy = [...prev];
+              copy[idx] = msg;
+              return copy;
+            }
+            return [...prev, msg];
           });
-          
-          // Load messages AFTER connection is confirmed
-          const loaded = await getSessionMessages({ sessionId: session.id });
-          if (isMounted) setMessages(loaded);
-          
-          sendReadToBackend(); // Now safe to send
-        } catch (error) {
-          console.error("Error initializing WebSocket:", error);
+          // if I received it, send READ receipt
+          if (msg.senderUsername !== currentUser) {
+            sendReadReceipt({
+              sessionId: session.id,
+              receipt: {
+                msgStatus: "READ",
+                sessionId: session.id,
+                receiverUsername: currentUser,
+                timestamp: new Date().toISOString(),
+                active: true
+              }
+            });
+          }
         }
       }
-    }
+    });
 
-    initializeWebSocket();
+    getSessionMessages({ sessionId: session.id })
+      .then((loaded) => {
+        if (mounted) {
+          setMessages(loaded);
+          // initial read
+          sendReadReceipt({
+            sessionId: session.id,
+            receipt: {
+              msgStatus: "READ",
+              sessionId: session.id,
+              receiverUsername: currentUser,
+              timestamp: new Date().toISOString(),
+              active: true
+            }
+          });
+        }
+      })
+      .catch(console.error);
 
     return () => {
-      isMounted = false;
+      mounted = false;
       disconnectWebSocket();
     };
-  }, [session]);
-
-  // Function to send a read receipt to the server if the user is active in the chat
-  const sendReadToBackend = () => {
-    if (!session || !session.id) return;
-    // Check the active flag from localStorage
-    const isActive = localStorage.getItem(`chatActive_${currentUser}_${session.id}`) === "true";
-    if (!isActive) {
-      console.log("User not active in chat, skipping read receipt");
-      return;
-    }
-    const readPayload = {
-      msgStatus: "READ",
-      sessionId: session.id,
-      receiverUsername: currentUser,
-      timestamp: new Date().toISOString(),
-      active: true
-    };
-    sendReadReceipt({ sessionId: session.id, receipt: readPayload });
-    console.log("Sending read receipt");
-  };
+  }, [session, currentUser]);
 
   const handleSend = () => {
-    if (input.trim() === "") return;
+    if (!input.trim()) return;
     sendMessages({ sessionId: session.id, message: { content: input } });
     setInput("");
-  };
-
-  const handleCloseChat = () => {
-    if (onClose) onClose();
   };
 
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <h3>{activeFriend ? activeFriend.username : "Chat"}</h3>
+        <h3>{activeFriend?.username || "Chat"}</h3>
+        <button onClick={onClose}>×</button>
       </div>
 
       <div className="messages-list">
-        {messages.map((msg, i) => {
-          const isFromCurrentUser = msg.senderUsername === currentUser;
-          const isLastMessage = i === messages.length - 1;
-          const shouldShowStatus = isLastMessage && isFromCurrentUser;
+        {messages.map((msg, idx) => {
+          const isMe   = msg.senderUsername === currentUser;
+          const isLast = idx === messages.length - 1;
           return (
-            <div key={msg.id} className={`message ${isFromCurrentUser ? "sent" : "received"}`}>
-              <strong>{isFromCurrentUser ? "You" : (activeFriend ? activeFriend.username : msg.senderUsername)}:</strong> {msg.content}
-              {shouldShowStatus && (
+            <div
+              key={msg.id}
+              className={`message ${isMe ? "sent" : "received"}`}
+            >
+              <strong>{isMe ? "You" : msg.senderUsername}:</strong>
+              <div className="message-content">
+                {renderMessageContent(msg.content)}
+              </div>
+              {isMe && isLast && (
                 <div className="message-status">
-                  {msg.status === "DELIVERED" && <div>Delivered</div>}
+                  {msg.status === "DELIVERED" && <small>Delivered</small>}
                   {msg.status === "READ" && msg.readAt && (
-                    <div>Read at {new Date(msg.readAt).toLocaleTimeString()}</div>
+                    <small>Read at {new Date(msg.readAt).toLocaleTimeString()}</small>
                   )}
                 </div>
               )}
@@ -175,7 +201,6 @@ function ChatWindow({ session, activeFriend, onClose }) {
           placeholder="Type your message..."
         />
         <button onClick={handleSend}>Send</button>
-        <button onClick={handleCloseChat}>Close</button>
       </div>
     </div>
   );

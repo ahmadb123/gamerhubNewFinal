@@ -17,6 +17,8 @@ public class LinkedProfiles {
     private String uhs;
     // if steam-> save steam id in a list.
     private String steamId;
+    // if discord -> save discord id in a list.
+    private String discordId;
 
 
 
@@ -71,5 +73,13 @@ public class LinkedProfiles {
 
     public void setSteamId(String steamId) {
         this.steamId = steamId;
+    }
+
+    public String getDiscordId() {
+        return discordId;
+    }
+
+    public void setDiscordId(String discordId) {
+        this.discordId = discordId;
     }
 }

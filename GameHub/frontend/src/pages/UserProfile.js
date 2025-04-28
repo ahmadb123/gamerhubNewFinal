@@ -9,6 +9,8 @@ import {
 } from "../service/profileService";
 // Import your shared stylesheet for consistent styling
 import "../assests/HomePage.css";
+import "../assests/UserProfile.css";
+import{DiscordAuthService, exchangeCodeForTokens} from "../service/DiscordAuthService";
 
 function UserProfile() {
   const [linkedProfiles, setLinkedProfiles] = useState([]);
@@ -23,6 +25,10 @@ function UserProfile() {
 
   // Toggle for Manage Accounts
   const [showManageAccounts, setShowManageAccounts] = useState(false);
+  
+  const handleDiscordLogin = async () => {
+    await DiscordAuthService();
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -129,116 +135,121 @@ function UserProfile() {
   };
 
   return (
-    <div className="container" style={{ marginTop: "2rem" }}>
-      <h1>User Profile</h1>
+    <div className="profile-container">
+      <div className="profile-preview">
+        <h1>User Profile</h1>
 
-      {/* Username Section */}
-      {isEdit ? (
-        <form onSubmit={handleUsernameUpdate} style={{ marginBottom: "1rem" }}>
-          <input
-            type="text"
-            value={usernameInput}
-            onChange={handleUsernameChange}
-            placeholder="Update username..."
-          />
-          <button type="submit" className="nav-button">
-            Update Username
-          </button>
-        </form>
-      ) : (
-        <p>
-          <strong>Username:</strong> {username || "No username set"}
-        </p>
-      )}
+        {/* Username Section */}
+        {isEdit ? (
+          <form onSubmit={handleUsernameUpdate} style={{ marginBottom: "1rem" }}>
+            <input
+              type="text"
+              value={usernameInput}
+              onChange={handleUsernameChange}
+              placeholder="Update username..."
+            />
+            <button type="submit" className="nav-button">
+              Update Username
+            </button>
+          </form>
+        ) : (
+          <p>
+            <strong>Username:</strong> {username || "No username set"}
+          </p>
+        )}
 
-      {/* Bio Section */}
-      {isEdit ? (
-        <form onSubmit={handleBioUpdate} style={{ marginBottom: "1rem" }}>
-          <textarea
-            value={userBio}
-            onChange={handleBioChange}
-            placeholder="Enter your bio here..."
-            rows={4}
-            cols={50}
-          />
-          <br />
-          <button type="submit" className="nav-button">
-            Update Bio
-          </button>
-        </form>
-      ) : (
-        <p>
-          <strong>Bio:</strong> {userBio || "No bio set"}
-        </p>
-      )}
+        {/* Bio Section */}
+        {isEdit ? (
+          <form onSubmit={handleBioUpdate} style={{ marginBottom: "1rem" }}>
+            <textarea
+              value={userBio}
+              onChange={handleBioChange}
+              placeholder="Enter your bio here..."
+              rows={4}
+              cols={50}
+            />
+            <br />
+            <button type="submit" className="nav-button">
+              Update Bio
+            </button>
+          </form>
+        ) : (
+          <p>
+            <strong>Bio:</strong> {userBio || "No bio set"}
+          </p>
+        )}
 
-      {/* Password Section */}
-      {isEdit ? (
-        <form onSubmit={handleUpdatePassword}>
-          <input
-            type="password"
-            value={currentPasswordInput}
-            onChange={(e) => setCurrentPasswordInput(e.target.value)}
-            placeholder="Current password"
-            style={{ marginRight: "1rem" }}
-          />
-          <input
-            type="password"
-            value={newPasswordInput}
-            onChange={(e) => setNewPasswordInput(e.target.value)}
-            placeholder="New password"
-            style={{ marginRight: "1rem" }}
-          />
-          <button type="submit" className="nav-button">
-            Update Password
-          </button>
-        </form>
-      ) : (
-        <p>
-          <strong>Password:</strong> ********
-        </p>
-      )}
+        {/* Password Section */}
+        {isEdit ? (
+          <form onSubmit={handleUpdatePassword}>
+            <input
+              type="password"
+              value={currentPasswordInput}
+              onChange={(e) => setCurrentPasswordInput(e.target.value)}
+              placeholder="Current password"
+              style={{ marginRight: "1rem" }}
+            />
+            <input
+              type="password"
+              value={newPasswordInput}
+              onChange={(e) => setNewPasswordInput(e.target.value)}
+              placeholder="New password"
+              style={{ marginRight: "1rem" }}
+            />
+            <button type="submit" className="nav-button">
+              Update Password
+            </button>
+          </form>
+        ) : (
+          <p>
+            <strong>Password:</strong> ********
+          </p>
+        )}
 
-      {/* Edit / Cancel Button */}
-      <button onClick={handleEditBtnClick} className="nav-button">
-        {isEdit ? "Cancel" : "Edit"}
-      </button>
+        {/* Edit / Cancel Button */}
+        <button onClick={handleEditBtnClick} className="nav-button">
+          {isEdit ? "Cancel" : "Edit"}
+        </button>
 
-      {/* Manage Accounts */}
-      <button
-        onClick={handleToggleManageAccounts}
-        className="nav-button"
-        style={{ marginLeft: "1rem" }}
-      >
-        {showManageAccounts ? "Hide Manage Accounts" : "Manage Accounts"}
-      </button>
+        {/* Manage Accounts */}
+        <button
+          onClick={handleToggleManageAccounts}
+          className="nav-button"
+          style={{ marginLeft: "1rem" }}
+        >
+          {showManageAccounts ? "Hide Manage Accounts" : "Manage Accounts"}
+        </button>
 
-      {showManageAccounts && (
-        <div style={{ marginTop: "2rem" }}>
-          <h2>Linked Accounts</h2>
-          {linkedProfiles.length ? (
-            linkedProfiles.map((account) => (
-              <div key={account.id} style={{ marginBottom: "0.5rem" }}>
-                <span>
-                  {account.platform}: {account.username}
-                </span>
-                <button
-                  onClick={() => handleUnlinkAccount(account.id)}
-                  className="nav-button"
-                  style={{ marginLeft: "1rem" }}
-                >
-                  Unlink
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No linked accounts.</p>
-          )}
-          <button onClick={handleLinkAccount} className="nav-button">
-            Link New Account
-          </button>
-        </div>
-      )}
+        <button onClick={handleDiscordLogin} className="nav-button" style={{ marginLeft: "1rem" }}>
+          Link Discord Account
+        </button>
+        {showManageAccounts && (
+          <div style={{ marginTop: "2rem" }}>
+            <h2>Linked Accounts</h2>
+            {linkedProfiles.length ? (
+              linkedProfiles.map((account) => (
+                <div key={account.id} style={{ marginBottom: "0.5rem" }}>
+                  <span>
+                    {account.platform}: {account.username}
+                  </span>
+                  <button
+                    onClick={() => handleUnlinkAccount(account.id)}
+                    className="nav-button"
+                    style={{ marginLeft: "1rem" }}
+                  >
+                    Unlink
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p>No linked accounts.</p>
+            )}
+            <button onClick={handleLinkAccount} className="nav-button">
+              Link New Account
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -7,26 +7,45 @@ import com.models.CommunityInsight.PostNews;
 public class PostNewsDTO {
     private String contentText;
     private String sharedNewsId;
-    private String sharedClipsId;
-    private String username; // Only include username instead of full User object
+    private String sharedClipsUrl;
+    private String username;
     private LocalDateTime timeShared;
-
+    private long likesCount;
+    private long commentsCount;
     // for the sharedNewsId - fields to correspond with the external api call - 
-    private String name; // n`ame of the game
+    private String name; // name of the game
     private String released; // release date
     private String background_image; // background image of the game
+    private Long id;
+
     public PostNewsDTO(PostNews postNews) {
         this.contentText = postNews.getContentText();
         this.sharedNewsId = postNews.getSharedNewsId();
-        this.sharedClipsId = postNews.getSharedClipsId();
+        this.sharedClipsUrl = postNews.getSharedClipsUrl();
         this.username = postNews.getUser().getUsername();
         this.timeShared = postNews.getTimeShared();
+        this.id = postNews.getId();
     }
     
 
     public PostNewsDTO(){}
     // getters and setters- >
 
+    public String getSharedClipsUrl() {
+        return sharedClipsUrl;
+    }
+
+    public void setSharedClipsUrl(String sharedXboxXuid) {
+        this.sharedClipsUrl = sharedXboxXuid;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -34,6 +53,22 @@ public class PostNewsDTO {
     
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(long likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(long commentsCount) {
+        this.commentsCount = commentsCount;
     }
     
     public String getReleased() {
@@ -68,14 +103,6 @@ public class PostNewsDTO {
         this.sharedNewsId = sharedNewsId;
     }
 
-    public String getSharedClipsId() {
-        return sharedClipsId;
-    }
-
-    public void setSharedClipsId(String sharedClipsId) {
-        this.sharedClipsId = sharedClipsId;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -93,3 +120,4 @@ public class PostNewsDTO {
     }
 
 }
+

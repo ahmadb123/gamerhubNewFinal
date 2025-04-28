@@ -41,7 +41,7 @@ function LoginPage() {
                 localStorage.setItem('jwtToken', token);
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', userId);
-                navigate('/landingpage')
+                navigate("/platform-select"); // Ensure this stays as platform-select
             } else if(response.status === 401) {
                 toast.error('Incorrect Password. Please try again.');
             } else {

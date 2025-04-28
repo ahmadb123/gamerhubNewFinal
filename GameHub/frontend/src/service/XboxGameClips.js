@@ -14,7 +14,7 @@ export const getGameClips = async() => {
         });
         if(response.ok){
             const data = await response.json();
-            return data.flatMap(item => item.gameClips) || []
+            return data;
         }
     }catch(error){
         console.error(error);
@@ -22,3 +22,18 @@ export const getGameClips = async() => {
         throw error;
     }
 };
+
+
+export const getGameClipById = async (clipId) => {
+    const uhs        = localStorage.getItem("uhs");
+    const xstsToken  = localStorage.getItem("XSTS_token");
+    const res = await fetch(`${apiUrl}/api/xbox/gameclips/${clipId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `XBL3.0 x=${uhs};${xstsToken}`,
+        "x-xbl-contract-version": "2"
+      }
+    });
+    if (!res.ok) throw new Error("Clip not found");
+    return res.json();
+  };

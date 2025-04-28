@@ -236,8 +236,17 @@ body {
   padding: 8px;
 }
 
+/* Main Layout */
+.main-layout {
+  display: flex;
+  flex-direction: row;
+}
+
 /* Main Content Layout */
 .main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 220px; /* Matches the sidebar width */
   display: grid;
   grid-template-columns: 3fr 1fr; /* 75% main content, 25% friends list */
   gap: 20px;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import NavHelper from '../component/NavHelper';
@@ -11,6 +11,7 @@ import {
   checkFriendRequest,
   acceptFriendRequest,
   getAllFriends,
+  addFriend,
 } from '../service/AddFriendService';
 import { searchUserProfile } from '../service/searchUserProfile';
 import { getAllLinkedProfiles } from '../service/UserLinkedProfiles';
@@ -36,12 +37,19 @@ const MainLayout = () => {
   const [selectedUserGames, setSelectedUserGames] = useState([]);
   const [showMoreSelectedUserGames, setShowMoreSelectedUserGames] = useState(false);
   const [isAccountLoading, setIsAccountLoading] = useState(false);
-
-  // New helper functions
+  const debounceTimer = useRef(null);
+  const lastQueried = useRef("");  // New helper functions
   const togglePendingList = () => setShowPendingList(!showPendingList);
   const navigateToFriendPage = (id) => {
     navigate(`/friend/${id}`);
   };
+
+  useEffect(() => {
+    const platform = localStorage.getItem("platform");
+    if (!platform) {
+      navigate("/platform-select");
+    }
+  }, [navigate]);
 
   // Fetch data on mount
   useEffect(() => {
@@ -133,45 +141,73 @@ const MainLayout = () => {
     setIsFriendsDropdownOpen(!isFriendsDropdownOpen);
   };
 
-  // Search handler
-  const handleSearchChange = async (event) => {
+
+  // only search when time is up
+  useEffect(() => {
+    return () => clearTimeout(debounceTimer.current);
+  }, []);
+
+  // search user profile
+  const handleSearchChange = (event) => {
     const newQuery = event.target.value;
     setSearchQuery(newQuery);
+    setSearchResult(null);
     setSelectedUserProfile(null);
-    
+    setSelectedUserGames([]);
+
+    // 1) bail early on too-short queries
     if (newQuery.length < 3) {
-      setSearchResult(null);
-      setSelectedUserGames([]);
+      clearTimeout(debounceTimer.current);
+      lastQueried.current = "";
       return;
     }
-    
-    try {
-      const result = await searchUserProfile(newQuery);
-      console.log("Search result:", result);
-      if (result) {
-        setSearchResult(result);
-        setSelectedUserProfile(result.profile);
-        setSelectedUserGames(result.recentGames || []);
-      } else {
-        setSearchResult(null);
-        setSelectedUserProfile(null);
-        setSelectedUserGames([]);
-      }
-    } catch (error) {
-      console.error("Auto-search error:", error);
-      toast.error("Failed to search user profile.");
-      setSearchResult(null);
-      setSelectedUserProfile(null);
-      setSelectedUserGames([]);
+
+    // 2) don't re-fire the same query twice
+    if (newQuery === lastQueried.current) {
+      return;
     }
+
+    // 3) debounce: wait 500ms after typing stops
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(async () => {
+      try {
+        const result = await searchUserProfile(newQuery);
+        if (result) {
+          toast.success("User profile found.");
+          setSearchResult(result);
+          setSelectedUserProfile(result.profile);
+          setSelectedUserGames(result.recentGames || []);
+        } else {
+          // no match: clear state, but no toast error
+          setSearchResult(null);
+          setSelectedUserProfile(null);
+          setSelectedUserGames([]);
+        }
+      } catch (err) {
+        toast.error("Failed to search user profile.");
+      }
+      lastQueried.current = newQuery;
+    }, 500);
   };
 
   const handleClose = () => {
     setSelectedUserProfile(null);
   };
 
-  const handleFriendBtn = () => {
-    toast.info("Add friend functionality is not implemented yet.");
+  const handleFriendBtn = async () => {
+    try {
+      const userToRequest = selectedUserProfile.username;
+      console.log("Adding friend:", userToRequest);
+      const result = await addFriend(userToRequest);
+      if (result.success) {
+        toast.success("Friend request sent successfully.");
+      } else {
+        toast.error("Failed to send friend request.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send friend request.");
+    }
   };
 
   const toggleShowMoreSelectedUserGames = () => {
@@ -268,6 +304,11 @@ const MainLayout = () => {
                 <ul>
                   <li><NavHelper page="/my-profile">My Profile</NavHelper></li>
                   <li><NavHelper page="/my-games">My Games</NavHelper></li>
+                  <li><NavHelper page="/my-collections">My Collections</NavHelper></li>
+                  <li><NavHelper page="/my-clips">My Clips</NavHelper></li>
+                  <li><NavHelper page="/my-friends">My Friends</NavHelper></li>
+                  <li><NavHelper page="/settings">Settings</NavHelper></li>
+                  <li><NavHelper page="/logout">Logout</NavHelper></li>
                 </ul>
               </div>
             )}
@@ -405,10 +446,7 @@ const MainLayout = () => {
         </div>
 
       {/* MAIN CONTENT (Child routes render here) */}
-      <div className="container">
-        <Outlet />
-      </div>
-
+      <Outlet />
       {/* FOOTER */}
       <footer className="footer">
         <p>About: Created by Ahmad Bishara</p>
