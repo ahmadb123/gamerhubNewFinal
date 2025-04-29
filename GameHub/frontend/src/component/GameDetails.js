@@ -109,6 +109,7 @@ function GameDetail() {
     }
   }, [trailerLoading, trailers]);
 
+  
   const openCollectionModal = async () => {
     try {
       setCollections(await fetchCollections());

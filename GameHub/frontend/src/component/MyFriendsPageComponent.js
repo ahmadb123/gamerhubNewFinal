@@ -1,227 +1,233 @@
-import React, { useState } from "react";
+// src/components/MyFriendsPageComponent.jsx
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchGameDetails } from "../service/NewsService";
+import "../assests/MyFriendsPage.css";
 
-// Helper to build the Steam game image URL.
-const getSteamGameImageUrl = (game) => {
-  return `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`;
-};
+// Helper to build the Steam game image URL
+const getSteamGameImageUrl = (game) =>
+  `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`;
 
-function MyFriendsPageComponent({ friend }) {
+function MyFriendsPageComponent({
+  friend,
+  collections = [],
+  isCollectionsLoading = false,
+}) {
   const navigate = useNavigate();
-  // State for toggling the recent games expansion.
+  const [expandedCollectionId, setExpandedCollectionId] = useState(null);
+  const [collectionGames, setCollectionGames] = useState({});
+  const [loadingCollectionGames, setLoadingCollectionGames] = useState(false);
   const [gamesExpanded, setGamesExpanded] = useState(false);
 
-  // Determine which linked accounts the friend has.
-  const hasXbox = friend.xboxProfiles && friend.xboxProfiles.length > 0;
-  const hasSteam = friend.steamProfiles && friend.steamProfiles.length > 0;
+  // Fetch detailed game info when a collection is expanded
+  useEffect(() => {
+    if (
+      expandedCollectionId !== null &&
+      !collectionGames[expandedCollectionId]
+    ) {
+      const col = collections.find((c) => c.id === expandedCollectionId);
+      if (!col) return;
+      setLoadingCollectionGames(true);
+      (async () => {
+        try {
+          const games = await Promise.all(
+            (col.items || []).map((item) =>
+              fetchGameDetails({ id: item.gameId })
+            )
+          );
+          setCollectionGames((prev) => ({
+            ...prev,
+            [expandedCollectionId]: games,
+          }));
+        } catch (err) {
+          console.error(
+            `Error fetching games for collection ${expandedCollectionId}:`,
+            err
+          );
+          setCollectionGames((prev) => ({
+            ...prev,
+            [expandedCollectionId]: [],
+          }));
+        } finally {
+          setLoadingCollectionGames(false);
+        }
+      })();
+    }
+  }, [expandedCollectionId, collections, collectionGames]);
 
-  // Count the total number of linked accounts.
-  const linkedAccountsCount =
-    (hasXbox ? friend.xboxProfiles.length : 0) +
-    (hasSteam ? friend.steamProfiles.length : 0);
+  // Linked accounts flags
+  const hasXbox = friend.xboxProfiles?.length > 0;
+  const hasSteam = friend.steamProfiles?.length > 0;
 
-  // Recent Games: Combine Xbox and Steam recent game data.
-  const hasXboxRecentGames = friend.xboxRecentGames && friend.xboxRecentGames.length > 0;
-  const hasSteamRecentGames =
-    friend.steamRecentGames &&
-    friend.steamRecentGames.ownedAndPlayedGames &&
-    friend.steamRecentGames.ownedAndPlayedGames.length > 0;
-
-  const combinedRecentGames = [];
-  if (hasXboxRecentGames) {
-    combinedRecentGames.push(
-      ...friend.xboxRecentGames.map((game) => ({
-        platform: "Xbox",
-        ...game,
-      }))
-    );
-  }
-  if (hasSteamRecentGames) {
-    combinedRecentGames.push(
-      ...friend.steamRecentGames.ownedAndPlayedGames.map((game) => ({
-        platform: "Steam",
-        ...game,
-      }))
-    );
-  }
-  // Assuming the arrays are already ordered by recency, pick the top 5 items.
-  const topFiveCombinedGames = combinedRecentGames.slice(0, 5);
+  // Recent games combined
+  const xboxRecent = friend.xboxRecentGames || [];
+  const steamRecent = friend.steamRecentGames?.ownedAndPlayedGames || [];
+  const combinedRecent = [
+    ...xboxRecent.map((g) => ({ platform: "Xbox", ...g })),
+    ...steamRecent.map((g) => ({ platform: "Steam", ...g })),
+  ];
+  const topFive = combinedRecent.slice(0, 5);
 
   return (
-    <div
-      style={{
-        border: "1px solid #444",
-        borderRadius: "8px",
-        padding: "12px",
-        marginBottom: "12px",
-        backgroundColor: "#222",
-        color: "#fff",
-      }}
-    >
-      {/* Header Section */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3 style={{ margin: 0 }}>{friend.username}</h3>
+    <div className="friend-card">
+      {/* Header */}
+      <div className="friend-header">
+        <h3 className="friend-username">{friend.username}</h3>
         <button
-          onClick={() => navigate(`/direct-messages?friendId=${friend.userId}`)}
-          style={{
-            background: "#0af",
-            border: "none",
-            color: "#fff",
-            padding: "0.3rem 0.6rem",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "0.9em",
-          }}
+          className="message-btn"
+          onClick={() =>
+            navigate(`/direct-messages?friendId=${friend.userId}`)
+          }
         >
           Message
         </button>
       </div>
 
       {/* Linked Accounts Section */}
-      {linkedAccountsCount > 0 && (
-        <div style={{ marginTop: "8px" }}>
-          <h4 style={{ marginBottom: "4px" }}>Linked Accounts:</h4>
-          <div style={{ display: "flex", gap: "10px" }}>
+      {(hasXbox || hasSteam) && (
+        <div className="linked-accounts">
+          <h4>Linked Accounts:</h4>
+          <div className="accounts-list">
             {hasXbox &&
-              friend.xboxProfiles.map((profile, idx) => (
-                <div key={idx} style={{ textAlign: "center" }}>
+              friend.xboxProfiles.map((p, i) => (
+                <div key={`xbox-${i}`} className="account">
                   <img
-                    src={profile.appDisplayPicRaw}
-                    alt={profile.xboxGamertag}
-                    style={{ width: "50px", height: "50px", borderRadius: "4px" }}
+                    src={p.appDisplayPicRaw}
+                    alt={p.xboxGamertag}
                   />
-                  <p style={{ margin: "2px 0 0 0", fontSize: "0.8rem" }}>{profile.xboxGamertag}</p>
-                  <p style={{ fontSize: "0.8rem" }}>Gamerscore: {profile.gamerscore}</p>
-                  <p style={{ fontSize: "0.8rem" }}>Tenure Level: {profile.tenureLevel}</p>
-                  <p style={{ fontSize: "0.7rem", fontStyle: "italic" }}>Xbox</p>
+                  <p>{p.xboxGamertag}</p>
+                  <p>Gamerscore: {p.gamerscore}</p>
+                  <p className="platform-label">(Xbox)</p>
                 </div>
               ))}
             {hasSteam &&
-              friend.steamProfiles.map((profile, idx) => (
-                <div key={idx} style={{ textAlign: "center" }}>
-                  <img
-                    src={profile.avatarfull}
-                    alt={profile.personaname}
-                    style={{ width: "50px", height: "50px", borderRadius: "4px" }}
-                  />
-                  <p style={{ margin: "2px 0 0 0", fontSize: "0.8rem" }}>{profile.personaname}</p>
-                  <a href={profile.profileurl} style={{ fontSize: "0.8rem", color: "#0af" }}>
-                    Profile
-                  </a>
-                  <p style={{ fontSize: "0.7rem", fontStyle: "italic" }}>Steam</p>
+              friend.steamProfiles.map((p, i) => (
+                <div key={`steam-${i}`} className="account">
+                  <img src={p.avatarfull} alt={p.personaname} />
+                  <p>{p.personaname}</p>
+                  <a href={p.profileurl}>Profile</a>
+                  <p className="platform-label">(Steam)</p>
                 </div>
               ))}
           </div>
         </div>
       )}
 
-      {/* Recent Games Section */}
-      {topFiveCombinedGames.length > 0 ? (
-        <div style={{ marginTop: "10px" }}>
-          <h4 style={{ marginBottom: "4px" }}>Recent Games:</h4>
-          {/* Preview Mode: Show only the first recent game */}
-          {!gamesExpanded ? (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {topFiveCombinedGames[0].platform === "Xbox" ? (
-                <img
-                  src={topFiveCombinedGames[0].displayImage}
-                  alt={topFiveCombinedGames[0].gameName}
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    marginRight: "10px",
-                    borderRadius: "4px",
-                  }}
-                />
-              ) : (
-                <img
-                  src={getSteamGameImageUrl(topFiveCombinedGames[0])}
-                  alt={topFiveCombinedGames[0].name}
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    marginRight: "10px",
-                    borderRadius: "4px",
-                  }}
-                />
-              )}
-              <p style={{ margin: 0, fontSize: "0.9em" }}>
-                {topFiveCombinedGames[0].platform === "Xbox"
-                  ? topFiveCombinedGames[0].gameName
-                  : topFiveCombinedGames[0].name}
-              </p>
-              {/* Render "Show More" only if there is more than one recent game */}
-              {combinedRecentGames.length > 1 && (
-                <button
-                  onClick={() => setGamesExpanded(true)}
-                  style={{
-                    marginLeft: "auto",
-                    background: "none",
-                    border: "none",
-                    color: "#0af",
-                    cursor: "pointer",
-                    fontSize: "0.9em",
-                  }}
-                >
-                  Show More
-                </button>
+      {/* Collections Section */}
+      <div className="collections">
+        <h4>Collections:</h4>
+        {isCollectionsLoading ? (
+          <p>Loading collections…</p>
+        ) : collections.length > 0 ? (
+          collections.map((col) => (
+            <div key={col.id} className="collection-item">
+              <div
+                className="collection-header"
+                onClick={() =>
+                  setExpandedCollectionId((prev) =>
+                    prev === col.id ? null : col.id
+                  )
+                }
+              >
+                <strong>{col.name}</strong>
+                <span>{col.items?.length ?? 0} games</span>
+              </div>
+              {expandedCollectionId === col.id && (
+                <div className="collection-games">
+                  {loadingCollectionGames ? (
+                    <p>Loading games…</p>
+                  ) : (
+                    (collectionGames[col.id] || []).map((game) => (
+                      <div key={game.id} className="game-thumb">
+                        <img
+                          src={
+                            game.background_image || getSteamGameImageUrl(game)
+                          }
+                          alt={game.name}
+                          onClick={() =>
+                            navigate(`/news/game/${game.id}`)
+                          }
+                        />
+                      </div>
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          ) : (
-            <>
-              {/* Expanded Mode: Show top 5 recent games horizontally */}
-              <div style={{ display: "flex", overflowX: "auto" }}>
-                {topFiveCombinedGames.map((game, idx) => (
-                  <div key={idx} style={{ marginRight: "10px", textAlign: "center" }}>
-                    {game.platform === "Xbox" ? (
-                      <img
-                        src={game.displayImage}
-                        alt={game.gameName}
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          borderRadius: "4px",
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={getSteamGameImageUrl(game)}
-                        alt={game.name}
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          borderRadius: "4px",
-                        }}
-                      />
-                    )}
-                    <p style={{ margin: "4px 0 0 0", fontSize: "0.8rem" }}>
-                      {game.platform === "Xbox" ? game.gameName : game.name}
-                    </p>
-                    <p style={{ margin: 0, fontSize: "0.7rem", color: "#0af" }}>
-                      {game.platform}
-                    </p>
-                  </div>
-                ))}
-              </div>
+          ))
+        ) : (
+          <p>No collections to show.</p>
+        )}
+      </div>
+
+      {/* Recent Games Section */}
+      <div className="recent-games">
+        <h4>Recent Games:</h4>
+        {topFive.length === 0 ? (
+          <p>No recent games available</p>
+        ) : !gamesExpanded ? (
+          <div className="recent-preview">
+            <img
+              src={
+                topFive[0].platform === "Xbox"
+                  ? topFive[0].displayImage
+                  : getSteamGameImageUrl(topFive[0])
+              }
+              alt={
+                topFive[0].platform === "Xbox"
+                  ? topFive[0].gameName
+                  : topFive[0].name
+              }
+            />
+            <p>
+              {topFive[0].platform === "Xbox"
+                ? topFive[0].gameName
+                : topFive[0].name}
+            </p>
+            {combinedRecent.length > 1 && (
               <button
-                onClick={() => setGamesExpanded(false)}
-                style={{
-                  marginTop: "8px",
-                  background: "none",
-                  border: "none",
-                  color: "#0af",
-                  cursor: "pointer",
-                  fontSize: "0.9em",
-                }}
+                className="show-more-btn"
+                onClick={() => setGamesExpanded(true)}
               >
-                Show Less
+                Show More
               </button>
-            </>
-          )}
-        </div>
-      ) : (
-        <p style={{ marginTop: "8px" }}>No recent games available</p>
-      )}
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="recent-list">
+              {topFive.map((game) => (
+                <div key={game.id} className="recent-thumb">
+                  <img
+                    src={
+                      game.platform === "Xbox"
+                        ? game.displayImage
+                        : getSteamGameImageUrl(game)
+                    }
+                    alt={
+                      game.platform === "Xbox"
+                        ? game.gameName
+                        : game.name
+                    }
+                  />
+                  <p>
+                    {game.platform === "Xbox"
+                      ? game.gameName
+                      : game.name}
+                  </p>
+                  <p className="platform-label">{game.platform}</p>
+                </div>
+              ))}
+            </div>
+            <button
+              className="show-more-btn"
+              onClick={() => setGamesExpanded(false)}
+            >
+              Show Less
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

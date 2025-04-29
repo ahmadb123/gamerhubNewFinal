@@ -121,7 +121,7 @@ export default function CommunityPage() {
   };
 
   // ── Reply via DM ───────────────────────────────────────────────────────────
-  const handleReply = async post => {
+  const handleReply = async (post) => {
     const replyMessage = prompt("Enter your reply message:");
     if (!replyMessage) return;
     const body = {

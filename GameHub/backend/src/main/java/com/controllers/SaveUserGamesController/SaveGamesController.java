@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,35 @@ public class SaveGamesController {
                 .body(Collections.singletonMap("error","An error occurred"));
         }
     }
+    // delete saved game - 
+    @DeleteMapping("/delete-game")
+    public ResponseEntity<?> deleteSavedGame(@RequestHeader("Authorization") String authHeader, 
+                                    @RequestBody NewsResults gameId) {
+        try{
+            // get the user from the token
+            String token = authHeader.substring(7);
+            Long userId = jwt.extractUserId(token);
+            if(userId == null){
+                return ResponseEntity.badRequest().body("Invalid token");
+            }
+            // get the user
+            User user = userRepository.findById(userId).orElse(null);
+            if(user == null){
+                return ResponseEntity.badRequest().body("User not found");
+            }
+            System.out.println("User found: " + user.getUsername());
+
+            // delete the game from the user's profile
+            saveGamesService.deleteGame(userId, gameId.getId());
+        return ResponseEntity
+            .ok(Collections.singletonMap("message","Game deleted successfully"));
+        } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity
+            .badRequest()
+            .body(Collections.singletonMap("error","An error occurred"));
+        }
+    }
     @PostMapping("/add-to-wishlist")
     public ResponseEntity<?> saveToWishlist(@RequestHeader("Authorization") String authHeader, 
                                     @RequestBody NewsResults gameId) {
@@ -97,6 +127,14 @@ public class SaveGamesController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("get-friends-collection/{id}")
+    public ResponseEntity<?> getFriendsCollection(
+            @RequestHeader("Authorization") String auth,
+            @PathVariable Long id
+    ){
+        var list = collectionService.listFriendsCollections(auth.substring(7), id);
+        return ResponseEntity.ok(list);
+    }
 
     @PostMapping("/add-to-collection")
     public ResponseEntity<?> createCollection(  @RequestHeader("Authorization") String auth,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getGameDetailById } from "../service/NewsService"; // Make sure this is correctly exported from your service
+import {deleteGameFromMyGames} from "../NewsHelper/AddNewsGamesToGameList";
 import '../assests/MyGames.css';
 
 function MyGames() {
@@ -7,6 +8,16 @@ function MyGames() {
     const [savedGames, setSavedGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // add delete handler
+    const handleDelete = async (id) => {
+        try {
+            await deleteGameFromMyGames(id);
+            setSavedGames(prev => prev.filter(game => game.id !== id));
+        } catch (err) {
+            console.error("Failed to delete game:", err);
+        }
+    };
 
     useEffect(() => {
         const getSavedGames = async () => {
@@ -42,6 +53,9 @@ function MyGames() {
                                 alt={game.name}
                             />
                         )}
+                        <button onClick={() => handleDelete(game.id)}>
+                            Delete
+                        </button>
                     </div>
                 ))}
             </div>

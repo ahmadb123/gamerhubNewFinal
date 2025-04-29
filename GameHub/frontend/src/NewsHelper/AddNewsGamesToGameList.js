@@ -21,6 +21,20 @@ export async function AddNewsGamesToGameList({ id }) {
   return res.json();
 }
 
+// delete from my games - 
+export async function deleteGameFromMyGames(id) {
+  const res = await fetch(`${apiUrl}/api/save-games/delete-game`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error(`Status ${res.status}`);
+  return res.json();
+}
+
 /** 2️⃣ Save to Wishlist */
 export async function AddToWishList({ id }) {
   const res = await fetch(`${apiUrl}/api/save-games/add-to-wishlist`, {
@@ -44,6 +58,16 @@ export async function fetchCollections() {
   return res.json(); // → [{ id, name, owner… }, …]
 }
 
+export async function fetchFriendsCollections(friendId) {
+  const res = await fetch(
+    `${apiUrl}/api/save-games/get-friends-collection/${friendId}`,
+    { headers: authHeader() }
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to load collections: ${res.statusText}`);
+  }
+  return res.json();
+}
 /** 4️⃣ Create a new collection */
 export async function createCollection(name) {
   const res = await fetch(`${apiUrl}/api/save-games/add-to-collection`, {

@@ -1,43 +1,69 @@
+// src/pages/FriendsPage.jsx
+
 import React, { useEffect, useState } from "react";
 import { getAllFriends } from "../service/AddFriendService";
 import MyFriendsPageComponent from "../component/MyFriendsPageComponent";
-
+import { fetchFriendsCollections } from "../NewsHelper/AddNewsGamesToGameList";
+import "../assests/MyFriendsPage.css" 
 function FriendsPage() {
-  // current user jwt token  
-  const jwt = localStorage.getItem("jwtToken");
-
-  // state for storing friends and fetching indicator
   const [friends, setFriends] = useState([]);
-  const [fetching, setFetching] = useState(true);
+  const [friendsCollections, setFriendsCollections] = useState({});
+  const [loadingFriends, setLoadingFriends] = useState(true);
+  const [loadingCollections, setLoadingCollections] = useState(true);
 
   useEffect(() => {
-    const getUserFriends = async () => {
-      const fetchFriends = await getAllFriends();
-      if (fetchFriends) {
-        setFriends(fetchFriends);
-      } else {
-        console.error("Failed to fetch friends");
+    async function loadAll() {
+      try {
+        // 1. Fetch friends
+        const friendsData = await getAllFriends();
+        setFriends(friendsData || []);
+        setLoadingFriends(false);
+
+        // 2. Fetch each friend’s collections in parallel
+        if (friendsData && friendsData.length > 0) {
+          const collectionsMap = {};
+          await Promise.all(
+            friendsData.map(async (friend) => {
+              try {
+                const cols = await fetchFriendsCollections(friend.userId);
+                console.log(`Fetched collections for ${friend.userId}:`, cols);
+                collectionsMap[friend.userId] = cols;
+              } catch (err) {
+                console.error(`Failed to fetch collections for ${friend.userId}:`, err);
+                collectionsMap[friend.userId] = [];
+              }
+            })
+          );
+          setFriendsCollections(collectionsMap);
+        }
+      } catch (err) {
+        console.error("Failed to load friends:", err);
+        setFriends([]);  
+      } finally {
+        setLoadingCollections(false);
       }
-      setFetching(false);
-    };
-    getUserFriends();
+    }
+
+    loadAll();
   }, []);
 
+  if (loadingFriends) {
+    return <p>Loading friends…</p>;
+  }
+
   return (
-    <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ color: "#0af" }}>Friends</h1>
-      {fetching ? (
-        <p>Loading...</p>
+    <div className="friends-list">
+      {friends.length === 0 ? (
+        <p>No friends found.</p>
       ) : (
-        <div>
-          {friends.length > 0 ? (
-            friends.map((friend, index) => (
-              <MyFriendsPageComponent key={index} friend={friend} />
-            ))
-          ) : (
-            <p>No friends found.</p>
-          )}
-        </div>
+        friends.map((f) => (
+          <MyFriendsPageComponent
+            key={f.userId}
+            friend={f}
+            collections={friendsCollections[f.userId] || []}
+            isCollectionsLoading={loadingCollections}
+          />
+        ))
       )}
     </div>
   );

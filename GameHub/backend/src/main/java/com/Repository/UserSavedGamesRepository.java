@@ -14,4 +14,7 @@ public interface UserSavedGamesRepository extends JpaRepository<MyGames, Long> {
     
     @Query("select m.gameId from MyGames m where m.user.id = :userId")
     List<Long> findGameIdsByUserId(@Param("userId") Long userId);
+    // delte the game from the user's profile
+    @Query("select m from MyGames m where m.user.id = :userId and m.gameId = :gameid")
+    MyGames findGameIdsByUserId(@Param("userId") Long userId, @Param("gameid") Long gameid);
 }
