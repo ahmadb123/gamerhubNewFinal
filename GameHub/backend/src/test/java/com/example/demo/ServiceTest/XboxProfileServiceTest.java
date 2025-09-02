@@ -3,9 +3,10 @@ package com.example.demo.ServiceTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.Test;
-import com.services.XboxProfileService;
+
 import com.dto.XboxProfileDTO;
 import com.services.TokenService;
+import com.services.XboxProfileService;
 
 public class XboxProfileServiceTest {
 

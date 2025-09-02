@@ -1,1 +1,12 @@
 com/controllers/SteamController/SteamUserInfoController.class
+com/services/OAuth2Service.class
+com/services/SteamOpenIDService.class
+com/services/SteamUserService.class
+com/services/SteamUserFriendsListService.class
+com/services/XboxRecentGamesService.class
+com/services/GameClipsServiceXbox.class
+com/services/SteamProfileService.class
+com/services/AchievementsService.class
+com/services/TokenService.class
+com/config/WebConfig.class
+com/services/XboxProfileService.class

@@ -3,8 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.models.GameClipRecordXbox.GameClip;
-import com.models.GameClipRecordXbox.GameClips;
-import com.services.XboxService.GameClipsServiceXbox;
+import com.services.GameClipsServiceXbox;
 
 import java.util.List;
 

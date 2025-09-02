@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import '../assests/AuthPage.css'; // Ensure you have a CSS file for styling
 const apiUrl = 'http://localhost:8080';
 
 function AuthPage(){

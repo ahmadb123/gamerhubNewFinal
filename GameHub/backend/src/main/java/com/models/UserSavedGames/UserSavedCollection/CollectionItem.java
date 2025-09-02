@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="collection_items")
 public class CollectionItem {
-  @Id @GeneratedValue
+  @Id 
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name="game_id", nullable=false)

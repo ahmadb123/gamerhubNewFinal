@@ -1,6 +1,9 @@
 package com.models.Steam;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SteamLoginResponse {
+    @JsonProperty("redirectUrl")
     public String redirectURL;
     public String error;
 

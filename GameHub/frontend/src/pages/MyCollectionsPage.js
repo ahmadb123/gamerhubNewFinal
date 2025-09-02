@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { fetchCollections } from "../NewsHelper/AddNewsGamesToGameList";
+// import { fetchCollections } from "../service/AddNewsGamesToGameList";
 import { fetchGameDetails } from "../service/NewsService";
 import "../assests/Collections.css";
 

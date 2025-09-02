@@ -17,7 +17,6 @@ public class XboxRecentGame {
     private Long id;
 
     // Many-to-one link to the user's XboxProfile
-    // so we know which user (profile) these games belong to
     @ManyToOne
     @JoinColumn(name = "xbox_profile_id", nullable = false)
     private XboxProfile xboxProfile;
@@ -28,7 +27,6 @@ public class XboxRecentGame {
     private String type;
     private String displayImage;
 
-    // Example storing last-time-played
     private LocalDateTime lastTimePlayed;
     private String lastTimePlayedFormatted;
 

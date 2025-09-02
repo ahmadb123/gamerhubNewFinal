@@ -2,8 +2,10 @@ package com.services.MessagesService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.Repository.MessagesRepository.DirectMessageRepository;
@@ -12,6 +14,8 @@ import com.models.ChatsAndDirectMessages.DirectMessageSession;
 import com.models.ChatsAndDirectMessages.DirectMessages;
 import com.models.ChatsAndDirectMessages.MessageStatus;
 import com.models.UserModel.User;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class DirectMessagesService {
@@ -29,21 +33,25 @@ public class DirectMessagesService {
         }
         return sessionExists;        
     }
+    @Transactional
+    public DirectMessageSession getSessionOrCreateSession(User u1, User u2) {
+    // 1) look for an existing session in either order
+    Optional<DirectMessageSession> opt =
+        directMessageSessionRepository.findSessionBetweenUsers(u1.getId(), u2.getId());
+    if (opt.isPresent()) {
+        return opt.get();
+    }
 
-    public DirectMessageSession getSessionOrCreateSession(User userOne, User userTwo) {
-        if (checkIfSessionExists(userOne, userTwo)) {
-            return directMessageSessionRepository
-                    .findSessionBetweenUsers(userOne.getId(), userTwo.getId())
-                    .get();
-        } else {
-            DirectMessageSession newSession = new DirectMessageSession(userOne, userTwo);
-            return directMessageSessionRepository.save(newSession);
-        }
-    }    
-
-    // public DirectMessageSession getOrCreateGroupSession(Set<User> participants){
-        
-    // }
+    // 2) not found → attempt to create one (constructor now normalizes order)
+    try {
+        DirectMessageSession s = new DirectMessageSession(u1, u2);
+        return directMessageSessionRepository.save(s);
+    } catch (DataIntegrityViolationException e) {
+        return directMessageSessionRepository
+        .findSessionBetweenUsers(u1.getId(), u2.getId())
+        .orElseThrow(() -> new RuntimeException("Failed to create or find session", e));
+    }
+    } 
 
     // Send a message with SENT status initially.
     public DirectMessages sendMessage(User sender, Long sessionId, String content){

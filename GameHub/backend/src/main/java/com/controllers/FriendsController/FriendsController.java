@@ -1,11 +1,14 @@
 package com.controllers.FriendsController;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Repository.FriendsRepository;
 import com.Repository.UserRepository;
 import com.models.FriendsModel.Friends;
-import com.models.Steam.SteamUserProfile.SteamProfile;
 import com.models.UserModel.User;
 import com.services.FriendsService;
 import com.services.SteamUserService;
-import com.services.XboxRecentGamesService; // added import
+import com.services.XboxRecentGamesService;
 import com.utility.JWT;
 import com.dto.FriendsWithLinkedAccountsDTO;
 import com.dto.PendingRequestDTO;
@@ -54,7 +56,14 @@ public class FriendsController {
             .orElseThrow(() -> new RuntimeException("Target user not found"));
         // Process friend request.
         friendsService.sendFriendRequest(requester, target);
-        return ResponseEntity.ok("Friend request sent");
+        
+        Map<String,Object> body = new HashMap<>();
+        body.put("success", true);
+        body.put("message", "Friend request sent");
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
     }
     @PostMapping("/accept")
     public ResponseEntity<?> acceptRequest(@RequestParam String userNameOFRequest, @RequestHeader("Authorization") String authHeader){
@@ -94,7 +103,13 @@ public class FriendsController {
             Long friendRequestId = friendRequets.get().getId();
             // send friend request - 
             friendsService.acceptFriendRequest(friendRequestId);
-            return ResponseEntity.ok("Friend request accepted");
+            Map<String,Object> body = new HashMap<>();
+            body.put("success", true);
+            body.put("message", "Friend request sent");
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body);
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error");

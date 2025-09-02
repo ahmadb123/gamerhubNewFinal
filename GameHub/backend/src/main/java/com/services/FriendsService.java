@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.Repository.FriendsRepository;
 import com.models.FriendsModel.Friends;
+import com.models.Steam.SteamUserProfile.SteamProfile;
 import com.models.UserModel.User;
 import com.models.XboxModel.XboxProfile;
 
@@ -68,5 +69,19 @@ public class FriendsService {
             }
         }
         return xboxProfiles;
+    }
+    // if user friend is also steam user, get their steam profile -
+    public List<SteamProfile> getSteamProfileForFriends(Long userId){
+        List<User> friends = getAllFriends(userId);
+        List<SteamProfile> steamProfiles = new ArrayList<>();
+        // we need to check if user is steam user -
+        for(User friend : friends){
+            if(!friend.getSteamProfiles().isEmpty()){
+                steamProfiles.add(friend.getSteamProfiles().get(0));
+            }else{
+                continue;
+            }
+        }
+        return steamProfiles;
     }
 }

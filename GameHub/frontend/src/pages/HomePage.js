@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../assests/HomePage.css";
 import Dropdown from "../utility/DropDownUtilityClass";
-import { fetchRecentNews, fetchNewsByOrder } from "../service/NewsService";
+import { fetchNewsByOrder } from "../service/NewsService";
 import {
   fetchXboxProfile,
   fetchPSNProfile,
@@ -334,6 +334,7 @@ class HomePage extends Component {
     try {
       const newsByOrder = await fetchNewsByOrder(ordering);
       this.setState({ recentNews: newsByOrder });
+      toast.success("News order changed to: " + ordering);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch news by order selection.");

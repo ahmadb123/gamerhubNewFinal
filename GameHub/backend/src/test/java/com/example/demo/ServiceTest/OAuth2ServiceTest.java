@@ -2,6 +2,7 @@ package com.example.demo.ServiceTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
 import com.services.OAuth2Service;
 
 public class OAuth2ServiceTest {

@@ -98,4 +98,10 @@ public class PostNewsService {
 
         return enrichedPosts;
     }
+
+    // Fetch a specific post by its ID
+    public PostNews getSharedNewsDetailsById(Long id){
+        return postNewsRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
 }

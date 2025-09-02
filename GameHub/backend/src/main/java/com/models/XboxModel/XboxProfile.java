@@ -18,8 +18,8 @@ public class XboxProfile {
      * 'fetch=LAZY' is typical in JPA so we only load the User when needed.
      * 'nullable=false' means each XboxProfile must belong to some User.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY) 
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     @JsonIgnore 
     private User user;
 

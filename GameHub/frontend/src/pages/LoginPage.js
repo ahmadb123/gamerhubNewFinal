@@ -5,7 +5,7 @@ import { useLocation } from 'react-router'
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '../assests/LoginPage.css';
 
 const apiUrl = 'http://localhost:8080';
 
@@ -42,6 +42,7 @@ function LoginPage() {
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', userId);
                 navigate("/platform-select"); // Ensure this stays as platform-select
+                toast.success('Login successful!');
             } else if(response.status === 401) {
                 toast.error('Incorrect Password. Please try again.');
             } else {
@@ -83,7 +84,6 @@ function LoginPage() {
                 </div>
                 <button type="submit" className="submit-button">Login</button>
             </form>
-            <ToastContainer position="top-center" />
         </div>
     );
 }

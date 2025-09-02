@@ -1,0 +1,112 @@
+/* Common auth-page background */
+.login-container,
+.register-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  color: white;                /* if you want white text on top */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Background animation for both login and register */
+.login-container::before,
+.register-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 200%;          /* double width for seamless loop */
+  height: 100%;         /* full viewport height */
+  background-image: url('../images/welcomepage.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;   /* auto width, full height */
+  animation: backgroundScroll 30s linear infinite;
+  z-index: -1;
+}
+
+/* Text and form styling for both login and register pages */
+.login-container h2,
+.register-container h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #00f0ff;
+  text-shadow: 0 0 8px rgba(0,240,255,0.5);
+}
+
+.form-group {
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  color: #c0c0c0;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+  background: rgba(255,255,255,0.2);
+  outline: none;
+  box-shadow: inset 0 0 8px rgba(0,240,255,0.7);
+}
+
+.form-group input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.submit-button {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #00f0ff;
+  border: none;
+  border-radius: 6px;
+  color: #0a0a0a;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px rgba(0,240,255,0.6);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.submit-button:hover {
+  background: #00c5cc;
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0,240,255,0.8);
+}
+
+/* If you have a “Show Password” checkbox area */
+.show-password {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #c0c0c0;
+  font-size: 0.9rem;
+}
+
+
+/* Reuse keyframes */
+@keyframes backgroundScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

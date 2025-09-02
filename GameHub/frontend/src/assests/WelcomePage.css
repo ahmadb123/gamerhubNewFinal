@@ -1,0 +1,61 @@
+/* src/assests/HomePage.css (or your main CSS file) */
+
+.welcome-page {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100vh;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* Background animation */
+/* src/assets/HomePage.css */
+
+.welcome-page::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 200%;      /* still double width for smooth loop */
+    height: 100%;     /* full viewport height only */
+    background-image: url('../images/welcomepage.png');
+    background-repeat: repeat-x;
+    background-size: auto 100%;  /* auto width, full height */
+    animation: backgroundScroll 30s linear infinite;
+    z-index: -1;
+  }
+  
+  @keyframes backgroundScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  
+  /* Style your buttons on top */
+  .auth-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .auth-buttons button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid #00f0ff;
+    border-radius: 8px;
+    color: #00f0ff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .auth-buttons button:hover {
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.05);
+  }
+  
