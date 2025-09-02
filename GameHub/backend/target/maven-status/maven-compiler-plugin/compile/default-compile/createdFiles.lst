@@ -8,5 +8,4 @@ com/services/GameClipsServiceXbox.class
 com/services/SteamProfileService.class
 com/services/AchievementsService.class
 com/services/TokenService.class
-com/config/WebConfig.class
 com/services/XboxProfileService.class

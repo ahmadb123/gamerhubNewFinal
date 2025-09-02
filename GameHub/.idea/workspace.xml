@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="13e74707-4273-4cdd-b3aa-b568e5f796ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/controllers/CommunityInsightController/PostNewsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/controllers/CommunityInsightController/PostNewsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/controllers/FriendsController/FriendsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/controllers/FriendsController/FriendsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/dto/FriendWithXboxDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/dto/PostNewsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/dto/PostNewsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/models/Steam/SteamUserProfile/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/models/Steam/SteamUserProfile/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/models/UserModel/LinkedProfiles.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/models/UserModel/LinkedProfiles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/services/FriendsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/services/FriendsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/services/OAuth2Service.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/services/OAuth2Service.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/services/PostNewsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/services/PostNewsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/services/UserLinkedProfilesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/services/UserLinkedProfilesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/Repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/Repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/config/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/CommunityInsightController/PostNewsController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/CommunityInsightController/PostNewsController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/FriendsController/FriendsController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/FriendsController/FriendsController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/MessageController/DirectMessageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/MessageController/DirectMessageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/NewsController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/NewsController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/SaveUserGamesController/SaveGamesController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/SaveUserGamesController/SaveGamesController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/SteamController/SteamUserInfoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/SteamController/SteamUserInfoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/controllers/XboxController/XboxProfileController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/controllers/XboxController/XboxProfileController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/dto/DirectMessageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/dto/DirectMessageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/dto/FriendWithXboxDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/dto/PostNewsDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/dto/PostNewsDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/models/ChatsAndDirectMessages/DirectMessageSession.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/models/ChatsAndDirectMessages/DirectMessageSession.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/models/ChatsAndDirectMessages/DirectMessages.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/models/ChatsAndDirectMessages/DirectMessages.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/models/Steam/SteamUserProfile/UserInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/models/Steam/SteamUserProfile/UserInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/models/UserModel/LinkedProfiles.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/models/UserModel/LinkedProfiles.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/models/UserModel/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/models/UserModel/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/FriendsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/FriendsService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/MessagesService/DirectMessagesService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/MessagesService/DirectMessagesService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/NewsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/NewsService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/OAuth2Service.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/OAuth2Service.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/PostNewsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/PostNewsService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/UserDetailsService/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/UserDetailsService/UserService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/services/UserLinkedProfilesService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/services/UserLinkedProfilesService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/test-classes/com/example/demo/ControllerTest/SaveGamesControllerTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/test-classes/com/example/demo/ControllerTest/SaveGamesControllerTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/0.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/0.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/1.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/1.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/10.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/10.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/11.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/11.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/12.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/12.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/13.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/13.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/14.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/14.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/15.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/15.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/16.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/16.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/17.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/17.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/18.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/18.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/19.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/19.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/2.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/2.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/20.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/20.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/21.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/21.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/22.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/22.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/23.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/23.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/24.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/24.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/25.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/25.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/26.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/26.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/27.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/27.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/28.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/28.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/29.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/29.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/3.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/3.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/30.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/30.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/31.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/31.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/4.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/4.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/5.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/5.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/6.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/6.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/7.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/7.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/8.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/8.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/9.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/9.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack.old" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/cjs/eslint-plugin-react-hooks.development.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/cjs/eslint-plugin-react-hooks.development.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/cjs/eslint-plugin-react-hooks.production.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/eslint-plugin-react-hooks/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/NewsHelper/GenreSide.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/NewsHelper/GenreSide.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/Routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assests/CommunityPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assests/CommunityPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assests/HomePage.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assests/HomePage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assests/News.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assests/News.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assests/UserProfile.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assests/UserProfile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/component/GameDetails.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/component/GameDetails.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/component/GameDetails.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/component/GameDetails.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/component/MainLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/component/MainLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ChatWindow.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ChatWindow.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AuthPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AuthPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/CommunityPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/CommunityPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/DirectMessages.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/DirectMessages.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/UserProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/UserProfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/PostNewsService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/service/PostNewsService.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2wCXVlLsA5gG5EtzfB9sNs2B1DH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="13e74707-4273-4cdd-b3aa-b568e5f796ab" name="Changes" comment="" />
+      <created>1745546554952</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745546554952</updated>
+      <workItem from="1745546556335" duration="2436000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

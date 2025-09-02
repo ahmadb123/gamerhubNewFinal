@@ -16,7 +16,6 @@
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/config/AppConfig.java
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/config/CorsConfig.java
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/config/SecurityConfig.java
-/Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/config/WebConfig.java
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/config/WebSocketConfig.java
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/controllers/CommunityInsightController/PostNewsController.java
 /Users/ahmadbishara/Documents/GitHub/GamerHUB/GameHub/backend/src/main/java/com/controllers/DiscordController/DiscordAuthenticationController.java
