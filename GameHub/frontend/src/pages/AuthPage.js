@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import '../assests/AuthPage.css'; // Ensure you have a CSS file for styling
-const apiUrl = 'http://localhost:8080';
+// const apiUrl = 'http://localhost:8080';
+// put this at the top, replace your current const apiUrl = 'http://localhost:8080'
+const apiUrl =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_BASE_URL) || // works if you're on Vite
+  process.env.REACT_APP_API_BASE_URL ||                               // works if you're on CRA (react-scripts)
+  "http://localhost:8080";                                            // dev fallback
 
 function AuthPage(){
     const [username, setUsername] = useState("");
