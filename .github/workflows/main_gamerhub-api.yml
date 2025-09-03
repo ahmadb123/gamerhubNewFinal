@@ -79,6 +79,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: gamerhub-api-fuhjf2dxdeaqdtgm   # must match your App Service name exactly
+          app-name: gamerhub-api    
           slot-name: Production
           package: "*.jar"
+
