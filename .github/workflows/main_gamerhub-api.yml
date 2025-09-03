@@ -14,22 +14,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Show repo tree (debug)
+        run: |
+          echo "PWD=$PWD"
+          ls -la
+          echo "Searching for pom.xml (depth 3):"
+          find . -maxdepth 3 -type f -name pom.xml -print
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin        # or 'microsoft', both OK
+          distribution: temurin
           java-version: '21'
-          cache: maven                 # speed up builds
+          cache: maven
 
-      - name: Build with Maven
-        working-directory: backend     # <-- run Maven where pom.xml lives
-        run: mvn -B -DskipTests clean package
+      - name: Build with Maven (auto-detect pom)
+        id: build
+        run: |
+          POM=$(find . -maxdepth 3 -type f -name "pom.xml" | head -n 1)
+          if [ -z "$POM" ]; then
+            echo "No pom.xml found. Check your repo paths."
+            exit 1
+          fi
+          echo "Using POM: $POM"
+          mvn -B -DskipTests -f "$POM" clean package
+          # find the built jar under the module's target/
+          JAR=$(dirname "$POM")/target
+          JAR_FILE=$(find "$JAR" -maxdepth 1 -type f -name "*.jar" | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "No JAR produced under $JAR"
+            exit 1
+          fi
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: backend/target/*.jar   # <-- upload the built JAR
+          path: ${{ steps.build.outputs.JAR_FILE }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -39,10 +61,13 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: java-app
+
+      - name: List downloaded files (debug)
+        run: ls -la
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -54,6 +79,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: gamerhub-api-fuhjf2dxdeaqdtgm   # <-- must match your App Service name
+          app-name: gamerhub-api-fuhjf2dxdeaqdtgm   # must match your App Service name exactly
           slot-name: Production
-          package: "*.jar"                          # JAR downloaded in current folder
+          package: "*.jar"
