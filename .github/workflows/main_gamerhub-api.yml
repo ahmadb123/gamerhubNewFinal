@@ -38,7 +38,6 @@ jobs:
           fi
           echo "Using POM: $POM"
           mvn -B -DskipTests -f "$POM" clean package
-          # find the built jar under the module's target/
           JAR=$(dirname "$POM")/target
           JAR_FILE=$(find "$JAR" -maxdepth 1 -type f -name "*.jar" | head -n 1)
           if [ -z "$JAR_FILE" ]; then
@@ -53,7 +52,7 @@ jobs:
           name: java-app
           path: ${{ steps.build.outputs.JAR_FILE }}
 
-   deploy:
+  deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
