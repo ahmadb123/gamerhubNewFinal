@@ -1,0 +1,85 @@
+name: Build and deploy JAR app to Azure Web App - gamerhub-api
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show repo tree (debug)
+        run: |
+          echo "PWD=$PWD"
+          ls -la
+          echo "Searching for pom.xml (depth 3):"
+          find . -maxdepth 3 -type f -name pom.xml -print
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build with Maven (auto-detect pom)
+        id: build
+        run: |
+          POM=$(find . -maxdepth 3 -type f -name "pom.xml" | head -n 1)
+          if [ -z "$POM" ]; then
+            echo "No pom.xml found. Check your repo paths."
+            exit 1
+          fi
+          echo "Using POM: $POM"
+          mvn -B -DskipTests -f "$POM" clean package
+          # find the built jar under the module's target/
+          JAR=$(dirname "$POM")/target
+          JAR_FILE=$(find "$JAR" -maxdepth 1 -type f -name "*.jar" | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "No JAR produced under $JAR"
+            exit 1
+          fi
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: ${{ steps.build.outputs.JAR_FILE }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+
+      - name: List downloaded files (debug)
+        run: ls -la
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_24573FE71F274CC585220D817E98090E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6F5C5C84F9714A19A33C629D0BDE038E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_43939A8B5F834E0891C383F9113FF169 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: gamerhub-api    
+          slot-name: Production
+          package: "*.jar"
+
