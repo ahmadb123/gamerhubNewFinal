@@ -82,6 +82,7 @@ jobs:
         with:
           app-name: gamerhub-api
           slot-name: Production
-          package:gameHub-0.0.1-SNAPSHOT.jar
+          package: gameHub-0.0.1-SNAPSHOT.jar
+
 
 
