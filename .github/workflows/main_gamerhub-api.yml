@@ -38,13 +38,13 @@ jobs:
           fi
           echo "Using POM: $POM"
           mvn -B -DskipTests -f "$POM" clean package
-          # find the built jar under the module's target/
           JAR=$(dirname "$POM")/target
           JAR_FILE=$(find "$JAR" -maxdepth 1 -type f -name "*.jar" | head -n 1)
           if [ -z "$JAR_FILE" ]; then
             echo "No JAR produced under $JAR"
             exit 1
           fi
+          echo "Found JAR: $JAR_FILE"
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
@@ -65,9 +65,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
+          path: .
 
       - name: List downloaded files (debug)
-        run: ls -la
+        run: ls -la .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -79,7 +80,9 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: gamerhub-api    
+          app-name: gamerhub-api
           slot-name: Production
-          package: "*.jar"
+          package: gameHub-0.0.1-SNAPSHOT.jar
+
+
 
