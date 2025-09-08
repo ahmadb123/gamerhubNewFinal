@@ -44,6 +44,7 @@ jobs:
             echo "No JAR produced under $JAR"
             exit 1
           fi
+          echo "Found JAR: $JAR_FILE"
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
@@ -67,7 +68,7 @@ jobs:
           path: .
 
       - name: List downloaded files (debug)
-        run: ls -la
+        run: ls -la .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -81,5 +82,4 @@ jobs:
         with:
           app-name: gamerhub-api
           slot-name: Production
-          package: ${{ steps.build.outputs.JAR_FILE }}
-
+          package: ./*.jar
