@@ -81,4 +81,5 @@ jobs:
         with:
           app-name: gamerhub-api
           slot-name: Production
-          package: '*.jar'
+          package: ${{ steps.build.outputs.JAR_FILE }}
+
