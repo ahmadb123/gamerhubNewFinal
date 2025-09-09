@@ -7,7 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../assests/LoginPage.css';
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
 function togglePassword(){
     let password = document.getElementById("passwordInput");
