@@ -7,7 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../assests/LoginPage.css';
 
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const apiUrl = 'https://gamerhub-api-fuhjf2dxdeaqdtgm.eastus2-01.azurewebsites.net';
 
 function togglePassword(){
     let password = document.getElementById("passwordInput");
