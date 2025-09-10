@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = 'https://gamerhub-api-fuhjf2dxdeaqdtgm.eastus2-01.azurewebsites.net';
 
 export const exchangeCodeForTokens = async () => {
     // get code from URL
